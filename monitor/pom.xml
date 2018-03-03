@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>de.aosd.clazzfish</groupId>
-        <artifactId>ClazzFish</artifactId>
+        <artifactId>clazzfish</artifactId>
         <version>0.5-SNAPSHOT</version>
     </parent>
     <artifactId>clazzfish-monitor</artifactId>
