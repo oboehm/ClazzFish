@@ -25,4 +25,26 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/oboehm/ClazzFish/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/oboehm/ClazzFish</url>
+    </ciManagement>
+
+    <developers>
+        <developer>
+            <name>Oliver Boehm</name>
+            <id>oboehm</id>
+            <email>ob@aosd.de</email>
+            <organization>AOSD</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
 </project>
