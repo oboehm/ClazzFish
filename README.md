@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/oboehm/ClazzFish.svg?branch=master)](https://travis-ci.org/oboehm/ClazzFish)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3AClazzFish&metric=coverage)](https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3AClazzFish)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=coverage)](https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 # ClazzFish
