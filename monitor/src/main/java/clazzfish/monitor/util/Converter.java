@@ -214,31 +214,27 @@ public final class Converter {
 	 * If a URL contains illegal characters for an URI (like blanks) this should
 	 * be automatically converted (e.g. to "%20")
 	 *
-	 * @param url
-	 *            the URL to be converted
+	 * @param url the URL to be converted
 	 * @return the given URL as URI
 	 */
 	public static URI toURI(final URL url) {
-		try {
-			return normalize(url.toURI());
-		} catch (URISyntaxException ex) {
-			LOG.trace("Cannot convert {} to URI:", url, ex);
-			return toURI(url.toExternalForm());
-		}
+		return toURI(url.toString());
 	}
 
 	/**
 	 * If a URL contains illegal characters for an URI (like blanks) this should
-	 * be automatically converted (e.g. to "%20")
+	 * be automatically converted (e.g. to "%20"). Also URL starting without an
+     * authority element (like "file:/") cannot have two slash characters ("//").
+     * This is also corrected
 	 *
-	 * @param uri
-	 *            the URL to be converted
+	 * @param uri the URL to be converted
 	 * @return the given URL as URI
 	 */
 	public static URI toURI(final String uri) {
 		try {
             String converted = uri.replaceAll(" ", "%20");
-			return normalize(new URI(converted.replaceAll("//", "/")));
+            converted = converted.replace("file://", "file:/");
+			return normalize(new URI(converted));
 		} catch (URISyntaxException ex) {
             LOG.trace("Cannot convert '{}' to URI:", uri, ex);
             throw new IllegalArgumentException(uri + " is not a valid URI", ex);

@@ -17,7 +17,6 @@
  */
 package clazzfish.monitor.util;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
@@ -37,9 +36,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link Converter} class.
@@ -270,7 +267,6 @@ class ConverterTest {
      * @throws MalformedURLException should not happen
      */
     @Test
-    @Ignore // works not on Travis - java.lang.IllegalArgumentException: URI has an authority component
     public void testToURIwithDirURL() throws MalformedURLException {
         File dir = SystemUtils.getJavaHome();
         URL url = new URL("file:/" + FilenameUtils.separatorsToUnix(dir.getPath()));
@@ -287,7 +283,6 @@ class ConverterTest {
      * @throws MalformedURLException should not happen
      */
     @Test
-    @Ignore // works not on Travis - java.lang.IllegalArgumentException: URI has an authority component
     public void testToURIwithDirname() throws MalformedURLException {
         File dir = SystemUtils.getJavaIoTmpDir();
         String url = "file:/" + FilenameUtils.separatorsToUnix(dir.getPath());
