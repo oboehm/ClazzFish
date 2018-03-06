@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.monitor.util.Converter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,29 +60,9 @@ public class ClassWalker extends ResourceWalker {
 		Collection<String> resources = this.getResources();
 		Collection<String> classes = new ArrayList<>(resources.size());
 		for (String res : resources) {
-			classes.add(resourceToClass(res));
+			classes.add(Converter.resourceToClass(res));
 		}
 		return classes;
 	}
-
-    /**
-     * Converts a resource (e.g. "/java/lang/String.class") into its classname
-     * ("java.lang.String").
-     *
-     * @param name e.g. "/java/lang/String.class"
-     * @return e.g. "java.lang.String"
-     */
-    private static String resourceToClass(final String name) {
-        if (name.endsWith(".class")) {
-            int lastdot = name.lastIndexOf('.');
-            String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
-            if (classname.startsWith(".")) {
-                classname = classname.substring(1);
-            }
-            return classname;
-        } else {
-            return name;
-        }
-    }
 
 }
