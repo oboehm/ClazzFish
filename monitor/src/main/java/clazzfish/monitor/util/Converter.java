@@ -238,7 +238,7 @@ public final class Converter {
 	public static URI toURI(final String uri) {
 		try {
             String converted = uri.replaceAll(" ", "%20");
-			return normalize(new URI(converted));
+			return normalize(new URI(converted.replaceAll("//", "/")));
 		} catch (URISyntaxException ex) {
             LOG.trace("Cannot convert '{}' to URI:", uri, ex);
             throw new IllegalArgumentException(uri + " is not a valid URI", ex);
