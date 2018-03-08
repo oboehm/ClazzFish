@@ -80,6 +80,12 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     
