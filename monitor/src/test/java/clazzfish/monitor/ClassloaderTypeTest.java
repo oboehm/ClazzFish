@@ -19,6 +19,7 @@ package clazzfish.monitor;
 
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
+import org.apache.catalina.loader.ParallelWebappClassLoader;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -56,13 +57,13 @@ class ClassloaderTypeTest {
         checkToClassloaderType(new CompoundClassLoader(), ClassloaderType.WEBSPHERE);
     }
 
-//    /**
-//     * Test method for {@link ClassloaderType#toClassloaderType(ClassLoader)}.
-//     */
-//    @Test
-//    public void testTomcat8ClassloaderType() {
-//        checkToClassloaderType(new ParallelWebappClassLoader(), ClassloaderType.TOMCAT8);
-//    }
+    /**
+     * Test method for {@link ClassloaderType#toClassloaderType(ClassLoader)}.
+     */
+    @Test
+    public void testTomcat8ClassloaderType() {
+        checkToClassloaderType(new ParallelWebappClassLoader(), ClassloaderType.TOMCAT8);
+    }
 
     /**
      * Test method for {@link ClassloaderType#toClassloaderType(ClassLoader)}.

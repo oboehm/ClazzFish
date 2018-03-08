@@ -1,7 +1,5 @@
 /*
- * $Id: WebappClassLoader.java,v 1.2 2015/12/12 17:42:05 oboehm Exp $
- *
- * Copyright (c) 2014 by Oliver Boehm
+ * Copyright (c) 2014-2018 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +22,10 @@ import java.net.URL;
 
 /**
  * This is a simple implementation of {@link ClassLoader} to be able to
- * simulate the Tomcat classloader for testing (till Tomcat 7).
+ * simulate the Tomcat classloader for testing (till Tomcat 7). It was copied
+ * from PatternTesting for testing.
  *
  * @author oliver
- * @since 1.5 (27.08.2014)
  */
 public final class WebappClassLoader extends ClassLoader {
 
