@@ -164,7 +164,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
      * So it is not really tested here. It is only manually compared which
      * parts of the classpath are missing.
      */
-    //@Test
+    @Test
     public void testGetClasspathFromPackages() {
         String[] classpath = digger.getClasspath();
         String[] packageClasspath = digger.getClasspathFromPackages();
@@ -328,7 +328,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
      * @throws MalformedURLException as a result of using an
      *         {@link URLClassLoader}
      */
-    //@Test
+    @Test
     public void testEarWarJar() throws MalformedURLException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_EAR,
                 "!/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar");
@@ -341,7 +341,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
      *
      * @throws IOException as a result of using an {@link URLClassLoader}
      */
-    //@Test
+    @Test
     public void testEarWarClasses() throws IOException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_EAR, "!/world.war!/WEB-INF/classes");
         checkGetClasses(warDigger, "patterntesting.sample.World");

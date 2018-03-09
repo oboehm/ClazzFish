@@ -359,18 +359,17 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @since 27-Jul-2009
 	 */
 	protected String[] getClasspathFromPackages() {
-		throw new UnsupportedOperationException("not yet implemented");
-//		Set<URI> packageURIs = new LinkedHashSet<>();
-//		Package[] packages = this.getLoadedPackageArray();
-//		for (int i = 0; i < packages.length; i++) {
-//			String resource = Converter.toResource(packages[i]);
-//			URI uri = ResourcepathDigger.whichResource(resource, this.classLoader);
-//			if (uri != null) {
-//				URI path = ClasspathHelper.getParent(uri, resource);
-//				packageURIs.add(path);
-//			}
-//		}
-//		return getClasspathFromPackages(packageURIs);
+		Set<URI> packageURIs = new LinkedHashSet<>();
+		Package[] packages = this.getLoadedPackageArray();
+		for (int i = 0; i < packages.length; i++) {
+			String resource = Converter.toResource(packages[i]);
+			URI uri = ResourcepathDigger.whichResource(resource, this.classLoader);
+			if (uri != null) {
+				URI path = ClasspathHelper.getParent(uri, resource);
+				packageURIs.add(path);
+			}
+		}
+		return getClasspathFromPackages(packageURIs);
 	}
 
 	private String[] getClasspathFromPackages(final Set<URI> packages) {
@@ -441,13 +440,11 @@ public class ClasspathDigger extends AbstractDigger {
 	 * resource is not found it will be tried again with/without a leading "/"
 	 * and with the parent classloader.
 	 *
-	 * @param name
-	 *            resource name (e.g. "log4j.properties")
+	 * @param name resource name (e.g. "log4j.properties")
 	 * @return URI of the given resource (or null if resource was not found)
 	 */
 	public URI whichResource(final String name) {
-		throw new UnsupportedOperationException("not yet implemented");
-		//return ResourcepathDigger.whichResource(name, this.classLoader);
+		return ResourcepathDigger.whichResource(name, this.classLoader);
 	}
 
 	/**
