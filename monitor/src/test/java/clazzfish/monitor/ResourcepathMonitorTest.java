@@ -215,7 +215,6 @@ class ResourcepathMonitorTest extends AbstractMonitorTest {
         String[] doubletPath = monitor.getDoubletResourcepath();
         assertTrue(doubletPath.length > 0, "no empty array expected");
         LOG.info("{} pathes with doublet resources found.", doubletPath.length);
-        assertTrue(doubletPath.length < ClasspathMonitor.getInstance().getClasspath().length, "too much pathes found");
     }
 
     /**
