@@ -42,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NestedZipFileTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NestedZipFileTest.class);
-    private static final File WORLD_WAR = new File("src/test/resources/clazzfish/util/world.war");
-    private static final File WORLD_EAR = new File("src/test/resources/clazzfish/util/world.ear");
+    private static final File WORLD_WAR = new File("src/test/resources/clazzfish/monitor/util/world.war");
+    private static final File WORLD_EAR = new File("src/test/resources/clazzfish/monitor/util/world.ear");
 
     /**
      * Test method for {@link NestedZipFile#toString()}.
@@ -52,7 +52,7 @@ class NestedZipFileTest {
      */
     @Test
     public void testToString() throws IOException {
-        try (NestedZipFile zipFile = new NestedZipFile("src/test/resources/clazzfish/util/world.war")) {
+        try (NestedZipFile zipFile = new NestedZipFile("src/test/resources/clazzfish/monitor/util/world.war")) {
             String s = zipFile.toString();
             LOG.info("s = \"{}\"", s);
             assertThat(s, containsString(zipFile.getName()));
@@ -103,7 +103,7 @@ class NestedZipFileTest {
         });
     }
 
-    private static void listContentOf(File zipFile) throws IOException, ZipException {
+    private static void listContentOf(File zipFile) throws IOException {
         try (NestedZipFile nested = new NestedZipFile(zipFile)) {
             LOG.info("Reading {}...", nested);
             Enumeration<? extends ZipEntry> entries = nested.entries();

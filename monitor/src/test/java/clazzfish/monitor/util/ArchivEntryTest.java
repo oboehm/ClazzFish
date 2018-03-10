@@ -76,11 +76,10 @@ class ArchivEntryTest {
     }
 
     /**
-     * Test get file.
-     * @throws IOException if e.g. disk is full
+     * Test get file from archive.
      */
     @Test
-    public void testGetFile() throws IOException {
+    public void testGetFile() {
         assertEqualsFile(new File("/tmp/hugo.zip"), zipEntry.getFileArchiv());
     }
 
@@ -230,10 +229,9 @@ class ArchivEntryTest {
      * existing JAR file.
      *
      * @throws IOException Signals that an I/O exception has occurred.
-     * @throws URISyntaxException the URI syntax exception
      */
     @Test
-    public void testGetBytesZipEntry() throws IOException, URISyntaxException {
+    public void testGetBytesZipEntry() throws IOException {
         ZipFile zipFile = new ZipFile(log1jar);
         ZipEntry entry = zipFile.getEntry("org/apache/commons/logging/Log.class");
         InputStream istream = zipFile.getInputStream(entry);
@@ -287,13 +285,10 @@ class ArchivEntryTest {
     /**
      * Another test case to reproduce <a
      * href="https://sourceforge.net/p/patterntesting/bugs/29/">bug 29</a>.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws URISyntaxException the URI syntax exception
      */
     @Test
-    public void testEquals4Bug29() throws IOException, URISyntaxException {
-        URI uri = new URI("bundleresource://77.fwk581954975");
+    public void testEquals4Bug29() {
+        URI uri = URI.create("bundleresource://77.fwk581954975");
         ArchivEntry e1 = new ArchivEntry(uri);
         ArchivEntry e2 = new ArchivEntry(uri);
         assertEquals(e1, e2);
@@ -336,14 +331,11 @@ class ArchivEntryTest {
     /**
      * Another test case to reproduce <a
      * href="https://sourceforge.net/p/patterntesting/bugs/29/">bug 29</a>.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws URISyntaxException the URI syntax exception
      */
     @Test
-    public void testNotEquals4Bug29() throws IOException, URISyntaxException {
-        ArchivEntry e1 = new ArchivEntry(new URI("bundleresource://167.fwk581954975"));
-        ArchivEntry e2 = new ArchivEntry(new URI("bundleresource://80.fwk581954975"));
+    public void testNotEquals4Bug29() {
+        ArchivEntry e1 = new ArchivEntry(URI.create("bundleresource://167.fwk581954975"));
+        ArchivEntry e2 = new ArchivEntry(URI.create("bundleresource://80.fwk581954975"));
         assertThat(e1, not(equalTo(e2)));
     }
 
@@ -419,11 +411,9 @@ class ArchivEntryTest {
 
     /**
      * Test method for {@link ArchivEntry#toURI()}.
-     *
-     * @throws URISyntaxException the URI syntax exception
      */
     @Test
-    public void testToURI() throws URISyntaxException {
+    public void testToURI() {
         File ab = new File("/a/b");
         ArchivEntry file = new ArchivEntry(ab);
         assertEqualsFile(ab, new File(file.toURI()));
@@ -466,7 +456,7 @@ class ArchivEntryTest {
     }
 
     private static ArchivEntry createWorldWarAchivEntry(String postfix) {
-        File warFile = new File("src/test/resources/clazzfish/util/world.war");
+        File warFile = new File("src/test/resources/clazzfish/monitor/util/world.war");
         assertTrue(warFile.exists(), "should exist: " + warFile);
         URI uri = URI.create("jar:" + warFile.toURI() + "!/WEB-INF/lib/" + postfix);
         return new ArchivEntry(uri);

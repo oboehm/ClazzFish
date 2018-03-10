@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractDiggerTest {
 
     /** The Constant WORLD_WAR. */
-    protected static final File WORLD_WAR = new File("src/test/resources/clazzfish/util/world.war");
+    protected static final File WORLD_WAR = new File("src/test/resources/clazzfish/monitor/util/world.war");
 
     /** The Constant WORLD_EAR. */
-    protected static final File WORLD_EAR = new File("src/test/resources/clazzfish/util/world.ear");
+    protected static final File WORLD_EAR = new File("src/test/resources/clazzfish/monitor/util/world.ear");
 
     /**
      * An {@link URLClassLoader} is mocked to return only one classpath which
