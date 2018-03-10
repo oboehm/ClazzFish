@@ -364,6 +364,7 @@ class ClasspathMonitorTest extends AbstractMonitorTest {
         LOG.info("Classpath has {} used and {} unused elements.", used.size(), unused.size());
         SortedSet<URI> merged = new TreeSet<>(cpMon.getUsedClasspathSet());
         merged.addAll(cpMon.getUnusedClasspathSet());
+        assertEquals(classpath.size(), merged.size());
         assertThat(classpath, equalTo(merged));
     }
 
