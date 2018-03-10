@@ -25,11 +25,8 @@ import clazzfish.monitor.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.JMException;
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.*;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -173,7 +170,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @param name e.g "my.company.ClasspathMonitor"
 	 * @see ClasspathMonitor#unregisterAsMBean()
-	 * @since 1.6
 	 */
 	public static void registerAsMBean(final String name) {
 		registerAsMBean(MBeanHelper.getAsObjectName(name));
@@ -224,7 +220,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @param name the classname
 	 * @return the URI
-	 * @see patterntesting.runtime.monitor.ClasspathMonitorMBean#whichClass(String)
+	 * @see ClasspathMonitorMBean#whichClass(String)
 	 */
 	@Override
 	public URI whichClass(final String name) {

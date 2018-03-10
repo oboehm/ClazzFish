@@ -6,18 +6,33 @@
 
     <groupId>de.aosd.clazzfish</groupId>
     <artifactId>clazzfish</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.5</version>
     <packaging>pom</packaging>
+
     <name>ClazzFish</name>
-    
     <description>
         ClazzFish is a collection of different modules, which help you to dive into
         the classpath of your application and to monitor it.
     </description>
-    
+    <url>https://github.com/oboehm/ClazzFish</url>
+    <inceptionYear>2018</inceptionYear>
+
     <modules>
         <module>monitor</module>
     </modules>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/oboehm/ClazzFish.git</connection>
+        <url>https://github.com/oboehm/ClazzFish</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

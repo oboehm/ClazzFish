@@ -33,7 +33,6 @@ deploy_jar_for() {
 	pushd $subdir
 	echo deploying $module in $subdir...
     mvn $options -DpomFile=target/$module-$VERSION.pom -Dfile=target/$module-$VERSION.jar
-    mvn $options -DpomFile=target/$module-$VERSION.pom -Dfile=target/$module-$VERSION-uberjar.jar -Dclassifier=uberjar
     mvn $options -DpomFile=target/$module-$VERSION.pom -Dfile=target/$module-$VERSION-sources.jar -Dclassifier=sources
     mvn $options -DpomFile=target/$module-$VERSION.pom -Dfile=target/$module-$VERSION-javadoc.jar -Dclassifier=javadoc
     popd
