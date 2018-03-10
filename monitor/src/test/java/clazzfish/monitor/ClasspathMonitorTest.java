@@ -165,7 +165,7 @@ class ClasspathMonitorTest extends AbstractMonitorTest {
      * where the doublet appears. Since 2.0 doublets in the same classpath are
      * not regarded as doublet.
      */
-    //@Test
+    @Test
     public void testGetNoClasses() {
         LOG.info("testGetNoClasses() is started.");
         Class<?> clazz = String.class;
@@ -238,7 +238,7 @@ class ClasspathMonitorTest extends AbstractMonitorTest {
     /**
      * Test get classloader details.
      */
-    //@Test
+    @Test
     public void testGetClassloaderDetails() {
         LOG.info("testGetClassloaderDetails() is started.");
         LOG.trace("classloader details: " + cpMon.getClassLoaderDetails());
@@ -475,7 +475,7 @@ class ClasspathMonitorTest extends AbstractMonitorTest {
      * @throws ClassNotFoundException should not happen
      * @throws IOException should not happen
      */
-    //@Test
+    @Test
     public void testGetIncompatibleClasses() throws ClassNotFoundException, IOException {
         LOG.info("testGetIncompatibleClasses() is started.");
         String[] incompatibleClasses = cpMon.getIncompatibleClasses();

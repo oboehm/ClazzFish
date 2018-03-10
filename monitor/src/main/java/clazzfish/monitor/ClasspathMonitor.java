@@ -408,8 +408,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	@Override
 	public int getNoClasses(final String classname) {
-		throw new UnsupportedOperationException("not yet implemented");
-		//return ResourcepathMonitor.getInstance().getNoResources(Converter.classToResource(classname));
+		return ResourcepathMonitor.getInstance().getNoResources(Converter.classToResource(classname));
 	}
 
 	/**
