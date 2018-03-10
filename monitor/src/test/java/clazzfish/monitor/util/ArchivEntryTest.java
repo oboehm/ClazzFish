@@ -358,7 +358,7 @@ class ArchivEntryTest {
      */
     @Test
     public void testArchivEntry() throws URISyntaxException, IOException {
-        File jarFile = new File(mavenRepositoryDir, "org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar");
+        File jarFile = new File(mavenRepositoryDir, "org/apache/commons/commons-lang3/3.7/commons-lang3-3.7.jar");
         String resource = "org/apache/commons/lang3/StringUtils.class";
         ArchivEntry entry = getArchivEntry(jarFile, resource);
         LOG.info("entry=" + entry + ", size=" + entry.getSize());

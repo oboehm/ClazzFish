@@ -478,7 +478,7 @@ class ClasspathMonitorTest extends AbstractMonitorTest {
      * @throws ClassNotFoundException should not happen
      * @throws IOException should not happen
      */
-    @Test
+    //@Test
     public void testGetIncompatibleClasses() throws ClassNotFoundException, IOException {
         LOG.info("testGetIncompatibleClasses() is started.");
         String[] incompatibleClasses = cpMon.getIncompatibleClasses();
