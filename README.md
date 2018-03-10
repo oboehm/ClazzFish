@@ -6,6 +6,7 @@
 
 ClazzFish is a collection of different modules, which help you to dive into the classpath of your application and to monitor it.
 Originally it was part of [PatternTesting](http://patterntesting.org) but is now extracted to a separate project.
+With [OSSRH-38331](https://issues.sonatype.org/browse/OSSRH-38331) it is requested to be sync'd with Maven Central.
 
 ---
 March 2018,
