@@ -10,6 +10,7 @@ addons:
       secure: "h4TQw9d2ta2oN318Vnfvaz0GJTame+vkNTCJT05eQhyKCUHZoiSBeQMfzweEedojXvauu+e7pPnj0tWxvL/pGfU1pF2TBgfOMC9GMhdAxUk5NWso6NjGqP4HILkZqN++p17vu8kWoVb8jEZsR2aNEmn59IdE8TUHb99/LsGZQ3oim/nhIJsmibLGoq7zPAspwet3n1nqn+0nwSY3N7Rf3jbbsCjBRDVVONiKA8YcJv/h4tQlomNv+jxMXBnmuhnLs3c5FyPHa3WRhOM+qOpJl4J9o44/XoV6Pj+cexZtCew0JD56oa9Ma+drPonDJdwX6OOVQNeMdiTfokuqRfNJImfrw7mXV//1ZTPAHzTKom0pGbvvrdkqSF0LXUX73GUa6aXyqOSl5jRddekOQWEIR3TSoKHg06NrVVHgWCtg3TGN0SJApAL9dpz2JUqU9bvy1AuWKYYcAF5i75kyTUMTcxIrUQPcJz5s7KOfW0OWHt5wvPErCfpjKYHpeclfpCWH5kRPmZX9RFB79aZ+UR8kU1A5KPvmALH1doIEGtIoUxWXdiU+l6QThRYP0ICO3N+kEZ4cL8ZQuG4h7hN0B1bUAaYUxk6jOEdosuMGt9VJP6n2Ji9w6DUG1j+wq61dy2zXb5mJeTIrQlYDKYLZolQ9Aou3oFpQOpngKAIUC6ciOYw="
     branches:
       - master
+      - develop
 
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -B
