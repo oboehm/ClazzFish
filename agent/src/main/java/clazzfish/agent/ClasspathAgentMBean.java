@@ -23,7 +23,7 @@ import java.io.*;
 /**
  * This is the MBean for the {@link ClasspathAgent} to be able to register
  * this class for a JMX console like jconsole or visualvm.
- * Originally this class was part of patterntesting-agent.
+ * Originally this interface was part of patterntesting-agent.
  *
  * @author oliver
  */
