@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class ClasspathAgent implements ClasspathAgentMBean {
 
     /** The Constant MBEAN_NAME for the registered name in JMX. */
-    public static final String MBEAN_NAME = "patterntesting.agent:type=ClasspathAgent";
+    public static final String MBEAN_NAME = "clazzfish.agent:type=ClasspathAgent";
 
     private static final long serialVersionUID = 20120302L;
     private static final Logger LOG = Logger.getLogger(ClasspathAgent.class.getName());
