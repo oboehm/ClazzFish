@@ -145,11 +145,11 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
                 "src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/classes!",
                 "src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar!"
         };
-        String classpath = "gibts/net";
-        for(int i = 0; i < classpathes.length; i++) {
-            classpath += File.pathSeparator + classpathes[i];
+        StringBuilder classpath = new StringBuilder("gibts/net");
+        for (String classpathe : classpathes) {
+            classpath.append(File.pathSeparator).append(classpathe);
         }
-        System.setProperty("test-classpath", classpath);
+        System.setProperty("test-classpath", classpath.toString());
         String[] realClasspathes = ClasspathDigger.getClasspath("test-classpath");
         assertThat(classpathes, equalTo(realClasspathes));
     }
@@ -169,21 +169,21 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
         String[] classpath = digger.getClasspath();
         String[] packageClasspath = digger.getClasspathFromPackages();
         Collection<String> missing = findMissingElementsOf(packageClasspath, classpath);
-        for (Iterator<String> iterator = missing.iterator(); iterator.hasNext();) {
-            LOG.info("unused: " + iterator.next());
+        for (String unused : missing) {
+            LOG.info("unused: {}", unused);
         }
         Collection<String> toomuch = findMissingElementsOf(classpath, packageClasspath);
-        for (Iterator<String> iterator = toomuch.iterator(); iterator.hasNext();) {
-            LOG.info("not in java.class.path: " + iterator.next());
+        for (String s : toomuch) {
+            LOG.info("not in java.class.path: {}", s);
         }
     }
 
     private static Collection<String> findMissingElementsOf(
             final String[] unknown, final String[] reference) {
         Collection<String> missing = new ArrayList<>();
-        for (int i = 0; i < unknown.length; i++) {
-            if (!ArrayUtils.contains(reference, unknown[i])) {
-                missing.add(unknown[i]);
+        for (String s : unknown) {
+            if (!ArrayUtils.contains(reference, s)) {
+                missing.add(s);
             }
         }
         return missing;
@@ -224,12 +224,9 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
     /**
      * Here we use the real tomcat class loader to reproduce
      * <a href="https://sourceforge.net/p/patterntesting/bugs/34/">bug 34</a>.
-     *
-     * @throws MalformedURLException the malformed url exception
-     * @since 1.6
      */
     @Test
-    public void testGetTomcat8() throws MalformedURLException {
+    public void testGetTomcat8() {
         org.apache.catalina.loader.WebappClassLoader tomcat = new org.apache.catalina.loader.WebappClassLoader(Thread.currentThread().getContextClassLoader());
         ClasspathDigger tomcatDigger = new ClasspathDigger(tomcat);
         String[] classpath = tomcatDigger.getClasspath();
@@ -319,7 +316,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
     @Test
     public void testWarJar() throws MalformedURLException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_WAR, "!/WEB-INF/lib/patterntesting-agent-1.6.3.jar");
-        checkGetClasses(warDigger, "patterntesting.agent.ClasspathAgent");
+        checkGetClasses(warDigger, "clazzfish.agent.ClasspathAgent");
     }
 
     /**
@@ -332,7 +329,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
     public void testEarWarJar() throws MalformedURLException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_EAR,
                 "!/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar");
-        checkGetClasses(warDigger, "patterntesting.agent.ClasspathAgent");
+        checkGetClasses(warDigger, "clazzfish.agent.ClasspathAgent");
     }
 
     /**
