@@ -316,7 +316,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
     @Test
     public void testWarJar() throws MalformedURLException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_WAR, "!/WEB-INF/lib/patterntesting-agent-1.6.3.jar");
-        checkGetClasses(warDigger, "clazzfish.agent.ClasspathAgent");
+        checkGetClasses(warDigger, "patterntesting.agent.ClasspathAgent");
     }
 
     /**
@@ -329,7 +329,7 @@ class ClasspathDiggerTest extends AbstractDiggerTest {
     public void testEarWarJar() throws MalformedURLException {
         ClasspathDigger warDigger = createClasspathDigger(WORLD_EAR,
                 "!/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar");
-        checkGetClasses(warDigger, "clazzfish.agent.ClasspathAgent");
+        checkGetClasses(warDigger, "patterntesting.agent.ClasspathAgent");
     }
 
     /**
