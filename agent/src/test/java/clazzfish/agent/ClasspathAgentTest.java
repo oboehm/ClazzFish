@@ -24,6 +24,10 @@ import javax.management.*;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,10 +56,21 @@ class ClasspathAgentTest {
      * Sets the up MBean.
      *
      * @throws MalformedObjectNameException the malformed object name exception
+     * @throws IOException                  the io exception
      */
     @BeforeAll
-    public static void setUpObjectName() throws MalformedObjectNameException {
+    public static void setUpObjectName() throws MalformedObjectNameException, IOException {
         mbean = new ObjectName(ClasspathAgent.MBEAN_NAME);
+        if (ClasspathAgent.getInstrumentation() == null) {
+            loadJavaAgentFrom(Paths.get("target"));
+        }
+    }
+    
+    private static void loadJavaAgentFrom(Path dir) throws IOException {
+        assertTrue(Files.isDirectory(dir));
+        Optional<Path> jarFile =
+                Files.list(dir).filter(f -> f.toString().endsWith(".jar")).filter(f -> Files.isRegularFile(f)).findFirst();
+        jarFile.ifPresent(ClasspathAgentLoader::loadAgent);
     }
 
     /**
@@ -94,7 +109,7 @@ class ClasspathAgentTest {
             String[] classnames = agent.getLoadedClassnames();
             assertTrue(classnames.length > 1, "not enough classes loaded?");
             for (int i = 1; i < classnames.length; i++) {
-                assertFalse(classnames[i-1].equals(classnames[i]), "doublet at " + i + ". element:");
+                assertNotEquals(classnames[i - 1], classnames[i], "doublet at " + i + ". element:");
                 assertTrue(classnames[i - 1].compareTo(classnames[i]) < 0, "unsorted at " + i + ". element:");
             }
         }
