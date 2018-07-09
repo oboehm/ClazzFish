@@ -66,7 +66,7 @@ public class ClasspathDigger extends AbstractDigger {
 
 	static {
 		try {
-			AGENT_MBEAN = new ObjectName("patterntesting.agent:type=ClasspathAgent");
+			AGENT_MBEAN = new ObjectName("clazzfish.agent:type=ClasspathAgent");
 		} catch (MalformedObjectNameException e) {
 			throw new ExceptionInInitializerError(e);
 		}
