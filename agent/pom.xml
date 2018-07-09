@@ -12,4 +12,21 @@
 
   <name>clazzfish-agent</name>
 
+  <build>
+    <plugins>
+      <!-- provide JAR as agent -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Premain-Class>clazzfish.agent.ClasspathAgent</Premain-Class>
+              <Agent-Class>clazzfish.agent.ClasspathAgent</Agent-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
 </project>
