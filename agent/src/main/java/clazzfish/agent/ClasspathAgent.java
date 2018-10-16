@@ -22,7 +22,6 @@ import javax.management.*;
 import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -69,16 +68,6 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      */
     public static ClasspathAgent getInstance() {
         return INSTANCE;
-    }
-
-
-    /**
-     * Main method.
-     *
-     * @param args arguments
-     */
-    public static void main(String[] args) {
-        LOG.info("Main method is invoked with args " + Arrays.asList(args));
     }
 
     /**

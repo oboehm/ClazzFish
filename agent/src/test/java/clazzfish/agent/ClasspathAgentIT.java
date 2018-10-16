@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *
  * @author oboehm
  */
-class ClasspathAgentIT {
+public class ClasspathAgentIT {
 
     private static final Logger LOG = Logger.getLogger(ClasspathAgentIT.class.getName());
     private static final ClasspathAgent agent = ClasspathAgent.getInstance();

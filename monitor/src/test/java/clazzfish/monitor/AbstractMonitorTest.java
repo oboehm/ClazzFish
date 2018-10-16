@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractMonitorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitorTest.class);
-    private final AbstractMonitor monitor = this.getMonitor();
 
     /**
      * Gets the monitor for testing.
@@ -55,7 +54,7 @@ public abstract class AbstractMonitorTest {
      */
     @Test
     public void testAddMeAsShutdownHook() {
-        testAddAsShutdownHook(monitor);
+        testAddAsShutdownHook(getMonitor());
     }
 
     /**
@@ -79,7 +78,7 @@ public abstract class AbstractMonitorTest {
      */
     @Test
     public void testRun() {
-        monitor.run();
+        getMonitor().run();
     }
 
     /**
@@ -87,8 +86,9 @@ public abstract class AbstractMonitorTest {
      */
     @Test
     public void testRegisterMeAsMBean() {
+        AbstractMonitor monitor = getMonitor();
         monitor.registerMeAsMBean();
-        assertTrue(monitor.isMBean(), "not registered: " + monitor);
+        assertTrue(monitor.isMBean(), "not registered: " + getMonitor());
         monitor.unregisterMeAsMBean();
         assertFalse(monitor.isMBean(), "registered: " + monitor);
     }
@@ -100,7 +100,7 @@ public abstract class AbstractMonitorTest {
      */
     @Test
     public void testDumpMe() throws IOException {
-        checkDumpMe(monitor, 1);
+        checkDumpMe(getMonitor(), 1);
     }
 
     /**
