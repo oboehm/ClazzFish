@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * JUnit tests for {@link ClasspathAgent} class. Some tests requires that you
@@ -53,7 +54,7 @@ class ClasspathAgentTest {
     private static ObjectName mbean;
 
     /**
-     * Sets the up MBean.
+     * Sets up the MBean.
      *
      * @throws MalformedObjectNameException the malformed object name exception
      * @throws IOException                  the io exception
@@ -92,10 +93,9 @@ class ClasspathAgentTest {
      */
     @Test
     public void testGetLoadedClasses() {
-        if (agent.isActive()) {
-            Class<?>[] loadedClasses = agent.getLoadedClasses();
-            assertTrue(loadedClasses.length > 0, "no classes loaded?");
-        }
+        assumeTrue(agent.isActive());
+        Class<?>[] loadedClasses = agent.getLoadedClasses();
+        assertTrue(loadedClasses.length > 0, "no classes loaded?");
     }
 
     /**
@@ -105,13 +105,12 @@ class ClasspathAgentTest {
      */
     @Test
     public void testGetLoadedClassnames() {
-        if (agent.isActive()) {
-            String[] classnames = agent.getLoadedClassnames();
-            assertTrue(classnames.length > 1, "not enough classes loaded?");
-            for (int i = 1; i < classnames.length; i++) {
-                assertNotEquals(classnames[i - 1], classnames[i], "doublet at " + i + ". element:");
-                assertTrue(classnames[i - 1].compareTo(classnames[i]) < 0, "unsorted at " + i + ". element:");
-            }
+        assumeTrue(agent.isActive());
+        String[] classnames = agent.getLoadedClassnames();
+        assertTrue(classnames.length > 1, "not enough classes loaded?");
+        for (int i = 1; i < classnames.length; i++) {
+            assertNotEquals(classnames[i - 1], classnames[i], "doublet at " + i + ". element:");
+            assertTrue(classnames[i - 1].compareTo(classnames[i]) < 0, "unsorted at " + i + ". element:");
         }
     }
 
@@ -120,10 +119,9 @@ class ClasspathAgentTest {
      */
     @Test
     public void testGetLoadedClassesFromClasslaoder() {
-        if (agent.isActive()) {
-            Class<?>[] loadedClasses = agent.getLoadedClasses(this.getClass().getClassLoader());
-            assertTrue(loadedClasses.length > 0, "no classes loaded?");
-        }
+        assumeTrue(agent.isActive());
+        Class<?>[] loadedClasses = agent.getLoadedClasses(this.getClass().getClassLoader());
+        assertTrue(loadedClasses.length > 0, "no classes loaded?");
     }
 
     /**
@@ -144,10 +142,9 @@ class ClasspathAgentTest {
      */
     @Test
     public void testMBeanAttribute() throws JMException {
-        if (agent.isActive()) {
-            Object attribute = mbeanServer.getAttribute(mbean, "LoadedClassnames");
-            assertNotNull(attribute);
-        }
+        assumeTrue(agent.isActive());
+        Object attribute = mbeanServer.getAttribute(mbean, "LoadedClassnames");
+        assertNotNull(attribute);
     }
 
     /**
@@ -157,11 +154,10 @@ class ClasspathAgentTest {
      */
     @Test
     public void testMBeanOperation() throws JMException {
-        if (agent.isActive()) {
-            Object result = mbeanServer.invoke(mbean, "getLoadedClasses", new Object[] { this
-                    .getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
-            assertNotNull(result);
-        }
+        assumeTrue(agent.isActive());
+        Object result = mbeanServer.invoke(mbean, "getLoadedClasses", new Object[] { this
+                .getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
+        assertNotNull(result);
     }
 
     /**
@@ -170,9 +166,8 @@ class ClasspathAgentTest {
      */
     @Test
     public void testLogLoadedClasses() {
-        if (agent.isActive()) {
-            agent.logLoadedClasses();
-        }
+        assumeTrue(agent.isActive());
+        agent.logLoadedClasses();
     }
 
     /**
@@ -183,9 +178,8 @@ class ClasspathAgentTest {
      */
     @Test
     public void testDumpLoadedClasses() throws IOException {
-        if (agent.isActive()) {
-            agent.dumpLoadedClasses();
-        }
+        assumeTrue(agent.isActive());
+        agent.dumpLoadedClasses();
     }
 
 }
