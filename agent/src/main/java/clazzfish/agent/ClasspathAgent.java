@@ -98,6 +98,9 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      * @return the instrumentation
      */
     public static Instrumentation getInstrumentation() {
+        if (instrumentation == null) {
+            throw new IllegalStateException("I must be started as javaagent");
+        }
         return instrumentation;
     }
 
@@ -116,10 +119,7 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      * @return the loaded classes
      */
     public Class<?>[] getLoadedClasses() {
-        if (instrumentation == null) {
-            throw new IllegalStateException("I must be started as javaagent");
-        }
-        return instrumentation.getAllLoadedClasses();
+        return getInstrumentation().getAllLoadedClasses();
     }
 
     /**
@@ -130,10 +130,7 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      * @see ClasspathAgentMBean#getLoadedClasses(ClassLoader)
      */
     public Class<?>[] getLoadedClasses(final ClassLoader classloader) {
-        if (instrumentation == null) {
-            throw new IllegalStateException("I must be started as javaagent");
-        }
-        return instrumentation.getInitiatedClasses(classloader);
+        return getInstrumentation().getInitiatedClasses(classloader);
     }
 
 
