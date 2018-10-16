@@ -530,8 +530,7 @@ public final class Converter {
 	 * If you want to print the system properties as key-value pairs (e.g.
 	 * "java.version=1.6.0_17...") you can use this method here.
 	 *
-	 * @param pairs
-	 *            e.g. the system properties
+	 * @param pairs e.g. the system properties
 	 * @return "key=value" lines (separated by newlines)
 	 * @since 1.4
 	 */
@@ -539,8 +538,7 @@ public final class Converter {
 	public static String toLongString(final Map<?, ?> pairs) {
 		StringBuilder buf = new StringBuilder();
 		Set<?> keys = new TreeSet(pairs.keySet());
-		for (Iterator<?> iterator = keys.iterator(); iterator.hasNext();) {
-			Object key = iterator.next();
+		for (Object key : keys) {
 			buf.append(key);
 			buf.append('=');
 			buf.append(pairs.get(key));
@@ -801,7 +799,7 @@ public final class Converter {
 	 * @return the SortedSet
 	 * @since 1.0
 	 */
-	public static SortedSet<?> toSortedSet(final Enumeration<?> enumeration) {
+	public static SortedSet toSortedSet(final Enumeration<?> enumeration) {
 		SortedSet<Object> set = new TreeSet<>();
 		while (enumeration.hasMoreElements()) {
 			Object element = enumeration.nextElement();

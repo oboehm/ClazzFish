@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link ReflectionHelper}.
  */
-class ReflectionHelperTest {
+public class ReflectionHelperTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ReflectionHelperTest.class);
 
@@ -205,9 +205,7 @@ class ReflectionHelperTest {
      */
     @Test
     public void testGetIdNotExisting() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            ReflectionHelper.getId(this);
-        });
+        assertThrows(IllegalArgumentException.class, () -> ReflectionHelper.getId(this));
     }
 
 }

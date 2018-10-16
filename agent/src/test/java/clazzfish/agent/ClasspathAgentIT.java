@@ -35,20 +35,23 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * JUnit tests for {@link ClasspathAgent} class. Some tests requires that you
- * start this class as java agent. To do this go the command line and start the
- * following command <tt>mvn -DskipTests package</tt>.
- * <p>
- * Next you shoud add the following vmargs in the launch configuration:
- * </p>
+ * start this class as java agent. This is done using the helper class
+ * {@link ClasspathAgentLoader}. This is also the reason which this class has
+ * the suffich 'IT' (for integration test).
+ *
+ * If you want to start the jar file manually go the command line and start
+ * the following command: <tt>mvn -DskipTests package</tt>.
+ *
+ * Next you should add the following vmargs in the launch configuration:
  * <pre>
  * -javaagent:target/clazzfish-agent-x.x-SNAPSHOT.jar
  * </pre>
  *
  * @author oboehm
  */
-class ClasspathAgentTest {
+class ClasspathAgentIT {
 
-    private static final Logger LOG = Logger.getLogger(ClasspathAgentTest.class.getName());
+    private static final Logger LOG = Logger.getLogger(ClasspathAgentIT.class.getName());
     private static final ClasspathAgent agent = ClasspathAgent.getInstance();
     private static final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
     private static ObjectName mbean;

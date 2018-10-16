@@ -38,6 +38,7 @@ import java.util.logging.Logger;
  * </p>
  *
  * @author oboehm
+ * @since 0.8
  */
 public class ClasspathAgent implements ClasspathAgentMBean {
 
@@ -165,7 +166,8 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         for (Class<?> aClass : classes) {
             classnames.add(aClass == null ? "-" : aClass.toString());
         }
-        return classnames.toArray(new String[classnames.size()]);
+        int size = classnames.size();
+        return classnames.toArray(new String[size]);
     }
 
     /**
@@ -241,7 +243,6 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      * @return the temporary file
      * @throws IOException Signals that an I/O exception has occurred.
      * @see ClasspathAgentMBean#dumpLoadedClasses()
-     * @since 1.5
      */
     public File dumpLoadedClasses() throws IOException {
         File dumpFile = File.createTempFile("dumpLoadedClasses", ".txt");
@@ -255,7 +256,6 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      * @param filename the file where the classes are dumped to.
      * @throws IOException Signals that an I/O exception has occurred.
      * @see ClasspathAgentMBean#dumpLoadedClasses(String)
-     * @since 1.5
      */
     public void dumpLoadedClasses(final String filename) throws IOException {
         this.dumpLoadedClasses(new File(filename));
@@ -266,7 +266,6 @@ public class ClasspathAgent implements ClasspathAgentMBean {
      *
      * @param dumpFile the file where the classes are dumped to.
      * @throws IOException Signals that an I/O exception has occurred.
-     * @since 1.5
      */
     public void dumpLoadedClasses(final File dumpFile) throws IOException {
         LOG.info("Loaded classes will be dumped to '" + dumpFile + "'.");
