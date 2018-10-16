@@ -69,6 +69,9 @@ class ClasspathAgentTest {
     
     private static void loadJavaAgentFrom(Path dir) throws IOException {
         assertTrue(Files.isDirectory(dir));
+        if (Files.list(dir).noneMatch(f -> f.toString().endsWith(".jar"))) {
+            ClasspathAgentLoader.createJar();
+        }
         Optional<Path> jarFile =
                 Files.list(dir).filter(f -> f.toString().endsWith(".jar")).filter(f -> Files.isRegularFile(f)).findFirst();
         jarFile.ifPresent(ClasspathAgentLoader::loadAgent);

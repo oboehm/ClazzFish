@@ -21,10 +21,14 @@ import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
+import org.apache.maven.shared.invoker.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -58,6 +62,29 @@ public class ClasspathAgentLoader {
         } catch (IOException | AgentInitializationException | AgentLoadException | AttachNotSupportedException ex) {
             throw new IllegalStateException("cannot load agent from " + jarFile, ex);
         }
+    }
+
+    /**
+     * Creates the project's jar file using 'maven'.
+     */
+    public static void createJar() {
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(new File("pom.xml"));
+        request.setGoals(Collections.singletonList("package"));
+        request.setProperties(createProperties("maven.test.skip", "true"));
+        Invoker invoker = new DefaultInvoker();
+        try {
+            LOG.info("Creating jar using " + invoker + "...");
+            invoker.execute(request);
+        } catch (MavenInvocationException e) {
+            throw new IllegalStateException("cannot create jar with " + request);
+        }
+    }
+
+    private static Properties createProperties(String key, String value) {
+        Properties props = new Properties();
+        props.setProperty(key, value);
+        return props;
     }
 
 }
