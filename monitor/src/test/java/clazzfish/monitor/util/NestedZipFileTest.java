@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author oboehm
  */
-class NestedZipFileTest {
+public class NestedZipFileTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NestedZipFileTest.class);
     private static final File WORLD_WAR = new File("src/test/resources/clazzfish/monitor/util/world.war");
