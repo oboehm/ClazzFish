@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link ResourcepathDigger}.
  */
-class ResourcepathDiggerTest extends AbstractDiggerTest {
+public class ResourcepathDiggerTest extends AbstractDiggerTest {
 
     /**
      * Returns a {@link ResourcepathDigger} for testing.

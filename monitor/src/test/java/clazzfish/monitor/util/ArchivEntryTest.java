@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author oliver (ob@aosd.de)
  */
-class ArchivEntryTest {
+public class ArchivEntryTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ArchivEntryTest.class);
 

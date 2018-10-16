@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author <a href="ob@aosd.de">oliver</a>
  */
-class ResourcepathMonitorTest extends AbstractMonitorTest {
+public class ResourcepathMonitorTest extends AbstractMonitorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourcepathMonitorTest.class);
     private static final String META_INF_LICENSE_TXT = "META-INF/LICENSE.txt";

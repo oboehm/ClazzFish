@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link ClasspathHelper}.
  */
-class ClasspathHelperTest {
+public class ClasspathHelperTest {
 
     /**
      * Test method for {@link ClasspathHelper#getParent(URI, String)} .

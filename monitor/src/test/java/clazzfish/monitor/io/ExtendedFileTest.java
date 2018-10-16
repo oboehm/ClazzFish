@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link ExtendedFile} class.
  */
-class ExtendedFileTest {
+public class ExtendedFileTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ExtendedFileTest.class);
     private static File dummy;

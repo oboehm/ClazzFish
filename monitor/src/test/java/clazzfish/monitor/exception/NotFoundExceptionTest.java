@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link NotFoundException}.
  */
-class NotFoundExceptionTest {
+public class NotFoundExceptionTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(NotFoundExceptionTest.class);
 

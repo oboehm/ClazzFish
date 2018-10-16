@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * Unit tests for {@link DoubletDigger}.
  */
-class DoubletDiggerTest {
+public class DoubletDiggerTest {
     
     public static final Logger LOG = LoggerFactory.getLogger(DoubletDiggerTest.class);
     private final DoubletDigger digger = new DoubletDigger(new ClasspathDigger());

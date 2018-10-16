@@ -35,7 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ClasspathDiggerTest extends AbstractDiggerTest {
+public class ClasspathDiggerTest extends AbstractDiggerTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ClasspathDiggerTest.class);
     private final ClasspathDigger digger = new ClasspathDigger();

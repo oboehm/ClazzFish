@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link MBeanHelper}.
  */
-class MBeanHelperTest {
+public class MBeanHelperTest {
 
     /**
      * Test method for {@link MBeanHelper#getMBeanName(Class)}.

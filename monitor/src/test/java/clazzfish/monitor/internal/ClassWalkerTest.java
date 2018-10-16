@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author <a href="boehm@javatux.de">oliver</a>
  */
-class ClassWalkerTest {
+public class ClassWalkerTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ClassWalkerTest.class);
     private final File startDir = new File("target/test-classes");

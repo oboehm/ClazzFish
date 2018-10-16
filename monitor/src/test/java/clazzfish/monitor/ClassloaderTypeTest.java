@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link ClassloaderType}.
  */
-class ClassloaderTypeTest {
-    
+public class ClassloaderTypeTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(ClassloaderTypeTest.class);
 
     /**

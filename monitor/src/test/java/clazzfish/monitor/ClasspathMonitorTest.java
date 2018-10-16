@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link ClasspathMonitorTest}.
  */
-class ClasspathMonitorTest extends AbstractMonitorTest {
+public class ClasspathMonitorTest extends AbstractMonitorTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ClasspathMonitorTest.class);
     private static ClasspathMonitor cpMon;

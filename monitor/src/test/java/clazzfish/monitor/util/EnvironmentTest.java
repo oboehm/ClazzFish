@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link Environment} class.
  */
-class EnvironmentTest {
+public class EnvironmentTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(EnvironmentTest.class);
 

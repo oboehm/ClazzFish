@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * Unit tests for {@link ResourceWalker} class.
  */
-class ResourceWalkerTest {
+public class ResourceWalkerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceWalker.class);
     private static final File CLASSES_DIR = new File("target", "test-classes");

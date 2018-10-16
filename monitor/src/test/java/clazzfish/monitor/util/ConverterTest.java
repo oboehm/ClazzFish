@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link Converter} class.
  */
-class ConverterTest {
+public class ConverterTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
