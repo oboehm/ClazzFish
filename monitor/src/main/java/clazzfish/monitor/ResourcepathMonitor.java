@@ -57,7 +57,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	 * We offer only some services. So there is no need to instantiate it from
 	 * outside.
 	 */
-	private ResourcepathMonitor() {
+	protected ResourcepathMonitor() {
 		this.resourcepathDigger = new ResourcepathDigger();
 		this.doubletDigger = new DoubletDigger(this.resourcepathDigger);
 		this.resources = getFutureResources();
@@ -66,7 +66,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	private FutureTask<String[]> getFutureResources() {
 		Callable<String[]> callable = new Callable<String[]>() {
 			@Override
-			public String[] call() throws Exception {
+			public String[] call() {
 				return getResourcesArray();
 			}
 		};
