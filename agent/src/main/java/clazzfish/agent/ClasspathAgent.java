@@ -133,8 +133,6 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         return getInstrumentation().getInitiatedClasses(classloader);
     }
 
-
-
     /**
      * Returns the classes which were loaded by the classloader. The loaded
      * packages are returned as string array so that it can be displayed by the

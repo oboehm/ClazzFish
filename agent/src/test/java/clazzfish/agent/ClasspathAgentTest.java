@@ -28,9 +28,7 @@ import java.util.Arrays;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +66,28 @@ public final class ClasspathAgentTest {
         File dump = new File("target", "dump.txt");
         agent.dumpLoadedClasses(dump.toString());
         assertTrue(dump.isFile());
+    }
+
+    /**
+     * If the ClasspathAgent is not started as agent the
+     * instrumentation attribute is null. In this case we
+     * expected an Exeption as answer of the method
+     * {@link ClasspathAgent#premain(String, Instrumentation)}.
+     */
+    @Test
+    public void testGetInstrumentation() {
+        ClasspathAgent.premain("", null);
+        assertThrows(IllegalStateException.class, ClasspathAgent::getInstrumentation);
+    }
+
+    @Test
+    public void testIsActive() {
+        assertTrue(agent.isActive());
+    }
+
+    @Test
+    public void testLogLoadedClasses() {
+        agent.logLoadedClasses();
     }
 
 }
