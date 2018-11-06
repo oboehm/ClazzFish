@@ -42,3 +42,4 @@ deploy_jar_for() {
 # start deployment
 deploy_pom_for clazzfish
 deploy_jar_for monitor clazzfish-monitor
+deploy_jar_for agent clazzfish-agent
