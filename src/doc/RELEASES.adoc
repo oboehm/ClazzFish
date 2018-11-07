@@ -49,7 +49,7 @@ The CI build is started automatically after a commit and push to GitHub.
 |Version |Date |Description
 
 |0.8
-|Jan-2019
+|07-Nov-2018
 |clazzfish-agent is added as new module.
 It contains a Java agent which provides some addtional infos for the ClasspathMonitor.
 This agent is only needed if you use a Java VM from IBM.
