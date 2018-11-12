@@ -83,7 +83,7 @@ public class ClasspathDigger extends AbstractDigger {
 		ClassLoader cloader = Thread.currentThread().getContextClassLoader();
 		if (cloader == null) {
 			cloader = ClasspathDigger.class.getClassLoader();
-			LOG.warn("no ContextClassLoader found - using " + cloader);
+			LOG.warn("No ContextClassLoader found - using now {}.", cloader);
 		}
 		return cloader;
 	}
@@ -550,12 +550,11 @@ public class ClasspathDigger extends AbstractDigger {
 	private List<String> getLoadedResourcesOf(String packageResource) {
 		List<String> loadedResources = new ArrayList<>();
 		String packageResourceWithoutSlash = packageResource.substring(1);
-		InputStream istream = this.classLoader.getResourceAsStream(packageResourceWithoutSlash);
-		if (istream == null) {
-			LOG.trace("Cannot load '{}' with {}.", packageResource, this.classLoader);
-			return loadedResources;
-		}
-		try {
+		try (InputStream istream = this.classLoader.getResourceAsStream(packageResourceWithoutSlash)) {
+			if (istream == null) {
+				LOG.trace("Cannot load '{}' with {}.", packageResource, this.classLoader);
+				return loadedResources;
+			}
 			List<String> lines = IOUtils.readLines(istream, StandardCharsets.UTF_8);
 			for (String line : lines) {
 				String resource = (packageResource + line);
@@ -565,8 +564,6 @@ public class ClasspathDigger extends AbstractDigger {
 			}
 		} catch (IOException ioe) {
 			LOG.warn("Cannot get resources for package '{}':", packageResource, ioe);
-		} finally {
-			IOUtils.closeQuietly(istream);
 		}
 		return loadedResources;
 	}
