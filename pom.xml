@@ -18,8 +18,9 @@
     <inceptionYear>2018</inceptionYear>
 
     <modules>
-      <module>agent</module>
-      <module>monitor</module>
+        <module>agent</module>
+        <module>monitor</module>
+        <module>jdbc</module>
     </modules>
 
     <licenses>

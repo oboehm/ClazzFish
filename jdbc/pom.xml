@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.aosd.clazzfish</groupId>
+        <artifactId>clazzfish</artifactId>
+        <version>0.9-SNAPSHOT</version>
+    </parent>
+    <artifactId>clazzfish-jdbc</artifactId>
+    <packaging>jar</packaging>
+    
+    <description>
+        classfish-jdbc is an add-on toe classfish-monitor
+        which allows you to monitor also JDBC calls.
+    </description>
+
+    
+
+    <dependencies>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>clazzfish-monitor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- optional: JAMon (Java and Performance Monitor) -->
+        <dependency>
+            <groupId>com.jamonapi</groupId>
+            <artifactId>jamon</artifactId>
+            <version>2.81</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.4</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    
+    
+    
+</project>

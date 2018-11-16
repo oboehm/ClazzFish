@@ -11,13 +11,12 @@ Originally it was part of [PatternTesting](http://patterntesting.org) but is now
 
 ## Roadmap
 
-With v0.5 the first step is done - the transfer of ClasspathMonitor and ResourcpathMonitor from the [PatternTesting](http://patterntesting.org) project.
+With v0.5 and v0.8 the first stepa are done - the transfer of ClasspathMonitor and ResourcpathMonitor from the [PatternTesting](http://patterntesting.org) project.
 The next steps will be:
 
-* Java agent for IBM classloader (clazzfish-agent)
+* support of JDBC monitoring
 * provide basic documentation, code cleanup, polishing
 * use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath
-* support of JDBC monitoring
 * extend documentation
 
 

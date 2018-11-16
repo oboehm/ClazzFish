@@ -48,11 +48,14 @@ The CI build is started automatically after a commit and push to GitHub.
 |===
 |Version |Date |Description
 
+|0.9
+|2019
+|clazzfish-jdbc is added as new module.
+It provides a ProxyDriver as JDBC driver which allows ...
+
 |0.8
 |07-Nov-2018
-|clazzfish-agent is added as new module.
-It contains a Java agent which provides some addtional infos for the ClasspathMonitor.
-This agent is only needed if you use a Java VM from IBM.
+|Java agent for IBM classloader provided (clazzfish-agent)
 
 |0.5
 |10-Mar-2018
