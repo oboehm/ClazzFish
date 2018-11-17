@@ -37,12 +37,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * This is a dynamic proxy for a JDBC connection which monitors together with
  * the {@link ConnectionMonitor} the different newInstance() and close() call.
  * <p>
- * Note: Since 1.4.2 this class was moved from package
- * "patterntesting.runtime.db" to here.
+ * Note: This class was moved in 2018 from the PatternTesting project to here.
  * </p>
  *
  * @author oliver (ob@aosd.de)
- * @since 1.3 (29.09.2012)
+ * @since 0.9
  */
 public class ProxyConnection implements InvocationHandler {
 
@@ -72,10 +71,9 @@ public class ProxyConnection implements InvocationHandler {
 	 * {@link #newInstance(Connection)} which is of no interest for us. We want
 	 * to store the real caller so we ignore the {@link ProxyConnection} class
 	 * but also the {@link ProxyDriver} class (ProxyDriver also calls this
-	 * constructor indirectly) and other non-interesting classes.
+	 * constructor indirectly) and other classes.
 	 *
-	 * @param connection
-	 *            the connection
+	 * @param connection the connection where this class acts as proxy
 	 */
 	protected ProxyConnection(final Connection connection) {
 		this.connection = connection;
