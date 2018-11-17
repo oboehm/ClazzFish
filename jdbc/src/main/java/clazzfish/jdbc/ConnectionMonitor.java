@@ -39,11 +39,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This is the monitor class for the {@link ProxyConnection} which monitors the
- * different open() and close() calls. So you can ask this monitor how many
- * connections and which connections are open.
+ * different newInstance() and close() calls. So you can ask this monitor how
+ * many connections and which connections are open.
  * <p>
  * The instance of this class is automatically registered as MBean as soon as a
  * {@link ProxyConnection} is used.
+ * </p>
+ * <p>
+ * Originally this class was part of PatternTesting (since 2012) but was moved
+ * in 2018 to the ClazzFish project.
  * </p>
  *
  * @author oliver (ob@aosd.de)

@@ -42,7 +42,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * </p>
  *
  * @author oliver (ob@aosd.de)
- * @version $Revision: 1.18 $
  * @since 1.3 (29.09.2012)
  */
 public class ProxyConnection implements InvocationHandler {
