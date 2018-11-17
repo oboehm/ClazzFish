@@ -1,6 +1,4 @@
 /*
- * $Id: ProxyDriver.java,v 1.10 2016/12/18 20:19:38 oboehm Exp $
- *
  * Copyright (c) 2014 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +37,7 @@ import java.util.*;
  * </p>
  *
  * @author oliver
- * @version $Revision: 1.10 $
- * @since 1.4.1 (27.03.2014)
+ * @since 0.9
  */
 public class ProxyDriver implements Driver {
 
@@ -123,8 +120,7 @@ public class ProxyDriver implements Driver {
 	/**
 	 * Gets the real JDBC URL of the underlying driver.
 	 *
-	 * @param jdbcURL
-	 *            the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
+	 * @param jdbcURL the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
 	 * @return the real driver name
 	 */
 	public static String getRealURL(final String jdbcURL) {
@@ -138,8 +134,7 @@ public class ProxyDriver implements Driver {
 	/**
 	 * Gets the real driver name of the underlying driver.
 	 *
-	 * @param jdbcURL
-	 *            the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
+	 * @param jdbcURL the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
 	 * @return the real driver name
 	 */
 	public static String getRealDriverName(final String jdbcURL) {
@@ -157,8 +152,7 @@ public class ProxyDriver implements Driver {
 	/**
 	 * Gets the real driver.
 	 *
-	 * @param jdbcURL
-	 *            the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
+	 * @param jdbcURL the jdbc url, e.g. "jdbc:proxy:hsqldb:mem:testdb"
 	 * @return the real driver
 	 */
 	public static Driver getRealDriver(final String jdbcURL) {
@@ -206,8 +200,7 @@ public class ProxyDriver implements Driver {
 	 * <li><tt>jdbc:jamon:</tt>... (if JAMon is in the classpath)</li>
 	 * </ul>
 	 *
-	 * @param url
-	 *            the JDBC URL
+	 * @param url the JDBC URL
 	 * @return true, if successful
 	 * @see Driver#acceptsURL(String)
 	 */
@@ -224,10 +217,8 @@ public class ProxyDriver implements Driver {
 	 * asked to connect to a given URL it passes the URL to each loaded driver
 	 * in turn.
 	 *
-	 * @param url
-	 *            the url
-	 * @param info
-	 *            the info (e.g. user/password)
+	 * @param url the url
+	 * @param info the info (e.g. user/password)
 	 * @return the connection
 	 * @throws SQLException
 	 *             the sQL exception
