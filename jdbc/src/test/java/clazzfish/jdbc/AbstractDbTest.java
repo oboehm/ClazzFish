@@ -1,6 +1,4 @@
 /*
- * $Id: AbstractDbTest.java,v 1.4 2016/12/18 20:19:39 oboehm Exp $
- *
  * Copyright (c) 2012 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,19 +87,16 @@ public abstract class AbstractDbTest {
             Class.forName("com.jamonapi.proxy.JAMonDriver");
             LOG.debug("JDBC driver for JAMon loaded.");
         }
-        Connection con = DriverManager.getConnection(JDBC_URL);
-        try {
-            Statement stmt = con.createStatement();
+        try (Connection con = DriverManager.getConnection(JDBC_URL); Statement stmt = con.createStatement()) {
             stmt.executeUpdate("CREATE TABLE country (lang CHAR(2), name VARCHAR(50), callingcode SMALLINT)");
-            stmt.executeUpdate("create table persons(ID decimal(5), NAME varchar(50), CITY varchar(50), COUNTRY char(2))");
-            stmt.executeUpdate("insert into persons (ID, NAME, CITY, COUNTRY) VALUES (1001, 'Oli B.', 'Stuttgart', 'DE')");
-            stmt.close();
+            stmt.executeUpdate(
+                    "create table persons(ID decimal(5), NAME varchar(50), CITY varchar(50), COUNTRY char(2))");
+            stmt.executeUpdate(
+                    "insert into persons (ID, NAME, CITY, COUNTRY) VALUES (1001, 'Oli B.', 'Stuttgart', 'DE')");
             LOG.info("Table 'persons' and 'country' created for testing.");
         } catch (SQLException ex) {
             LOG.info("Table 'persons' and 'country' not created because {}.", ex.getMessage());
             LOG.trace("Table creation failed.", ex);
-        } finally {
-            con.close();
         }
     }
 
