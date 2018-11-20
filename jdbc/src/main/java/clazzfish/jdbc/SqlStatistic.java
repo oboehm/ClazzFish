@@ -23,12 +23,12 @@ package clazzfish.jdbc;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import clazzfish.jdbc.monitor.ProfileMonitor;
+import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.openmbean.TabularData;
 import java.util.regex.Pattern;
 
 /**
@@ -59,6 +59,18 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 		super("SQL");
 	}
 	
+	/**
+	 * To start a new statistic call this method. In contradiction to
+	 * {@link AbstractStatistic#reset()} old {@link ProfileMonitor}s will 
+	 * removed.
+	 */
+	@Override
+	public void reset() {
+		synchronized (SqlStatistic.class) {
+			this.resetRootMonitor();
+		}
+	}
+
 	/**
 	 * Start the monitor for the given SQL statement.
 	 *
@@ -112,163 +124,24 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	 * You can register the instance as shutdown hook. If the VM is terminated
 	 * the profile values are logged and dumped to a CSV file in the tmp
 	 * directory.
-	 * 
-	 * @param hook the SQL instance which is registered as shutdown hook
 	 */
-	public static void addAsShutdownHook(SqlStatistic hook) {
-		Runtime.getRuntime().addShutdownHook(hook);
-		LOG.debug("{} is registered as shutdown hook.", hook);
+	public static void addAsShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(SQL_INSTANCE);
+		LOG.debug("{} is registered as shutdown hook.", SQL_INSTANCE);
 	}
 	
 	/**
-	 * Gets the max hits.
+	 * With this method you can register the monitor with your own name. This is
+	 * e.g. useful if you have an application server with several applications.
+	 * <p>
+	 * You can only register the monitor only once. If you want to register it
+	 * with another name you have to first unregister it.
+	 * </p>
 	 *
-	 * @return the max hits
+	 * @param name the MBean name (e.g. "my.class.Monitor")
 	 */
-	@Override
-	public int getMaxHits() {
-		return 0;
+	public static void registerAsMBean(final String name) {
+		getInstance().registerMeAsMBean(MBeanHelper.getAsObjectName(name));
 	}
-
-	/**
-	 * Gets the max hits label.
-	 *
-	 * @return the max hits label
-	 */
-	@Override
-	public String getMaxHitsLabel() {
-		return null;
-	}
-
-	/**
-	 * Gets the max hits statistic.
-	 *
-	 * @return the max hits statistic
-	 */
-	@Override
-	public String getMaxHitsStatistic() {
-		return null;
-	}
-
-	/**
-	 * Gets the max total.
-	 *
-	 * @return the max total
-	 */
-	@Override
-	public double getMaxTotal() {
-		return 0;
-	}
-
-	/**
-	 * Gets the max total label.
-	 *
-	 * @return the max total label
-	 */
-	@Override
-	public String getMaxTotalLabel() {
-		return null;
-	}
-
-	/**
-	 * Gets the max total statistic.
-	 *
-	 * @return the max total statistic
-	 */
-	@Override
-	public String getMaxTotalStatistic() {
-		return null;
-	}
-
-	/**
-	 * Gets the max avg.
-	 *
-	 * @return the max avg
-	 */
-	@Override
-	public double getMaxAvg() {
-		return 0;
-	}
-
-	/**
-	 * Gets the max avg label.
-	 *
-	 * @return the max avg label
-	 */
-	@Override
-	public String getMaxAvgLabel() {
-		return null;
-	}
-
-	/**
-	 * Gets the max avg statistic.
-	 *
-	 * @return the max avg statistic
-	 */
-	@Override
-	public String getMaxAvgStatistic() {
-		return null;
-	}
-
-	/**
-	 * Gets the max max.
-	 *
-	 * @return the max max
-	 */
-	@Override
-	public double getMaxMax() {
-		return 0;
-	}
-
-	/**
-	 * Gets the max max label.
-	 *
-	 * @return the max max label
-	 */
-	@Override
-	public String getMaxMaxLabel() {
-		return null;
-	}
-
-	/**
-	 * Gets the max max statistic.
-	 *
-	 * @return the max max statistic
-	 */
-	@Override
-	public String getMaxMaxStatistic() {
-		return null;
-	}
-
-	/**
-	 * Sets the maximal size of statistic entries.
-	 *
-	 * @param size the new max size
-	 * @since 1.6
-	 */
-	@Override
-	public void setMaxSize(int size) {
-
-	}
-
-	/**
-	 * Gets the max size.
-	 *
-	 * @return the max size
-	 * @since 1.6
-	 */
-	@Override
-	public int getMaxSize() {
-		return 0;
-	}
-
-	/**
-	 * Gets the statistics.
-	 *
-	 * @return the statistics
-	 */
-	@Override
-	public TabularData getStatistics() {
-		return null;
-	}
+	
 }

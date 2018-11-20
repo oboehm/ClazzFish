@@ -63,15 +63,16 @@ public abstract class AbstractMonitor extends Thread implements AbstractMonitorM
      * To be able to register the instance as shutdown hook via JMX we can't use
      * a static method - this is the reason why this additional method was
      * added.
-     * 
-     * If this monitor class is registered as shutdown hook (see
-     * {@link #addMeAsShutdownHook()} from a web application a dump to a
-     * directory may not be possible because the application server (e.g.
-     * Tomcat) has been stopped already the web application instance. This was
-     * the problem as decribed in
+     * <p>
+     * If this monitor class is registered as shutdown hook from a web 
+     * application a dump to a directory may not be possible because the
+     * application server (e.g. Tomcat) has been stopped already the web
+     * application instance. This was the problem as decribed in
      * <a href="https://sourceforge.net/p/patterntesting/bugs/37/">bugs/37</a>.
-     * 
+     * </p>
+     * <p>
      * In this situation it is not possible to add monitor as shutdown hook.
+     * </p>
      */
     @Override
     public void addMeAsShutdownHook() {
@@ -124,6 +125,20 @@ public abstract class AbstractMonitor extends Thread implements AbstractMonitorM
      */
     public void registerMeAsMBean() {
         this.registerMeAsMBean(MBeanHelper.getAsObjectName(this.getClass()));
+    }
+
+    /**
+     * With this method you can register the monitor with your own name. This is
+     * e.g. useful if you have an application server with several applications.
+     * <p>
+     * You can only register the monitor only once. If you want to register it
+     * with another name you have to first unregister it.
+     * </p>
+     *
+     * @param name the MBean name (e.g. "my.class.Monitor")
+     */
+    public void registerMeAsMBean(final String name) {
+        this.registerMeAsMBean(MBeanHelper.getAsObjectName(name));
     }
 
     /**
@@ -379,4 +394,14 @@ public abstract class AbstractMonitor extends Thread implements AbstractMonitorM
         return classpath;
     }
 
+    /**
+     * As the toString implementation the name of the registered MBean is used.
+     *
+     * @return the registered MBean name
+     */
+    @Override
+    public String toString() {
+        return this.mbeanName.toString();
+    }
+    
 }

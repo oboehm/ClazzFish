@@ -56,7 +56,7 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	/** Is JaMon library available?. */
 	private static final boolean JAMON_AVAILABLE;
 
-	/**
+	/*
 	 * Instances of this class *must* be initialized after isJamonAvailable 
 	 * attribute is set. Otherwise you'll get a NullPointerException after MBean
 	 * registration.
@@ -84,12 +84,12 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	 * 0 hits to see which methods or constructors are never called.
 	 */
 	@Override
-	synchronized public void reset() {
+	public synchronized void reset() {
 		List<String> labels = new ArrayList<>();
 		ProfileMonitor[] monitors = getMonitors();
-		for (int i = 0; i < monitors.length; i++) {
-			if (monitors[i].getHits() == 0) {
-				labels.add(monitors[i].getLabel());
+		for (ProfileMonitor monitor : monitors) {
+			if (monitor.getHits() == 0) {
+				labels.add(monitor.getLabel());
 			}
 		}
 		this.factory.addMonitors(labels);
@@ -150,6 +150,22 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	}
 
 	/**
+	 * Returns the monitor for the given label. It it does not exists an
+	 * {@link IllegalArgumentException} will be thrown.
+	 * 
+	 * @param label label of the monitor
+	 * @return monitor with the given label
+	 */
+	public ProfileMonitor getMonitor(String label) {
+		for (ProfileMonitor profMon : this.getMonitors()) {
+			if (label.equals(profMon.getLabel())) {
+				return profMon;
+			}
+		}
+		throw new IllegalArgumentException("not a valid monitor label: '" + label + "'");
+	}
+
+	/**
 	 * Gets the sorted monitors.
 	 *
 	 * @return monitors sorted after total time (descending order)
@@ -163,9 +179,9 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	private ProfileMonitor getMaxHitsMonitor() {
 		ProfileMonitor[] monitors = getMonitors();
 		ProfileMonitor max = new SimpleProfileMonitor();
-		for (int i = 0; i < monitors.length; i++) {
-			if (monitors[i].getHits() >= max.getHits()) {
-				max = monitors[i];
+		for (ProfileMonitor monitor : monitors) {
+			if (monitor.getHits() >= max.getHits()) {
+				max = monitor;
 			}
 		}
 		return max;
@@ -204,9 +220,9 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	private ProfileMonitor getMaxTotalMonitor() {
 		ProfileMonitor[] monitors = getMonitors();
 		ProfileMonitor max = new SimpleProfileMonitor();
-		for (int i = 0; i < monitors.length; i++) {
-			if (monitors[i].getTotal() >= max.getTotal()) {
-				max = monitors[i];
+		for (ProfileMonitor monitor : monitors) {
+			if (monitor.getTotal() >= max.getTotal()) {
+				max = monitor;
 			}
 		}
 		return max;
@@ -246,11 +262,11 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 		ProfileMonitor[] monitors = getMonitors();
 		ProfileMonitor max = monitors[0];
 		double maxValue = 0.0;
-		for (int i = 0; i < monitors.length; i++) {
-			double value = monitors[i].getAvg();
+		for (ProfileMonitor monitor : monitors) {
+			double value = monitor.getAvg();
 			if (!Double.isNaN(value) && (value > maxValue)) {
 				maxValue = value;
-				max = monitors[i];
+				max = monitor;
 			}
 		}
 		return max;
@@ -298,9 +314,9 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	private ProfileMonitor getMaxMaxMonitor() {
 		ProfileMonitor[] monitors = getMonitors();
 		ProfileMonitor max = new SimpleProfileMonitor();
-		for (int i = 0; i < monitors.length; i++) {
-			if (monitors[i].getMax() >= max.getMax()) {
-				max = monitors[i];
+		for (ProfileMonitor monitor : monitors) {
+			if (monitor.getMax() >= max.getMax()) {
+				max = monitor;
 			}
 		}
 		return max;
@@ -354,15 +370,15 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 					itemTypes);
 			TabularDataSupport data = MBeanHelper.createTabularDataSupport(rowType, itemNames);
 			ProfileMonitor[] monitors = getSortedMonitors();
-			for (int i = 0; i < monitors.length; i++) {
+			for (ProfileMonitor monitor : monitors) {
 				Map<String, Object> map = new HashMap<>();
-				map.put("Label", monitors[i].getLabel());
-				map.put("Units", monitors[i].getUnits());
-				map.put("Hits", monitors[i].getHits());
-				map.put("Avg", monitors[i].getAvg());
-				map.put("Total", monitors[i].getTotal());
-				map.put("Min", monitors[i].getMin());
-				map.put("Max", monitors[i].getMax());
+				map.put("Label", monitor.getLabel());
+				map.put("Units", monitor.getUnits());
+				map.put("Hits", monitor.getHits());
+				map.put("Avg", monitor.getAvg());
+				map.put("Total", monitor.getTotal());
+				map.put("Min", monitor.getMin());
+				map.put("Max", monitor.getMax());
 				CompositeDataSupport compData = new CompositeDataSupport(rowType, map);
 				data.put(compData);
 			}

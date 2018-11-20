@@ -77,7 +77,7 @@ public class MBeanHelper {
 	 * <p>
 	 * The default level for an MBean is since 1.4.3 now set to "2" (see
 	 * {@link #getMBeanName(Object, int)}. This means you will find all MBeans
-	 * from PatternTesting Runtime under the node "patterntesting.runtime" if
+	 * from PatternTesting Runtime under the node "clazzfish.monitor" if
 	 * you open your JMX console (e.g. the 'jconsole' from the JDK).
 	 * </p>
 	 *
