@@ -140,15 +140,8 @@ public final class SimpleProfileMonitorFactory extends ProfileMonitorFactory {
 	 */
 	@Override
 	public void setMaxNumMonitors(final int size) {
-		maxSize = size;
-		ProfileMonitor[] monitors = this.rootMonitor.getMonitors();
-		int tooMuch = monitors.length - size;
-		for (int i = 0; i < tooMuch; i++) {
-			SimpleProfileMonitor oldest = getOldestMonitorOf(monitors);
-			this.removeMonitor(oldest);
-			monitors = this.rootMonitor.getMonitors();
-		}
-		LOG.debug("Max size is set to {}, actual size is {}.", size, monitors.length);
+		this.maxSize = size;
+		limitMonitorsToMaxSize();
 	}
 
 	/**
@@ -171,6 +164,17 @@ public final class SimpleProfileMonitorFactory extends ProfileMonitorFactory {
 	@Override
 	public void addMonitors(final List<String> labels) {
 		this.rootMonitor.addChildren(labels);
+		limitMonitorsToMaxSize();
+	}
+
+	private void limitMonitorsToMaxSize() {
+		ProfileMonitor[] monitors = this.rootMonitor.getMonitors();
+		int tooMuch = monitors.length - this.maxSize;
+		for (int i = 0; i < tooMuch; i++) {
+			SimpleProfileMonitor oldest = getOldestMonitorOf(monitors);
+			this.removeMonitor(oldest);
+			monitors = this.rootMonitor.getMonitors();
+		}
 	}
 
 }
