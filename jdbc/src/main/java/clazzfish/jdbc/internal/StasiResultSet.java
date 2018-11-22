@@ -3048,7 +3048,7 @@ public final class StasiResultSet implements ResultSet {
 		}
 	}
 
-	public static boolean hasToStringDefaultImpl(final Object obj) {
+	private static boolean hasToStringDefaultImpl(final Object obj) {
 		String s = Objects.toString(obj);
 		return s.startsWith(obj.getClass().getName() + "@");
 	}

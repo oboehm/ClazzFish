@@ -46,7 +46,7 @@ public abstract class AbstractMonitor extends Thread implements AbstractMonitorM
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitor.class);
     private boolean shutdownHook = false;
-    private ObjectName mbeanName;
+    private ObjectName mbeanName = MBeanHelper.getAsObjectName(this.getClass());
 
     /**
      * Here you can ask if the ClasspathMonitor was already registeres ad
