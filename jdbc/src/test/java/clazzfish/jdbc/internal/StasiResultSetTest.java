@@ -19,7 +19,6 @@
 package clazzfish.jdbc.internal;
 
 import clazzfish.jdbc.AbstractDbTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +28,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link StasiResultSet} class.
@@ -38,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public final class StasiResultSetTest extends AbstractDbTest {
 
     private static Logger LOG = LoggerFactory.getLogger(StasiResultSetTest.class);
-    private ResultSet resultSet;
+    private final ResultSet resultSet = mock(ResultSet.class);
+    private final StasiResultSet stasiResultSet = new StasiResultSet(resultSet);
 
     /**
      * Returns an object for testing.
@@ -62,14 +64,15 @@ public final class StasiResultSetTest extends AbstractDbTest {
      */
     @Test
     public void testGetValues() throws SQLException {
-        resultSet = getResultSetFor("SELECT * FROM persons WHERE country = 'DE'");
-        while (resultSet.next()) {
-            int id = resultSet.getInt(1);
-            assertTrue(id > 0, "not > 0: " + id);
-            String name = resultSet.getString(2);
-            Object obj = resultSet.getObject(2);
-            assertEquals(name, obj);
-            LOG.info("id = {}, name = \"{}\"", id, name);
+        try (ResultSet rs = getResultSetFor("SELECT * FROM persons WHERE country = 'DE'")) {
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                assertTrue(id > 0, "not > 0: " + id);
+                String name = rs.getString(2);
+                Object obj = rs.getObject(2);
+                assertEquals(name, obj);
+                LOG.info("id = {}, name = \"{}\"", id, name);
+            }
         }
     }
 
@@ -81,16 +84,17 @@ public final class StasiResultSetTest extends AbstractDbTest {
      */
     @Test
     public void testIsFirst() throws SQLException {
-        resultSet = getResultSetFor("SELECT * FROM persons WHERE id = 1001");
-        StasiResultSet srs = (StasiResultSet) resultSet;
-        ResultSet wrapped = srs.getWrappedResultSet();
-        assertTrue(srs.isBeforeFirst(), "should be before first");
-        assertTrue(wrapped.isBeforeFirst(), "should be before first");
-        assertTrue(srs.next(), "result expected");
-        assertTrue(srs.isFirst(), "should be first");
-        assertTrue(srs.isLast(), "should be last");
-        assertFalse(srs.next(), "no result expected");
-        assertTrue(srs.isAfterLast(), "should be after last");
+        try (ResultSet rs = getResultSetFor("SELECT * FROM persons WHERE id = 1001")) {
+            StasiResultSet srs = (StasiResultSet) rs;
+            ResultSet wrapped = srs.getWrappedResultSet();
+            assertTrue(srs.isBeforeFirst(), "should be before first");
+            assertTrue(wrapped.isBeforeFirst(), "should be before first");
+            assertTrue(srs.next(), "result expected");
+            assertTrue(srs.isFirst(), "should be first");
+            assertTrue(srs.isLast(), "should be last");
+            assertFalse(srs.next(), "no result expected");
+            assertTrue(srs.isAfterLast(), "should be after last");
+        }
     }
 
     /**
@@ -100,10 +104,11 @@ public final class StasiResultSetTest extends AbstractDbTest {
      */
     @Test
     public void testToStringWithSQL() throws SQLException {
-        resultSet = getResultSetFor("SELECT * FROM country");
-        String s = resultSet.toString();
-        assertFalse(s.contains("@"), "looks like default implementation: " + s);
-        LOG.info("s = \"{}\"", s);
+        try (ResultSet rs = getResultSetFor("SELECT * FROM country")) {
+            String s = rs.toString();
+            assertFalse(s.contains("@"), "looks like default implementation: " + s);
+            LOG.info("s = \"{}\"", s);
+        }
     }
 
     private ResultSet getResultSetFor(final String sql) throws SQLException {
@@ -112,16 +117,35 @@ public final class StasiResultSetTest extends AbstractDbTest {
         return statement.getResultSet();
     }
 
-    /**
-     * Close result set.
-     *
-     * @throws SQLException the SQL exception
-     */
-    @AfterEach
-    public void closeResultSet() throws SQLException {
-        if (this.resultSet != null) {
-            this.resultSet.close();
-        }
+    @Test
+    public void testToStringWithRuntimeException() {
+        checkToString(new IllegalStateException("bumm"));
+    }
+
+    @Test
+    public void testToStringWithLinkageError() {
+        checkToString(new LinkageError("bad error"));
+    }
+
+    private void checkToString(Throwable provocated) {
+        when(resultSet.toString()).thenThrow(provocated);
+        String s = stasiResultSet.toString();
+        LOG.info("s = \"{}\"", s);
+    }
+
+    @Test
+    public void testToStringWithSqlException() throws SQLException {
+        when(resultSet.toString()).thenReturn(resultSet.getClass().getName() + "@12345");
+        when(resultSet.isClosed()).thenThrow(new SQLException("very wrong SQL"));
+        String s = stasiResultSet.toString();
+        LOG.info("s = \"{}\"", s);
+    }
+    
+    @Test
+    public void testToStringOverriden() {
+        String expected = "hello world";
+        when(resultSet.toString()).thenReturn(expected);
+        assertEquals(expected, stasiResultSet.toString());
     }
 
 }

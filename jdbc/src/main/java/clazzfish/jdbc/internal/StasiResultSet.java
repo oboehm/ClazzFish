@@ -54,10 +54,10 @@ public final class StasiResultSet implements ResultSet {
 	private final LogWatch logWatch = new LogWatch();
 
 	/**
-	 * Instantiates a new stasi result set.
+	 * Instantiates a new StasiResultSet as a wrapper aroud the given
+	 * ResultSet.
 	 *
-	 * @param rs
-	 *            the rs
+	 * @param rs the wrapped result set
 	 */
 	public StasiResultSet(final ResultSet rs) {
 		this.resultSet = rs;
