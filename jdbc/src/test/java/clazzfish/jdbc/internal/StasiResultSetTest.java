@@ -96,6 +96,16 @@ public final class StasiResultSetTest extends AbstractDbTest {
             assertTrue(srs.isAfterLast(), "should be after last");
         }
     }
+    
+    @Test
+    public void testMoveCursor() throws SQLException {
+        stasiResultSet.afterLast();
+        stasiResultSet.beforeFirst();
+        assertFalse(stasiResultSet.next());
+        assertFalse(stasiResultSet.previous());
+        assertFalse(stasiResultSet.absolute(-1));
+        assertFalse(stasiResultSet.relative(1));
+    }
 
     /**
      * Test method for {@link Object#toString()}.

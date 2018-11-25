@@ -17,6 +17,10 @@
         the classpath of your application and to monitor it.
     </description>
 
+    <properties>
+        <sonar.coverage.exclusions>**/internal/StasiResultSet.java</sonar.coverage.exclusions>
+    </properties>
+    
     
 
     <dependencies>

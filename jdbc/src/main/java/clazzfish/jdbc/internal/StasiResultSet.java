@@ -45,7 +45,7 @@ import java.util.Objects;
  * </p>
  *
  * @author oliver
- * @since 1.4.1 (15.04.2014)
+ * @since 0.9
  */
 public final class StasiResultSet implements ResultSet {
 
@@ -68,7 +68,6 @@ public final class StasiResultSet implements ResultSet {
 	 * {@link ResultSet} directly. Use this method to get it.
 	 *
 	 * @return the wrapped {@link ResultSet}
-	 * @since 1.6.2
 	 */
 	public ResultSet getWrappedResultSet() {
 		return this.resultSet;
@@ -3067,12 +3066,10 @@ public final class StasiResultSet implements ResultSet {
 	 * @param arg1
 	 *            the arg1
 	 * @return the object
-	 * @throws SQLException
-	 *             the SQL exception
 	 * @since Java 7
 	 */
 	@Override
-	public <T> T getObject(final int arg0, final Class<T> arg1) throws SQLException {
+	public <T> T getObject(final int arg0, final Class<T> arg1) {
 		throw new UnsupportedOperationException("not yet implemented");
 	}
 
@@ -3090,12 +3087,10 @@ public final class StasiResultSet implements ResultSet {
 	 * @param arg1
 	 *            the arg1
 	 * @return the object
-	 * @throws SQLException
-	 *             the SQL exception
 	 * @since Java 7
 	 */
 	@Override
-	public <T> T getObject(final String arg0, final Class<T> arg1) throws SQLException {
+	public <T> T getObject(final String arg0, final Class<T> arg1) {
 		throw new UnsupportedOperationException("not yet implemented");
 	}
 
