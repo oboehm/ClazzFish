@@ -1,7 +1,5 @@
 /*
- * $Id: StasiPreparedStatement.java,v 1.11 2016/12/18 20:19:39 oboehm Exp $
- *
- * Copyright (c) 2014 by Oliver Boehm
+ * Copyright (c) 2014-2018 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1078,7 +1076,7 @@ public final class StasiPreparedStatement extends StasiStatement implements Prep
 	@Override
 	@SuppressWarnings("deprecation")
 	public void setUnicodeStream(final int arg0, final InputStream arg1, final int arg2) throws SQLException {
-		this.preparedStatement.setUnicodeStream(arg0, arg1, arg2);
+	    throw new SQLFeatureNotSupportedException("setUnicodeStream(" + arg0 + ", Inputstream, " + arg2 + ") is not supported");
 	}
 
 	/**
