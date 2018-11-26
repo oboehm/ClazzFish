@@ -16,6 +16,10 @@
         classfish-jdbc is an add-on toe classfish-monitor
         which allows you to monitor also JDBC calls.
     </description>
+    
+    <properties>
+        <sonar.coverage.exclusions>**/StasiResultSet.*</sonar.coverage.exclusions>
+    </properties>
 
     
 

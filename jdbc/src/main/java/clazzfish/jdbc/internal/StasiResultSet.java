@@ -1,7 +1,5 @@
 /*
- * $Id: StasiResultSet.java,v 1.14 2016/12/27 07:40:46 oboehm Exp $
- *
- * Copyright (c) 2014 by Oliver Boehm
+ * Copyright (c) 2014-2018 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

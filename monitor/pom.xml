@@ -16,10 +16,6 @@
         classfish-monitor has the classes and MBeans which allows you to dive into
         the classpath of your application and to monitor it.
     </description>
-
-    <properties>
-        <sonar.coverage.exclusions>**/StasiResultSet.*</sonar.coverage.exclusions>
-    </properties>
     
     
 
