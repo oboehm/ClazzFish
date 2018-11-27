@@ -93,6 +93,9 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
     public void testAddBatch() throws SQLException {
         try (PreparedStatement stmt = this.proxy
                 .prepareStatement("INSERT INTO country (lang, name, callingcode) " + "VALUES(?, ?, ?)")) {
+            stmt.clearWarnings();
+            stmt.clearParameters();
+            stmt.clearBatch();
             setCountryRow(stmt, "ch", "Suiss", 41);
             stmt.addBatch();
             setCountryRow(stmt, "fr", "France", 33);
@@ -129,6 +132,15 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
         try (ResultSet query = stmt.executeQuery()) {
             assertTrue(query.next(), "result expected");
             assertEquals(1001, query.getInt("id"));
+        }
+    }
+    
+    @Test
+    public void testExcecute() throws SQLException {
+        try (PreparedStatement stmt = this.proxy.prepareStatement("SELECT * FROM persons")) {
+            assertTrue(stmt.execute());
+            assertNotNull(stmt.getResultSet());
+            assertEquals(stmt.getUpdateCount(), stmt.getLargeUpdateCount());
         }
     }
 

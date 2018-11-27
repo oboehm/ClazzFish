@@ -1076,7 +1076,8 @@ public final class StasiPreparedStatement extends StasiStatement implements Prep
 	@Override
 	@SuppressWarnings("deprecation")
 	public void setUnicodeStream(final int arg0, final InputStream arg1, final int arg2) throws SQLException {
-	    throw new SQLFeatureNotSupportedException("setUnicodeStream(" + arg0 + ", Inputstream, " + arg2 + ") is not supported");
+		throw new SQLFeatureNotSupportedException(
+				"setUnicodeStream(" + arg0 + ", " + arg2 + ", " + arg2 + ") is not supported");
 	}
 
 	/**

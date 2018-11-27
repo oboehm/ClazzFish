@@ -88,8 +88,8 @@ public class StasiStatement implements Statement {
 	}
 
 	private static boolean matches(final String classname, final Class<?>... classes) {
-		for (int i = 0; i < classes.length; i++) {
-			if (classname.equals(classes[i].getName())) {
+		for (Class<?> aClass : classes) {
+			if (classname.equals(aClass.getName())) {
 				return true;
 			}
 		}
@@ -846,6 +846,27 @@ public class StasiStatement implements Statement {
 	@Override
 	public final boolean isCloseOnCompletion() throws SQLException {
 		throw new UnsupportedOperationException("not yet implemented");
+	}
+
+	/**
+	 * Retrieves the current result as an update count; if the result
+	 * is a <code>ResultSet</code> object or there are no more results, -1
+	 * is returned. This method should be called only once per result.
+	 * <p>
+	 * This method should be used when the returned row count may exceed
+	 * {@link Integer#MAX_VALUE}.
+	 * <p>
+	 *
+	 * @return the current result as an update count; -1 if the current result
+	 * is a <code>ResultSet</code> object or there are no more results
+	 * @throws SQLException if a database access error occurs or
+	 *                      this method is called on a closed <code>Statement</code>
+	 * @see #execute
+	 * @since Java 8
+	 */
+	@Override
+	public long getLargeUpdateCount() throws SQLException {
+		return this.statement.getLargeUpdateCount();
 	}
 
 	/**
