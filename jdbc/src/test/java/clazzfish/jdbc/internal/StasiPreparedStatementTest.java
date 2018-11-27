@@ -160,6 +160,14 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             LOG.info("sql = \"{}\"", sql);
         }
     }
+    
+    @Test
+    public void testGetMetaData() throws SQLException {
+        try (PreparedStatement stmt = this.proxy.prepareStatement("SELECT * FROM persons WHERE id = ?")) {
+            assertNotNull(stmt.getMetaData());
+            assertNotNull(stmt.getParameterMetaData());
+        }
+    }
 
 }
 
