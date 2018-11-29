@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -166,6 +167,25 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
         try (PreparedStatement stmt = this.proxy.prepareStatement("SELECT * FROM persons WHERE id = ?")) {
             assertNotNull(stmt.getMetaData());
             assertNotNull(stmt.getParameterMetaData());
+        }
+    }
+    
+    @Test
+    public void testArray() throws SQLException {
+        try (PreparedStatement stmt = this.proxy.prepareStatement("CREATE TABLE arraytest(a INTEGER ARRAY)")) {
+            stmt.executeUpdate();
+        }
+        try (PreparedStatement stmt = this.proxy.prepareStatement("INSERT INTO arraytest VALUES ?")) {
+            Object[] objects = new Object[] { 1, 2, 3 };
+            Array array = connection.createArrayOf("INTEGER", objects);
+            stmt.setArray(1, array);
+            stmt.execute();
+        }
+        try (PreparedStatement stmt = this.proxy.prepareStatement("SELECT  * FROM arraytest");
+                ResultSet rs = stmt.executeQuery()) {
+            assertTrue(rs.next());
+            Array a = rs.getArray(1);
+            assertNotNull(a);
         }
     }
 
