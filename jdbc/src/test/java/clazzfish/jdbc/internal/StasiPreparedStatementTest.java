@@ -23,6 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -186,6 +190,19 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             assertTrue(rs.next());
             Array a = rs.getArray(1);
             assertNotNull(a);
+        }
+    }
+    
+    @Test
+    public void testSetAsciiStream() throws SQLException, IOException {
+        try (InputStream asciiStream = new ByteArrayInputStream("DEATCH".getBytes(StandardCharsets.US_ASCII));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("UPDATE persons SET country = ? WHERE country = 'DE'")) {
+            stmt.setAsciiStream(1, asciiStream, 2);
+            stmt.setAsciiStream(1, asciiStream, 2L);
+            stmt.setAsciiStream(1, asciiStream);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
         }
     }
 
