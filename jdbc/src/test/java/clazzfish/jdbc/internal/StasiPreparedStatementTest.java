@@ -19,6 +19,7 @@
 package clazzfish.jdbc.internal;
 
 import clazzfish.jdbc.AbstractDbTest;
+import org.hsqldb.jdbc.JDBCBlob;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.Array;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -205,7 +203,7 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             assertEquals(1, ret);
         }
     }
-    
+
     @Test
     public void testSetBinaryStream() throws SQLException, IOException {
         try (InputStream binaryStream = new ByteArrayInputStream("hello world".getBytes(StandardCharsets.US_ASCII));
@@ -218,5 +216,26 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             assertEquals(1, ret);
         }
     }
-    
+
+    @Test
+    public void testSetBlob() throws SQLException, IOException {
+        try (InputStream istream = new ByteArrayInputStream("ploppp".getBytes(StandardCharsets.US_ASCII));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, image) VALUES ('EN', ?)")) {
+            stmt.setBlob(1, istream, 2L);
+            stmt.setBlob(1, istream);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
+        }
+    }
+
+    @Test
+    public void testSetBlobBlob() throws SQLException {
+        Blob blob = new JDBCBlob("bloblobloblob".getBytes(StandardCharsets.US_ASCII));
+        try (PreparedStatement stmt = this.proxy
+                .prepareStatement("INSERT INTO COUNTRY (lang, image) VALUES ('AU', ?)")) {
+            stmt.setBlob(1, blob);
+        }
+    }
+
 }
