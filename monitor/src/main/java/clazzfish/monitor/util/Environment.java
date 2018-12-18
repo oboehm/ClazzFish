@@ -18,7 +18,6 @@
 
 package clazzfish.monitor.util;
 
-import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.io.FileInputStreamReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -34,14 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 /**
  * This class provides some utilities for the access to the environment (e.g.
@@ -63,22 +57,7 @@ public class Environment {
 	public static final Environment INSTANCE = new Environment();
 
 	/** System property to disable multithreading. */
-	public static final String DISABLE_THREADS = "patterntesting.disableThreads";
-
-	/** System property to enable integration tests. */
-	public static final String INTEGRATION_TEST = "patterntesting.integrationTest";
-
-	/** System property for annotation RunTestsParallel. */
-	public static final String RUN_TESTS_PARALLEL = "patterntesting.runTestsParallel";
-
-	/** System property for annotation SmokeTest. */
-	public static final String RUN_SMOKE_TESTS = "patterntesting.runSmokeTests";
-
-	/** True if property for integration test is set. */
-	public static final boolean INTEGRATION_TEST_ENABLED = Environment.isPropertyEnabled(Environment.INTEGRATION_TEST);
-
-	/** True if SmokeTest property is set. */
-	public static final boolean SMOKE_TEST_ENABLED = Environment.isPropertyEnabled(Environment.RUN_SMOKE_TESTS);
+	public static final String DISABLE_THREADS = "clazzfish.disableThreads";
 
 	/**
 	 * To be able to use different "environment" this class can now be
@@ -149,7 +128,7 @@ public class Environment {
 	 */
 	public static String getName() {
 		String name = getClassLoader().getClass().getName();
-		String[] packages = name.split("\\.|\\$", 4);
+		String[] packages = name.split("[.$]", 4);
 		return packages[0] + "." + packages[1] + "." + packages[2];
 	}
 
@@ -162,7 +141,7 @@ public class Environment {
 		ClassLoader cloader = Thread.currentThread().getContextClassLoader();
 		if (cloader == null) {
 			cloader = Environment.class.getClassLoader();
-			LOG.warn("no ContextClassLoader found - using " + cloader);
+			LOG.warn("No ContextClassLoader found - using {}.", cloader);
 		}
 		return cloader;
 	}
@@ -181,15 +160,15 @@ public class Environment {
 			LOG.debug("Empty properties are ignored for matching of system properties.");
 			return true;
 		}
-		for (int i = 0; i < props.length; i++) {
-			if (props[i].contains("*") || props[i].contains("?")) {
-				LOG.warn("Wildcard in property \"" + props[i] + "\" is not supported!");
-			}
-			String prop = System.getProperty(props[i], FALSE);
-			if (!FALSE.equalsIgnoreCase(prop)) {
-				return true;
-			}
-		}
+        for (String prop1 : props) {
+            if (prop1.contains("*") || prop1.contains("?")) {
+                LOG.warn("Wildcard in property \"{}\" is not supported!", prop1);
+            }
+            String prop = System.getProperty(prop1, FALSE);
+            if (!FALSE.equalsIgnoreCase(prop)) {
+                return true;
+            }
+        }
 		return false;
 	}
 
@@ -197,8 +176,7 @@ public class Environment {
 	 * Returns true if the given property is set as System property and the
 	 * value of it is not false.
 	 *
-	 * @param key
-	 *            e.g. "patterntesting.runTestsParallel"
+	 * @param key e.g. "clazzfish.runTestsParallel"
 	 * @return true if property is set
 	 */
 	public static boolean isPropertyEnabled(final String key) {
@@ -224,7 +202,7 @@ public class Environment {
 			istream = cloader.getResourceAsStream(resource.substring(1));
 		}
 		if (istream == null) {
-			LOG.debug("using Environment.class to get " + resource + "...");
+			LOG.debug("Using Environment.class to get {}...", resource);
 			istream = Environment.class.getResourceAsStream(resource);
 		}
 		Properties props = loadProperties(istream);
@@ -265,11 +243,8 @@ public class Environment {
 	 * @return normally true
 	 */
 	public static boolean areThreadsAllowed() {
-		if (isGoogleAppEngine() || isPropertyEnabled(DISABLE_THREADS)) {
-			return false;
-		}
-		return true;
-	}
+        return !isGoogleAppEngine() && !isPropertyEnabled(DISABLE_THREADS);
+    }
 
 	/**
 	 * If we are in a Google App Engine (GAE) environment we will return true
@@ -304,11 +279,11 @@ public class Environment {
 	public static File getLocalMavenRepositoryDir() throws IOException {
 		File[] repoDirs = { getLocalRepository(), new File(".repository").getAbsoluteFile(),
 				new File("../.repository").getAbsoluteFile() };
-		for (int i = 0; i < repoDirs.length; i++) {
-			if (repoDirs[i].exists() && repoDirs[i].isDirectory()) {
-				return repoDirs[i];
-			}
-		}
+        for (File repoDir : repoDirs) {
+            if (repoDir.exists() && repoDir.isDirectory()) {
+                return repoDir;
+            }
+        }
 		throw new IOException("local maven repository not found in " + Converter.toString(repoDirs));
 	}
 
@@ -340,38 +315,6 @@ public class Environment {
 			LOG.warn("Will return {} as default because cannot read {}:", m2Repo, settings, ex);
 		}
 		return m2Repo;
-	}
-
-	/**
-	 * It is only tested for Jamon 2.4 and 2.7 so we look for it
-	 *
-	 * @return true if Jamon 2.4 or 2.7 (or greater) was found
-	 */
-	public static boolean isJamonAvailable() {
-		String resource = "/com/jamonapi/MonitorFactory.class";
-		URL classURL = Environment.class.getResource(resource);
-		if (classURL == null) {
-			LOG.debug("JAMon and {} not available, using simple profiling.", resource);
-			return false;
-		}
-		try (JarFile jarfile = ClasspathMonitor
-				.whichResourceJar(ClasspathHelper.getParent(classURL.toURI(), resource))) {
-			Manifest manifest = jarfile.getManifest();
-			Attributes attributes = manifest.getMainAttributes();
-			String version = attributes.getValue("version");
-			if (version == null) {
-				LOG.info("JAMon in {} available for profiling.", jarfile.getName());
-				return true;
-			} else if ("JAMon 2.4".equalsIgnoreCase(version) || (version.compareTo("JAMon 2.7") >= 0)) {
-				LOG.info("{} available for profiling.", version);
-				return true;
-			} else {
-				LOG.info("{} not supported (only JAMon 2.4 and 2.7 or higher), using simple profiling.", version);
-			}
-		} catch (IOException | URISyntaxException ex) {
-			LOG.info("Will use simple profiling because cannot read manifest for {}:", classURL, ex);
-		}
-		return false;
 	}
 
 }
