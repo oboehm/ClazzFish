@@ -205,6 +205,18 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             assertEquals(1, ret);
         }
     }
-
+    
+    @Test
+    public void testSetBinaryStream() throws SQLException, IOException {
+        try (InputStream binaryStream = new ByteArrayInputStream("hello world".getBytes(StandardCharsets.US_ASCII));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, image) VALUES ('FR', ?)")) {
+            stmt.setBinaryStream(1, binaryStream, 2);
+            stmt.setBinaryStream(1, binaryStream, 2L);
+            stmt.setBinaryStream(1, binaryStream);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
+        }
+    }
+    
 }
-
