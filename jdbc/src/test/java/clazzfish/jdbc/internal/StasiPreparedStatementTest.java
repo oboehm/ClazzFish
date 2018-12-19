@@ -23,6 +23,7 @@ import org.hsqldb.jdbc.JDBCBlob;
 import org.hsqldb.jdbc.JDBCClob;
 import org.hsqldb.jdbc.JDBCNClob;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,15 +310,13 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
     }
     
     @Test
-    public void testSetURL() throws MalformedURLException {
+    public void testSetURL() throws SQLException, MalformedURLException {
         URI uri = URI.create("http://localhost");
-        try (PreparedStatement stmt = this.proxy
-                .prepareStatement("INSERT INTO COUNTRY (lang, name) VALUES ('GR', ?)")) {
-            stmt.setURL(1, uri.toURL());
-        } catch (SQLException canhappen) {
-            LOG.info("setURL(1, {}) failed ({})", uri, canhappen.getMessage());
-            LOG.debug("Details:", canhappen);
-        }
+        PreparedStatement stmt = Mockito.mock(PreparedStatement.class);
+        StasiPreparedStatement statement = new StasiPreparedStatement(stmt, "SELECT * FROM a WHERE b = ?");
+        statement.setURL(1, uri.toURL());
+        assertThat(statement.toString(), containsString(uri.toString()));
+        LOG.info("statement = '{}'", statement);
     }
 
 }
