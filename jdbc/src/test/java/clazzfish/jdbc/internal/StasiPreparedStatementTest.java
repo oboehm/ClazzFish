@@ -271,4 +271,16 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
         }
     }
 
+    @Test
+    public void testSetNCharacterStream() throws SQLException, IOException {
+        try (Reader reader = new BufferedReader(new StringReader("Australia"));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('AU', ?)")) {
+            stmt.setNCharacterStream(1, reader, 2L);
+            stmt.setNCharacterStream(1, reader);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
+        }
+    }
+
 }
