@@ -21,6 +21,7 @@ package clazzfish.jdbc.internal;
 import clazzfish.jdbc.AbstractDbTest;
 import org.hsqldb.jdbc.JDBCBlob;
 import org.hsqldb.jdbc.JDBCClob;
+import org.hsqldb.jdbc.JDBCNClob;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,6 +281,28 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             stmt.setNCharacterStream(1, reader);
             int ret = stmt.executeUpdate();
             assertEquals(1, ret);
+        }
+    }
+
+
+    @Test
+    public void testSetNClob() throws SQLException, IOException {
+        try (Reader reader = new BufferedReader(new StringReader("Canada"));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('CN', ?)")) {
+            stmt.setNClob(1, reader, 2);
+            stmt.setNClob(1, reader);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
+        }
+    }
+
+    @Test
+    public void testSetNClobNClob() throws SQLException {
+        NClob nclob = new JDBCNClob("Belgium");
+        try (PreparedStatement stmt = this.proxy
+                .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('BE', ?)")) {
+            stmt.setNClob(1, nclob);
         }
     }
 
