@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
@@ -303,6 +305,18 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
         try (PreparedStatement stmt = this.proxy
                 .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('BE', ?)")) {
             stmt.setNClob(1, nclob);
+        }
+    }
+    
+    @Test
+    public void testSetURL() throws MalformedURLException {
+        URI uri = URI.create("http://localhost");
+        try (PreparedStatement stmt = this.proxy
+                .prepareStatement("INSERT INTO COUNTRY (lang, name) VALUES ('GR', ?)")) {
+            stmt.setURL(1, uri.toURL());
+        } catch (SQLException canhappen) {
+            LOG.info("setURL(1, {}) failed ({})", uri, canhappen.getMessage());
+            LOG.debug("Details:", canhappen);
         }
     }
 

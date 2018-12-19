@@ -1059,6 +1059,7 @@ public final class StasiPreparedStatement extends StasiStatement implements Prep
 	@Override
 	public void setURL(final int arg0, final URL arg1) throws SQLException {
 		this.preparedStatement.setURL(arg0, arg1);
+		this.parameters.put(arg0, arg1);
 	}
 
 	/**
