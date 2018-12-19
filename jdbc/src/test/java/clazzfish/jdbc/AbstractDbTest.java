@@ -73,9 +73,9 @@ public abstract class AbstractDbTest {
      * +-------------------------------------+
      *
      * COUNTRY:
-     * +---------------------------+-------+
-     * | LANG | NAME | CALLINGCODE | IMAGE |
-     * +---------------------------+-------+
+     * +---------------------------+-------+----------+
+     * | LANG | NAME | CALLINGCODE | IMAGE | CONTRACT |
+     * +---------------------------+-------+----------+
      * </pre>
      *
      * @throws ClassNotFoundException the class not found exception
@@ -87,7 +87,8 @@ public abstract class AbstractDbTest {
             LOG.debug("JDBC driver for JAMon loaded.");
         }
         try (Connection con = DriverManager.getConnection(JDBC_URL); Statement stmt = con.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE country (lang CHAR(2), name VARCHAR(50), callingcode SMALLINT, image BLOB)");
+            stmt.executeUpdate(
+                    "CREATE TABLE country (lang CHAR(2), name VARCHAR(50), callingcode SMALLINT, image BLOB, contract CLOB)");
             stmt.executeUpdate(
                     "create table persons(ID decimal(5), NAME varchar(50), CITY varchar(50), COUNTRY char(2))");
             stmt.executeUpdate(

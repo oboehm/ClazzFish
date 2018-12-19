@@ -24,9 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
@@ -235,6 +233,19 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
         try (PreparedStatement stmt = this.proxy
                 .prepareStatement("INSERT INTO COUNTRY (lang, image) VALUES ('AU', ?)")) {
             stmt.setBlob(1, blob);
+        }
+    }
+    
+    @Test
+    public void testSetCharacterStream() throws SQLException, IOException {
+        try (Reader reader = new BufferedReader(new StringReader("Italy"));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('IT', ?)")) {
+            stmt.setCharacterStream(1, reader, 2);
+            stmt.setCharacterStream(1, reader, 2L);
+            stmt.setCharacterStream(1, reader);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
         }
     }
 
