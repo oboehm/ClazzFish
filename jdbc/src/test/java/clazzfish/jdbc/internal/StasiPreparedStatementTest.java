@@ -20,6 +20,7 @@ package clazzfish.jdbc.internal;
 
 import clazzfish.jdbc.AbstractDbTest;
 import org.hsqldb.jdbc.JDBCBlob;
+import org.hsqldb.jdbc.JDBCClob;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,7 +236,7 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             stmt.setBlob(1, blob);
         }
     }
-    
+
     @Test
     public void testSetCharacterStream() throws SQLException, IOException {
         try (Reader reader = new BufferedReader(new StringReader("Italy"));
@@ -246,6 +247,27 @@ public class StasiPreparedStatementTest extends AbstractDbTest {
             stmt.setCharacterStream(1, reader);
             int ret = stmt.executeUpdate();
             assertEquals(1, ret);
+        }
+    }
+
+    @Test
+    public void testSetClob() throws SQLException, IOException {
+        try (Reader reader = new BufferedReader(new StringReader("Greek"));
+                PreparedStatement stmt = this.proxy
+                        .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('GR', ?)")) {
+            stmt.setClob(1, reader, 2);
+            stmt.setClob(1, reader);
+            int ret = stmt.executeUpdate();
+            assertEquals(1, ret);
+        }
+    }
+
+    @Test
+    public void testSetClobClob() throws SQLException {
+        Clob clob = new JDBCClob("Spain");
+        try (PreparedStatement stmt = this.proxy
+                .prepareStatement("INSERT INTO COUNTRY (lang, contract) VALUES ('ES', ?)")) {
+            stmt.setClob(1, clob);
         }
     }
 
