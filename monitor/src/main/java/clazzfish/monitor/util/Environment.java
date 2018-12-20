@@ -155,7 +155,7 @@ public class Environment {
 	 *            the properties to be checked
 	 * @return true if one of the given properties exist (and are not "false")
 	 */
-	public static boolean matchesOneOf(final String[] props) {
+	public static boolean matchesOneOf(final String... props) {
 		if (StringUtils.isEmpty(props[0])) {
 			LOG.debug("Empty properties are ignored for matching of system properties.");
 			return true;

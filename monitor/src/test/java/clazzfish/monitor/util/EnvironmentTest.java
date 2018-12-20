@@ -54,6 +54,11 @@ public class EnvironmentTest {
         String[] props = {"java.home"};
         assertTrue(Environment.matchesOneOf(props), "'java.home' should exist");
     }
+    
+    @Test
+    public void testMatchesOneOfWithWildcard() {
+        assertTrue(Environment.matchesOneOf("hello*", "java.io.tmpdir"));
+    }
 
     /**
      * Test method for {@link Environment#matchesOneOf(java.lang.String[])}.
