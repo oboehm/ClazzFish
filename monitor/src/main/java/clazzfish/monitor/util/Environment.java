@@ -65,61 +65,7 @@ public class Environment {
 	 */
 	protected Environment() {
 	}
-
-	/**
-	 * Gets the os name.
-	 *
-	 * @return e.g. "Mac OS X"
-	 */
-	public String getOsName() {
-		return SystemUtils.OS_NAME;
-	}
-
-	/**
-	 * Gets the os arch.
-	 *
-	 * @return e.g. "x86_64"
-	 */
-	public String getOsArch() {
-		return SystemUtils.OS_ARCH;
-	}
-
-	/**
-	 * Gets the os version.
-	 *
-	 * @return e.g. "10.10.2"
-	 */
-	public String getOsVersion() {
-		return SystemUtils.OS_VERSION;
-	}
-
-	/**
-	 * Gets the java version.
-	 *
-	 * @return e.g. "1.6.0_17"
-	 */
-	public String getJavaVersion() {
-		return SystemUtils.JAVA_VERSION;
-	}
-
-	/**
-	 * Gets the java vendor.
-	 *
-	 * @return e.g. "Apple Inc."
-	 */
-	public String getJavaVendor() {
-		return SystemUtils.JAVA_VENDOR;
-	}
-
-	/**
-	 * Gets the user name.
-	 *
-	 * @return e.g. "oliver"
-	 */
-	public String getUserName() {
-		return SystemUtils.USER_NAME;
-	}
-
+	
 	/**
 	 * The name of an environment is derived from the classloader. I.e. on a
 	 * Tomcat server the name is "org.apache.catalina".

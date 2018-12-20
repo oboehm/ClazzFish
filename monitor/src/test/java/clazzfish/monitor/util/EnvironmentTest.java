@@ -58,6 +58,12 @@ public class EnvironmentTest {
     @Test
     public void testMatchesOneOfWithWildcard() {
         assertTrue(Environment.matchesOneOf("hello*", "java.io.tmpdir"));
+        assertTrue(Environment.matchesOneOf("world?", "java.io.tmpdir"));
+    }
+    
+    @Test
+    public void testMatchesOnOfEmpty() {
+        assertTrue(Environment.matchesOneOf(""));
     }
 
     /**
