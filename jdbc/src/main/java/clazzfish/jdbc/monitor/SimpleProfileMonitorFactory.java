@@ -103,18 +103,10 @@ public final class SimpleProfileMonitorFactory extends ProfileMonitorFactory {
 					&& mon.getTotal() <= maxTotal && mon.getMax() <= maxMax) {
 				oldest = mon;
 			} else {
-				if (mon.getHits() > maxHits) {
-					maxHits = mon.getHits();
-				}
-				if (mon.getAvg() > maxAvg) {
-					maxAvg = mon.getAvg();
-				}
-				if (mon.getTotal() > maxTotal) {
-					maxTotal = mon.getTotal();
-				}
-				if (mon.getMax() > maxMax) {
-					maxMax = mon.getMax();
-				}
+				maxHits = Math.max(mon.getHits(), maxHits);
+				maxAvg = Math.max(mon.getAvg(), maxAvg);
+				maxTotal = Math.max(mon.getTotal(), maxTotal);
+				maxMax = Math.max(mon.getMax(), maxMax);
 			}
 		}
 		return (SimpleProfileMonitor) oldest;
