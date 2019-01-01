@@ -7,7 +7,7 @@
     <parent>
         <groupId>de.aosd.clazzfish</groupId>
         <artifactId>clazzfish</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.9</version>
     </parent>
     <artifactId>clazzfish-jdbc</artifactId>
     <packaging>jar</packaging>
