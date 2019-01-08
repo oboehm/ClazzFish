@@ -55,7 +55,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 		return SQL_INSTANCE;
 	}
 
-	private SqlStatistic() {
+	protected SqlStatistic() {
 		super("SQL");
 	}
 	
