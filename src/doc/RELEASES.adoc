@@ -48,6 +48,12 @@ The CI build is started automatically after a commit and push to GitHub.
 |===
 |Version |Date |Description
 
+|1.0
+|SNAPSHOT
+|How to activate SQL logging?
+The answer to this question you can find now in the link:SQL-Logging.adoc[documentation].
+Also clazzfish-sample is added as new module which provides some example and ideas how to use ClazzFish.
+
 |0.9
 |01-Jan-2019
 |clazzfish-jdbc is added as new module to support JDBC monitoring.

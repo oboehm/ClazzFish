@@ -1,0 +1,112 @@
+= SQL Logging and Monitoring
+
+
+ClazzFish provides a
+link:../../jdbc/src/main/java/clazzfish/jdbc/ProxyDriver.java[ProxyDriver]
+which can be registered as JDBC driver.
+It uses "`jdbx:proxy:...`" as prefix and will forward the JDBC calls to the normal driver (registered as "`jdbc:...`").
+
+
+
+== Dependencies
+
+
+To add the SQL features of ClazzFish to your project use the following dependecies for Maven:
+
+.Maven Dependencies
+[source,xml]
+----
+<dependency>
+  <groupId>de.aosd.clazzfish</groupId>
+  <artifactId>clazzfish-jdbc</artifactId>
+  <version>0.9</version>
+</dependency>
+----
+
+For the actual version see e.g. https://search.maven.org/search?q=clazzfish-jdbc[search.maven.org].
+
+If you start your application and sees the message "`SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"`" in your log
+a dependency for SLF4J (Simple Log Facade for Java) is missing:
+
+.SLF4J Dependencies
+[source,xml]
+----
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.25</version>
+</dependency>
+----
+
+Add this to your maven dependencies.
+
+
+
+== Driver Registration
+
+
+.Driver Properties for HSQL-DB
+|===
+|Property |Value | Description
+
+|driver name
+|clazzfish.jdbc.ProxyDriver
+|driver class
+
+|driver url
+|jdbc:proxy:hsqldb:mem:testdb
+|JDBC-URL for HSQL-DB (jdbc:proxy:hsqldb:mem:testdb)
+
+|===
+
+For other database change the URL - put "`proxy:`" after the first part ("`jdbc:...`").
+
+Don't forget to register the driver to JDBC:
+
+.Example for Driver Registration
+[source,java]
+----
+private static void loadDbDriver() throws ClassNotFoundException {
+    Class.forName("clazzfish.jdbc.ProxyDriver");
+    Class.forName("org.hsqldb.jdbcDriver");
+}
+----
+
+Because the ProxyDriver of ClazzFish forwards the call to the original driver you have to register it also.
+Some drivers will be automatically registered by ClassFish but only these which are known by it.
+For v0.9 the known JDBC drivers are:
+
+* HSQL-DB
+* MS SQL-Server
+* JTurbo
+* Informix
+
+Other JDBC drivers must be registered manually (as in the example above).
+
+
+
+== Logging
+
+To log the SQL statements set the log level for `clazzfish.jdbc.SqlStatistic` to `DEBUG`:
+
+.Logger Configuration
+[source,xml]
+----
+<Logger name="clazzfish.jdbc.SqlStatistic" level="debug"/>
+----
+
+Add this entry to your Loggers configuration in your Log4J-2 configuration file (usually `log4j2.xml`).
+
+
+
+== Tracing
+
+The logging with stacktrace is available only in TRACE level.
+To activate it add the following line to your Log4J configuration:
+
+.Logger Configuration
+[source,xml]
+----
+<Logger name="clazzfish.jdbc.SqlStatistic" level="trace"/>
+----
+

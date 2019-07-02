@@ -21,6 +21,7 @@
         <module>agent</module>
         <module>monitor</module>
         <module>jdbc</module>
+        <module>sample</module>
     </modules>
 
     <licenses>
