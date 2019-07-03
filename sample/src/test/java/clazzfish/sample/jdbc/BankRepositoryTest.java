@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,8 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit tests for {@link BankRepository}.
+ * These unit tests for {@link BankRepository} can be used to watch the log.
+ * You should see the executed SQL statements in it.
  */
 class BankRepositoryTest {
 
@@ -41,6 +43,7 @@ class BankRepositoryTest {
 
     @BeforeAll
     public static void setUpRepository() throws SQLException {
+        BankRepository.setUpDB();
         Account tomsAccount = getAccountFor(TOM);
         Account jimsAccount = getAccountFor(JIM);
         assertEquals(TOM, tomsAccount.getHolder());
@@ -54,7 +57,7 @@ class BankRepositoryTest {
         if (accounts.isEmpty()) {
             return BankRepository.createAccountFor(user);
         } else {
-            return new ArrayList<Account>(accounts).get(0);
+            return new ArrayList<>(accounts).get(0);
         }
     }
 
@@ -74,6 +77,53 @@ class BankRepositoryTest {
         Account account = BankRepository.getAccount(jimsAccountNumber);
         assertEquals(jimsAccountNumber, account.getId());
         assertEquals(JIM, account.getHolder());
+    }
+
+    /**
+     * Test method for {@link BankRepository#save(Account)}.
+     *
+     * @throws SQLException in case of DB problems
+     */
+    @Test
+    public void testSave() throws SQLException {
+        jimsAccount.deposit(new BigDecimal("1000.00"));
+        BigDecimal balance = jimsAccount.getBalance();
+        BankRepository.save(jimsAccount);
+        Account saved = BankRepository.getAccount(jimsAccount.getId());
+        assertEquals(balance, saved.getBalance());
+    }
+
+    /**
+     * Test method for {@link BankRepository#transfer(Account, int, BigDecimal)}.
+     *
+     * @throws SQLException the sQL exception
+     */
+    @Test
+    public void testTransfer() throws SQLException {
+        BigDecimal tomsBalance = tomsAccount.getBalance();
+        BigDecimal amount = new BigDecimal(200);
+        BankRepository.transfer(jimsAccount, tomsAccount, amount);
+        assertEquals(tomsBalance.add(amount), tomsAccount.getBalance());
+    }
+
+    /**
+     * Test method for {@link BankRepository#getAccountsFor(User)}.
+     *
+     * @throws SQLException the sQL exception
+     */
+    @Test
+    public void testGetAccountsFor() throws SQLException {
+        int n = BankRepository.getAccountsFor(JIM).size();
+        Account newAccount = BankRepository.createAccountFor(JIM);
+        try {
+            Collection<Account> accounts = BankRepository.getAccountsFor(new User(JIM.getName()));
+            assertEquals(n + 1, accounts.size());
+            for (Account account : accounts) {
+                assertEquals(JIM, account.getHolder());
+            }
+        } finally {
+            BankRepository.deleteAccount(newAccount);
+        }
     }
 
 }

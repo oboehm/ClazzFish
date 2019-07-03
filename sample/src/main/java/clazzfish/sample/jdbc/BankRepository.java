@@ -32,7 +32,7 @@ import java.util.Collection;
  * dates are stored in a in-memory DB (jdbc:hsqldb:mem:testd). If you want to
  * use another DB set the system property "JDBC_URL", e.g as
  * <pre>
- * java -DJDBC_URL="jdbc:hsqldb:file:/tmp/oli" ...
+ * java -DJDBC_URL="jdbc:proxy:hsqldb:file:/tmp/oli" ...
  * </pre>
  *
  * @author oboehm
@@ -46,17 +46,18 @@ public final class BankRepository {
     static {
         try {
             loadDbDriver();
-            setUpDB();
-            log.info("DB successfully set up.");
         } catch (ClassNotFoundException cnfe) {
             log.error("cannot load DB driver for {}", JDBC_URL, cnfe);
             throw new ExceptionInInitializerError(cnfe);
-        } catch (SQLException ex) {
-            log.info("Could not create DB - probably created already.", ex);
         }
     }
 
-    private static void setUpDB() throws SQLException {
+    /**
+     * This method can be used to set up the DB.
+     *
+     * @throws SQLException e.g. if the DB was set up already
+     */
+    public static void setUpDB() throws SQLException {
         Connection connection = getConnection();
         String autoIncrement = "AUTO_INCREMENT";
         if (JDBC_URL.contains(":hsqldb:")) {
@@ -82,8 +83,9 @@ public final class BankRepository {
     }
 
     private static void executeUpdate(final String sql, final Connection connection) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.executeUpdate(sql);
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+        }
     }
 
     private static Connection getConnection() throws SQLException {
@@ -101,23 +103,20 @@ public final class BankRepository {
      * @throws SQLException the sQL exception
      */
     public static Account getAccount(final int number) throws SQLException {
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("SELECT balance, name FROM accounts where number = ?");
+        try (Connection connection = getConnection(); PreparedStatement stmt = connection
+                .prepareStatement("SELECT balance, name FROM accounts where number = ?")) {
             stmt.setInt(1, number);
             stmt.execute();
-            ResultSet rs = stmt.getResultSet();
-            if (rs.next()) {
-                User user = new User(rs.getString("name"));
-                Account account = new Account(number, user);
-                account.setBalance(rs.getBigDecimal("balance"));
-                return account;
-            } else {
-                throw new SQLException("account " + number + " not found");
+            try (ResultSet rs = stmt.getResultSet()) {
+                if (rs.next()) {
+                    User user = new User(rs.getString("name"));
+                    Account account = new Account(number, user);
+                    account.setBalance(rs.getBigDecimal("balance"));
+                    return account;
+                } else {
+                    throw new SQLException("account " + number + " not found");
+                }
             }
-        } finally {
-            connection.close();
         }
     }
 
@@ -129,22 +128,19 @@ public final class BankRepository {
      * @throws SQLException the sQL exception
      */
     public static Collection<Account> getAccountsFor(final User user) throws SQLException {
-        Collection<Account> userAccounts = new ArrayList<Account>();
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("SELECT * FROM accounts WHERE name = ?");
+        Collection<Account> userAccounts = new ArrayList<>();
+        try (Connection connection = getConnection();
+                PreparedStatement stmt = connection.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
             stmt.setString(1, user.getName());
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Account account = new Account(rs.getInt("number"), user);
-                account.setBalance(rs.getBigDecimal("balance"));
-                userAccounts.add(account);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Account account = new Account(rs.getInt("number"), user);
+                    account.setBalance(rs.getBigDecimal("balance"));
+                    userAccounts.add(account);
+                }
             }
             log.info("{} account(s) found for {}.", userAccounts.size(), user);
             return userAccounts;
-        } finally {
-            connection.close();
         }
     }
 
@@ -157,34 +153,26 @@ public final class BankRepository {
      */
     public static synchronized Account createAccountFor(final User user) throws SQLException {
         Account account = createAccount();
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("UPDATE accounts SET name = ? WHERE number = ?");
+        try (Connection connection = getConnection();
+                PreparedStatement stmt = connection.prepareStatement("UPDATE accounts SET name = ? WHERE number = ?")) {
             stmt.setString(1, user.getName());
             stmt.setInt(2, account.getId());
             if (stmt.executeUpdate() < 1) {
                 throw new SQLWarning("cannot create account for " + user);
             }
             return getAccount(account.getId());
-        } finally {
-            connection.close();
         }
     }
 
     private static Account createAccount() throws SQLException {
         User nobody = new User("nobody");
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("INSERT INTO accounts (balance, name) VALUES (0.00, ?)");
+        try (Connection connection = getConnection(); PreparedStatement stmt = connection
+                .prepareStatement("INSERT INTO accounts (balance, name) VALUES (0.00, ?)")) {
             stmt.setString(1, nobody.getName());
             if (stmt.executeUpdate() < 1) {
                 throw new SQLWarning("cannot create account for " + nobody);
             }
             return getAccountsFor(nobody).iterator().next();
-        } finally {
-            connection.close();
         }
     }
 
@@ -195,17 +183,13 @@ public final class BankRepository {
      * @throws SQLException the SQL exception
      */
     public static void deleteAccount(final Account account) throws SQLException {
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("DELETE FROM accounts WHERE number = ?");
+        try (Connection connection = getConnection();
+                PreparedStatement stmt = connection.prepareStatement("DELETE FROM accounts WHERE number = ?")) {
             stmt.setInt(1, account.getId());
             if (stmt.executeUpdate() < 1) {
                 throw new SQLWarning("cannot delete " + account);
             }
             log.info("{} was deleted.", account);
-        } finally {
-            connection.close();
         }
     }
 
@@ -216,18 +200,14 @@ public final class BankRepository {
      * @throws SQLException the SQL exception
      */
     public static void save(final Account account) throws SQLException {
-        Connection connection = getConnection();
-        try {
-            PreparedStatement stmt = connection
-                    .prepareStatement("UPDATE accounts SET balance = ? WHERE number = ?");
+        try (Connection connection = getConnection(); PreparedStatement stmt = connection
+                .prepareStatement("UPDATE accounts SET balance = ? WHERE number = ?")) {
             stmt.setBigDecimal(1, account.getBalance());
             stmt.setInt(2, account.getId());
             if (stmt.executeUpdate() < 1) {
                 throw new SQLWarning("cannot update " + account);
             }
             log.info("{} was saved.", account);
-        } finally {
-            connection.close();
         }
     }
 

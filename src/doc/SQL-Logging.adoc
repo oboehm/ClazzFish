@@ -97,6 +97,25 @@ To log the SQL statements set the log level for `clazzfish.jdbc.SqlStatistic` to
 
 Add this entry to your Loggers configuration in your Log4J-2 configuration file (usually `log4j2.xml`).
 
+[example log]
+....
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "CREATE TABLE accounts (number INTEGER IDENTITY PRIMARY KEY, balance DECIMAL(10,2), name VARCHAR(50))" returned with 0 after 1 ms.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "SELECT * FROM accounts WHERE name = 'Tom'" returned with open JDBCResultSet after 32 ms.
+07:31:56  INFO [main|sample.jdbc.BankRepository ] 0 account(s) found for Tom.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "INSERT INTO accounts (balance, name) VALUES (0.00, 'nobody')" returned with 1 after 0 ms.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "SELECT * FROM accounts WHERE name = 'nobody'" returned with open JDBCResultSet after 0 ms.
+07:31:56  INFO [main|sample.jdbc.BankRepository ] 1 account(s) found for nobody.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "UPDATE accounts SET name = 'Tom' WHERE number = 0" returned with 1 after 4 ms.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "SELECT balance, name FROM accounts where number = 0" returned with true after 0 ms.
+07:31:56 DEBUG [main|clazzfish.jdbc.SqlStatistic] "SELECT * FROM accounts WHERE name = 'Jim'" returned with open JDBCResultSet after 0 ms.
+07:31:56  INFO [main|sample.jdbc.BankRepository ] 0 account(s) found for Jim.
+....
+
+This is the output of the log you can see if you start the unit test
+link:../../sample/src/test/java/clazzfish/sample/jdbc/BankRepositoryTest.java[BankRepositoryTest]
+with link:../../sample/src/main/resources/log4j2.xml[log4j2.xml] as LOG4J configuration
+in link:../../sample[clazzfish-sample].
+
 
 
 == Tracing
@@ -110,3 +129,27 @@ To activate it add the following line to your Log4J configuration:
 <Logger name="clazzfish.jdbc.SqlStatistic" level="trace"/>
 ----
 
+With this configruration you see
+
+[example log]
+....
+07:42:00 TRACE [main|clazzfish.jdbc.SqlStatistic] "CREATE TABLE accounts (number INTEGER IDENTITY PRIMARY KEY, balance DECIMAL(10,2), name VARCHAR(50))" returned with 0 after 2 ms
+	at clazzfish.sample.jdbc.BankRepository.executeUpdate(BankRepository.java:87)
+	at clazzfish.sample.jdbc.BankRepository.setUpDB(BankRepository.java:68)
+	at clazzfish.sample.jdbc.BankRepositoryTest.setUpRepository(BankRepositoryTest.java:46)
+	...
+07:42:00 TRACE [main|clazzfish.jdbc.SqlStatistic] "SELECT * FROM accounts WHERE name = 'Tom'" returned with open JDBCResultSet after 9 ms
+	at clazzfish.sample.jdbc.BankRepository.getAccountsFor(BankRepository.java:139)
+	at clazzfish.sample.jdbc.BankRepositoryTest.getAccountFor(BankRepositoryTest.java:56)
+	at clazzfish.sample.jdbc.BankRepositoryTest.setUpRepository(BankRepositoryTest.java:47)
+	...
+07:42:00  INFO [main|sample.jdbc.BankRepository ] 0 account(s) found for Tom.
+07:42:00 TRACE [main|clazzfish.jdbc.SqlStatistic] "INSERT INTO accounts (balance, name) VALUES (0.00, 'nobody')" returned with 1 after 1 ms
+	at clazzfish.sample.jdbc.BankRepository.createAccount(BankRepository.java:183)
+	at clazzfish.sample.jdbc.BankRepository.createAccountFor(BankRepository.java:160)
+	at clazzfish.sample.jdbc.BankRepositoryTest.getAccountFor(BankRepositoryTest.java:58)
+	at clazzfish.sample.jdbc.BankRepositoryTest.setUpRepository(BankRepositoryTest.java:47)
+	...
+....
+
+in the log.

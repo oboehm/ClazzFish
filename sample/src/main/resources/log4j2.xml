@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" xmlns="http://logging.apache.org/log4j/2.0/config">
+
   <Appenders>
     <Console name="CONSOLE" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} %4.4level [%-4.4t] %-23.23C{3} - %msg%n" />
+      <PatternLayout pattern="%d{HH:mm:ss} %5.5level [%-4.4t|%-27.27C{3}] %msg%n" />
     </Console>
   </Appenders>
+
   <Loggers>
     <Logger name="clazzfish" level="INFO" />
+    <!--
+      If you want to see the executed SQL statements in the log set the
+      logger of SqlStatistic to
+        * DEBUG, if you want to see the SQL statements
+        * TRACE, if you want also to see also the caller method
+      In TRACE level you will get a stacktrace of each executed SQL method.
+      This will slow down your application so use it only for tracing.
+    -->
     <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG" />
     <Root level="INFO">
       <AppenderRef ref="CONSOLE" />
     </Root>
   </Loggers>
+
 </Configuration>
