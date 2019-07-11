@@ -59,7 +59,7 @@ The CI build is started automatically after a commit and push to GitHub.
   I.e. you can ask the monitor how often an SQL statement is called and how long does it takes.
 
 
-==== 0.8 (07-Nov-2018)
+=== 0.8 (07-Nov-2018)
 
 * Java agent for IBM classloader provided (clazzfish-agent)
 
