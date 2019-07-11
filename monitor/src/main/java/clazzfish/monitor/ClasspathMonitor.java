@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2008-2018 by Oliver Boehm
+/*
+ * Copyright (c) 2008-2019 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.jar.Attributes;
@@ -113,7 +114,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	private FutureTask<String[]> getFutureCasspathClasses() {
 		Callable<String[]> callable = new Callable<String[]>() {
 			@Override
-			public String[] call() throws Exception {
+			public String[] call() {
 				return getClasspathClassArray();
 			}
 		};
@@ -125,7 +126,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	private FutureTask<Set<String>> getFutureUnusedClasses() {
 		Callable<Set<String>> callable = new Callable<Set<String>>() {
 			@Override
-			public Set<String> call() throws Exception {
+			public Set<String> call() {
 				return getClasspathClassSet();
 			}
 		};
@@ -754,8 +755,9 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public Collection<String> getClasspathClassList(final String packageName) {
 		Collection<String> classlist = new ArrayList<>();
 		String[] classes = this.getClasspathClasses();
+		String prefix = packageName + ".";
 		for (int i = 0; i < classes.length; i++) {
-			if (classes[i].startsWith(packageName)) {
+			if (classes[i].startsWith(prefix)) {
 				classlist.add(classes[i]);
 			}
 		}
@@ -1343,7 +1345,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	private void dumpClassloaderInfo(final File dir) throws IOException {
 		File dumpFile = new File(dir, "ClassloaderInfo.txt");
 		LOG.debug("Dumping classloader info to {}...", dumpFile);
-		try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8")) {
+		try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), StandardCharsets.UTF_8)) {
 			dumpClassloaderInfo(new BufferedWriter(writer));
 			writer.flush();
 		}

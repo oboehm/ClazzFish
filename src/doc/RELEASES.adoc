@@ -43,33 +43,32 @@ The CI build is started automatically after a commit and push to GitHub.
 
 == Release Notes
 
-[cols="1,2,5"]
-.Release Notes
-|===
-|Version |Date |Description
+=== 1.0 (SNAPSHOT)
 
-|1.0
-|SNAPSHOT
-|How to activate SQL logging?
-The answer to this question you can find now in the link:SQL-Logging.adoc[documentation].
-Also clazzfish-sample is added as new module which provides some example and ideas how to use ClazzFish.
+* How to activate SQL logging?
+  The answer to this question you can find now in the link:SQL-Logging.adoc[documentation].
+  Also clazzfish-sample is added as new module which provides some example and ideas how to use ClazzFish.
+* _fixed_: too many classes found by ClasspathMonitor.getConcreteClassList()
+  (https://github.com/oboehm/ClazzFish/issues/1[issue #1])
 
-|0.9
-|01-Jan-2019
-|clazzfish-jdbc is added as new module to support JDBC monitoring.
-It provides a ProxyDriver as JDBC driver which allows you to log and monitor the SQL statements.
-I.e. you can ask the monitor how often an SQL statement is called and how long does it takes.
 
-|0.8
-|07-Nov-2018
-|Java agent for IBM classloader provided (clazzfish-agent)
+=== 0.9 (01-Jan-2019)
 
-|0.5
-|10-Mar-2018
-|The first version contains mainly a ClasspathMonitor and ResourcepathMonitor as JMX bean.
-Originally these classes were part of the http://patterntesting.org[PatternTesting] project.
-With https://issues.sonatype.org/browse/OSSRH-38331[OSSRH-38331] ClassFish is sync'd with Central Maven.
-|===
+* clazzfish-jdbc is added as new module to support JDBC monitoring.
+  It provides a ProxyDriver as JDBC driver which allows you to log and monitor the SQL statements.
+  I.e. you can ask the monitor how often an SQL statement is called and how long does it takes.
+
+
+==== 0.8 (07-Nov-2018)
+
+* Java agent for IBM classloader provided (clazzfish-agent)
+
+
+=== 0.5 (10-Mar-2018)
+
+* The first version contains mainly a ClasspathMonitor and ResourcepathMonitor as JMX bean.
+  Originally these classes were part of the http://patterntesting.org[PatternTesting] project.
+  With https://issues.sonatype.org/browse/OSSRH-38331[OSSRH-38331] ClassFish is sync'd with Central Maven.
 
 
 

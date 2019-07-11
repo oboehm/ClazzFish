@@ -545,5 +545,14 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
         assertTrue(ClasspathMonitor.isRegisteredAsMBean(), cpMon + " is not registered as MBean");
         ClasspathMonitor.unregisterAsMBean();
     }
+
+    @Test
+    public void testGetConcreteClassList() {
+        Collection<Class<?>> javaClasses = cpMon.getConcreteClassList("java");
+        LOG.info("{} concrete Java classes found.", javaClasses.size());
+        for (Class c : javaClasses) {
+            assertThat(c.getName(), startsWith("java."));
+        }
+    }
     
 }
