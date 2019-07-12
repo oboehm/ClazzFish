@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2018 by Oliver Boehm
+ * Copyright (c) 2013-2019 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,7 @@ public class NotFoundException extends NoSuchElementException {
 	/**
 	 * Instantiates a new not found exception.
 	 *
-	 * @param value
-	 *            the object which was not found
+	 * @param value the object which was not found
 	 */
 	public NotFoundException(final Object value) {
 		this((value instanceof Pattern ? "pattern" : "value") + " \"" + value + "\" not found");
@@ -50,8 +49,7 @@ public class NotFoundException extends NoSuchElementException {
 	/**
 	 * Instantiates a new not found exception.
 	 *
-	 * @param msg
-	 *            the msg
+	 * @param msg the message
 	 */
 	public NotFoundException(final String msg) {
 		this(msg, null);
@@ -60,21 +58,8 @@ public class NotFoundException extends NoSuchElementException {
 	/**
 	 * Instantiates a new not found exception.
 	 *
-	 * @param t
-	 *            the cause
-	 */
-	public NotFoundException(final Throwable t) {
-		super();
-		this.cause = t;
-	}
-
-	/**
-	 * Instantiates a new not found exception.
-	 *
-	 * @param msg
-	 *            the msg
-	 * @param t
-	 *            the cause
+	 * @param msg the message
+	 * @param t   the cause
 	 */
 	public NotFoundException(final String msg, final Throwable t) {
 		super(msg);
@@ -88,7 +73,7 @@ public class NotFoundException extends NoSuchElementException {
 	 * @see Throwable#getCause()
 	 */
 	@Override
-	public Throwable getCause() {
+	public synchronized Throwable getCause() {
 		return this.cause;
 	}
 
