@@ -246,6 +246,7 @@ public class Environment {
 		File m2Repo = new File(settings.getParentFile(), "repository");
 		try (Reader reader = new FileInputStreamReader(settings, StandardCharsets.UTF_8)) {
 			XMLInputFactory factory = XMLInputFactory.newInstance();
+			disableExternalEntities(factory);
 			XMLStreamReader xmlReader = factory.createXMLStreamReader(reader);
 			while (xmlReader.next() != XMLStreamConstants.END_DOCUMENT) {
 				if (xmlReader.isStartElement()) {
@@ -261,6 +262,11 @@ public class Environment {
 			LOG.warn("Will return {} as default because cannot read {}:", m2Repo, settings, ex);
 		}
 		return m2Repo;
+	}
+
+	private static void disableExternalEntities(XMLInputFactory factory) {
+		factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+		factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
 	}
 
 }
