@@ -245,8 +245,7 @@ public class Environment {
 	private static File getLocalRepositoryFrom(File settings) {
 		File m2Repo = new File(settings.getParentFile(), "repository");
 		try (Reader reader = new FileInputStreamReader(settings, StandardCharsets.UTF_8)) {
-			XMLInputFactory factory = XMLInputFactory.newInstance();
-			disableExternalEntities(factory);
+			XMLInputFactory factory = createXmlInputFactory();
 			XMLStreamReader xmlReader = factory.createXMLStreamReader(reader);
 			while (xmlReader.next() != XMLStreamConstants.END_DOCUMENT) {
 				if (xmlReader.isStartElement()) {
@@ -264,9 +263,12 @@ public class Environment {
 		return m2Repo;
 	}
 
-	private static void disableExternalEntities(XMLInputFactory factory) {
+	private static XMLInputFactory createXmlInputFactory() {
+		XMLInputFactory factory = XMLInputFactory.newInstance();
+		// disable external entities
 		factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
 		factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+		return factory;
 	}
 
 }

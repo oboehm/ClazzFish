@@ -89,7 +89,7 @@ public final class BankRepository {
     }
 
     private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(JDBC_URL, "x", "x");
+        return DriverManager.getConnection(JDBC_URL);
     }
 
     /** Only static methods - no need to instantiate it. */
