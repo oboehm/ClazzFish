@@ -554,5 +554,14 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
             assertThat(c.getName(), startsWith("java."));
         }
     }
+
+    @Test
+    public void testGetConcreteClassListDot() {
+        String packageName = "clazzfish.monitor";
+        Collection<Class<?>> c1 = cpMon.getConcreteClassList(packageName);
+        Collection<Class<?>> c2 = cpMon.getConcreteClassList(packageName + ".");
+        assertThat(c1, not(empty()));
+        assertEquals(c1.size(), c2.size());
+    }
     
 }

@@ -112,25 +112,13 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	private FutureTask<String[]> getFutureCasspathClasses() {
-		Callable<String[]> callable = new Callable<String[]>() {
-			@Override
-			public String[] call() {
-				return getClasspathClassArray();
-			}
-		};
-		FutureTask<String[]> classes = new FutureTask<>(callable);
+		FutureTask<String[]> classes = new FutureTask<>(() -> getClasspathClassArray());
 		EXECUTOR.execute(classes);
 		return classes;
 	}
 
 	private FutureTask<Set<String>> getFutureUnusedClasses() {
-		Callable<Set<String>> callable = new Callable<Set<String>>() {
-			@Override
-			public Set<String> call() {
-				return getClasspathClassSet();
-			}
-		};
-		FutureTask<Set<String>> classes = new FutureTask<>(callable);
+		FutureTask<Set<String>> classes = new FutureTask<>(() -> getClasspathClassSet());
 		EXECUTOR.execute(classes);
 		return classes;
 	}
@@ -532,16 +520,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 		return sbuf.toString().trim();
 	}
 
-	/**
-	 * Dump fields.
-	 *
-	 * @param sbuf
-	 *            the sbuf
-	 * @param cl
-	 *            the cl
-	 * @param obj
-	 *            the obj
-	 */
 	private static void dumpFields(final StringBuilder sbuf, final Class<?> cl, final Object obj) {
 		Field[] fields = cl.getDeclaredFields();
 		AccessibleObject.setAccessible(fields, true);
@@ -755,7 +733,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public Collection<String> getClasspathClassList(final String packageName) {
 		Collection<String> classlist = new ArrayList<>();
 		String[] classes = this.getClasspathClasses();
-		String prefix = packageName + ".";
+		String prefix = packageName.endsWith(".") ? packageName : packageName + ".";
 		for (int i = 0; i < classes.length; i++) {
 			if (classes[i].startsWith(prefix)) {
 				classlist.add(classes[i]);
