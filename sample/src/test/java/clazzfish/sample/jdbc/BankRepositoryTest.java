@@ -106,6 +106,14 @@ class BankRepositoryTest {
         assertEquals(tomsBalance.add(amount), tomsAccount.getBalance());
     }
 
+    @Test
+    public void testTransferWithAccountnumber() throws SQLException {
+        BigDecimal jimsBalance = jimsAccount.getBalance();
+        BigDecimal amount = new BigDecimal(50);
+        BankRepository.transfer(jimsAccount, tomsAccountNumber, amount);
+        assertEquals(jimsBalance.add(amount.negate()), jimsAccount.getBalance());
+    }
+
     /**
      * Test method for {@link BankRepository#getAccountsFor(User)}.
      *

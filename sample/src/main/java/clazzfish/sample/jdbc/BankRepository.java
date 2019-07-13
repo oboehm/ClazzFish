@@ -47,7 +47,6 @@ public final class BankRepository {
         try {
             loadDbDriver();
         } catch (ClassNotFoundException cnfe) {
-            log.error("cannot load DB driver for {}", JDBC_URL, cnfe);
             throw new ExceptionInInitializerError(cnfe);
         }
     }
@@ -71,12 +70,8 @@ public final class BankRepository {
 
     private static void loadDbDriver() throws ClassNotFoundException {
         String driverName = "org.hsqldb.jdbcDriver";
-        if (JDBC_URL.startsWith("jdbc:mysql")) {
-            driverName = "com.mysql.jdbc.Driver";
-        } else if (JDBC_URL.startsWith("jdbc:proxy")) {
+        if (JDBC_URL.startsWith("jdbc:proxy")) {
             driverName = ProxyDriver.class.getName();
-        } else if (JDBC_URL.startsWith("jdbc:jamon")) {
-            driverName = "com.jamonapi.proxy.JAMonDriver";
         }
         Class.forName(driverName);
         log.info("{} loaded.", driverName);
