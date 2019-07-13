@@ -43,7 +43,7 @@ The CI build is started automatically after a commit and push to GitHub.
 
 == Release Notes
 
-=== 1.0 (SNAPSHOT)
+=== 1.0 (13-Jul-2019)
 
 * How to activate SQL logging?
   The answer to this question you can find now in the link:SQL-Logging.adoc[documentation].
