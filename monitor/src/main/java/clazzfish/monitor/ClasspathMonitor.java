@@ -29,6 +29,7 @@ import javax.management.ObjectName;
 import java.io.*;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
@@ -522,15 +523,21 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 
 	private static void dumpFields(final StringBuilder sbuf, final Class<?> cl, final Object obj) {
 		Field[] fields = cl.getDeclaredFields();
-		AccessibleObject.setAccessible(fields, true);
+		try {
+			AccessibleObject.setAccessible(fields, true);
+		} catch (InaccessibleObjectException ex) {
+			LOG.info("Start JVM with '--add-opens java.base/jdk.internal.loader=ALL-UNNAMED' to dump fields of {}.", cl);
+			LOG.debug("Details:", ex);
+		}
 		for (int i = 0; i < fields.length; i++) {
 			sbuf.append(fields[i]);
 			sbuf.append(" = ");
 			try {
 				sbuf.append(fields[i].get(obj));
 			} catch (IllegalAccessException ex) {
-				LOG.warn("Cannot access " + fields[i] + ":", ex);
-				sbuf.append("<").append(ex).append(">");
+				LOG.info("Cannot access field {} {}.", i, fields[i]);
+				LOG.debug("Details:", ex);
+				sbuf.append("???");
 			}
 			sbuf.append('\n');
 		}
@@ -913,8 +920,8 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 		SortedSet<String> unused = new TreeSet<>();
 		LOG.trace(Arrays.class + " loaded (to get corrected used classpath");
 		String[] used = this.getUsedClasspath();
-		for (int i = 0; i < classpath.length; i++) {
-			String path = new File(classpath[i]).getAbsolutePath();
+		for (String s : classpath) {
+			String path = new File(s).getAbsolutePath();
 			if (Arrays.binarySearch(used, path) < 0) {
 				unused.add(path);
 			}
@@ -1231,7 +1238,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public URI[] getIncompatibleClasspathURIs() {
 		LOG.debug("calculating incompatible-classpath...");
 		Set<URI> classpathSet = getClasspathSet(this.getIncompatibleClassList());
-		return classpathSet.toArray(new URI[classpathSet.size()]);
+		return classpathSet.toArray(new URI[0]);
 	}
 
 	/**
