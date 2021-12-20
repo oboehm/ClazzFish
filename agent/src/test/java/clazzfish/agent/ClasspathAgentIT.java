@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Oliver Boehm
+ * Copyright (c) 2018-2021 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * JUnit tests for {@link ClasspathAgent} class. Some tests requires that you
  * start this class as java agent. This is done using the helper class
  * {@link ClasspathAgentLoader}. This is also the reason which this class has
- * the suffich 'IT' (for integration test).
+ * the suffix 'IT' (for integration test).
  *
  * If you want to start the jar file manually go the command line and start
  * the following command: <tt>mvn -DskipTests package</tt>.
@@ -76,7 +76,7 @@ public class ClasspathAgentIT {
             ClasspathAgentLoader.createJar();
         }
         Optional<Path> jarFile =
-                Files.list(dir).filter(f -> f.toString().endsWith(".jar")).filter(f -> Files.isRegularFile(f)).findFirst();
+                Files.list(dir).filter(f -> f.toString().endsWith(".jar")).filter(Files::isRegularFile).findFirst();
         jarFile.ifPresent(ClasspathAgentLoader::loadAgent);
     }
 
