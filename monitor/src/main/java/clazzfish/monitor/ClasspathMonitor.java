@@ -34,6 +34,9 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.jar.Attributes;
@@ -299,9 +302,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	/**
 	 * Which class jar.
 	 *
-	 * @param clazz
-	 *            the clazz
-	 *
+	 * @param clazz the clazz
 	 * @return the jar file
 	 */
 	public JarFile whichClassJar(final Class<?> clazz) {
@@ -319,6 +320,37 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public JarFile whichClassJar(final String classname) {
 		String resource = Converter.classToResource(classname);
 		return whichResourceJar(resource);
+	}
+
+	/**
+	 * Returns the path of the given clazz.
+	 *
+	 * @param clazz the class
+	 * @return class path
+	 * @since 1.1
+	 */
+	public Path whichFileSystem(final Class<?> clazz) {
+		return whichFileSystem(Converter.classToResource(clazz.getName()));
+	}
+
+	/**
+	 * Returns the path of the given resource image. This method was introduced
+	 * for the module system as described in
+	 * <a href="https://openjdk.java.net/jeps/220">JEP 220</a> (Modular
+	 * Run-Time Images).
+	 *
+	 * @param resource the resource
+	 * @return resource path
+	 * @since 1.1
+	 */
+	public Path whichFileSystem(final String resource) {
+		URI uri = whichResourcePath(resource);
+		if ("jrt".equals(uri.getScheme())) {
+			FileSystem fs = FileSystems.getFileSystem(URI.create("jrt:/"));
+			return fs.getPath("modules", uri.getPath(), resource);
+		} else {
+			throw new UnsupportedOperationException(uri + " not yet supported");
+		}
 	}
 
 	/**

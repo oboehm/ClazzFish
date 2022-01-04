@@ -32,9 +32,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarFile;
 
+import static clazzfish.monitor.ClassloaderType.SUN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -372,7 +375,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     public void testGetBootClasspath() {
         LOG.info("testGetBootClasspath() is started.");
         String[] classpath = cpMon.getBootClasspath();
-        if (ClassloaderType.getCurrentClassloaderType() == ClassloaderType.SUN) {
+        if (ClassloaderType.getCurrentClassloaderType() == SUN) {
             checkClasspath(classpath);
             findInClasspath(String.class, classpath);
         } else {
@@ -424,10 +427,21 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
      */
     @Test
     public void testWhichClassJar() {
-        LOG.info("testWhichClassJar() is started.");
-        JarFile jarfile = cpMon.whichClassJar(String.class);
-        LOG.info("found: " + jarfile.getName());
-        assertNotNull(jarfile);
+        if (ClassloaderType.getCurrentClassloaderType() == SUN) {
+            LOG.info("testWhichClassJar() is started.");
+            JarFile jarfile = cpMon.whichClassJar(String.class);
+            assertNotNull(jarfile);
+            LOG.info("found: {}", jarfile.getName());
+        }
+    }
+
+    @Test
+    public void testWhichFileSystem() {
+        Path path = cpMon.whichFileSystem(String.class);
+        assertNotNull(path);
+        LOG.info("String.class was found in {}.", path.toAbsolutePath());
+        assertTrue(Files.exists(path));
+        assertThat(path.toString(), containsString("String"));
     }
 
     /**
