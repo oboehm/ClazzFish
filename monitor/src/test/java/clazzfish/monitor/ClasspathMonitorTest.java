@@ -21,6 +21,7 @@ import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.util.ArchivEntry;
 import clazzfish.monitor.util.Converter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -371,8 +372,12 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     public void testGetBootClasspath() {
         LOG.info("testGetBootClasspath() is started.");
         String[] classpath = cpMon.getBootClasspath();
-        checkClasspath(classpath);
-        findInClasspath(String.class, classpath);
+        if (ClassloaderType.getCurrentClassloaderType() == ClassloaderType.SUN) {
+            checkClasspath(classpath);
+            findInClasspath(String.class, classpath);
+        } else {
+            LOG.info("bootclasspath is only supported till Java 8, but not for {}.", SystemUtils.JAVA_VERSION);
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 by Oliver Boehm
+ * Copyright (c) 2008-2022 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -941,7 +941,8 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 
 	/**
 	 * To get the boot classpath the sytem property "sun.boot.class.path" is
-	 * used to get them. This will work of course only for the SunVM.
+	 * used to get them. This will work of course only for the SunVM and only
+	 * till Java 8.
 	 *
 	 * @return the boot classpath as String array
 	 */
