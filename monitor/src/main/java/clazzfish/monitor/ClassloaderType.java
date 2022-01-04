@@ -38,6 +38,9 @@ public enum ClassloaderType {
 	/** The default classloader of the Sun VM. */
 	SUN("sun.misc.Launcher$AppClassLoader"),
 
+	/** The new classloader of Open-JDK since Java 11. */
+	JDK("jdk.internal.loader.ClassLoaders$AppClassLoader"),
+
 	/** The URLClassLoader where many appserver are based on. */
 	NET(URLClassLoader.class),
 
@@ -62,20 +65,20 @@ public enum ClassloaderType {
 	private final String fieldname;
 	private final boolean web;
 
-	private ClassloaderType(final Class<? extends ClassLoader> classLoader) {
+	ClassloaderType(final Class<? extends ClassLoader> classLoader) {
 		this(classLoader.getName(), false);
 		this.classLoader = classLoader;
 	}
 
-	private ClassloaderType(final String classname) {
+	ClassloaderType(final String classname) {
 		this(classname, false);
 	}
 
-	private ClassloaderType(final String classname, final boolean web) {
+	ClassloaderType(final String classname, final boolean web) {
 		this(classname, web, "");
 	}
 
-    private ClassloaderType(final String classname, final boolean web, final String fieldname) {
+    ClassloaderType(final String classname, final boolean web, final String fieldname) {
         this.classname = classname;
         this.fieldname = fieldname;
         this.web = web;
@@ -157,8 +160,8 @@ public enum ClassloaderType {
 	 */
 	public static boolean isSupported(final String classloaderName) {
 		ClassloaderType[] types = ClassloaderType.values();
-		for (int i = 0; i < types.length; i++) {
-			if (classloaderName.equals(types[i].classname)) {
+		for (ClassloaderType type : types) {
+			if (classloaderName.equals(type.classname)) {
 				return true;
 			}
 		}

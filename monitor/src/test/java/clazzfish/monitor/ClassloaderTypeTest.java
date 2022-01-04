@@ -43,7 +43,8 @@ public class ClassloaderTypeTest {
     @Test
     public void testToClassloaderType() {
         checkToClassloaderType(getCurrentClassLoader(),
-                anyOf(equalTo(ClassloaderType.SUN), equalTo(ClassloaderType.NET), equalTo(ClassloaderType.SUREFIRE)));
+                anyOf(equalTo(ClassloaderType.SUN), equalTo(ClassloaderType.JDK),
+                        equalTo(ClassloaderType.NET), equalTo(ClassloaderType.SUREFIRE)));
     }
 
     /**
@@ -140,7 +141,8 @@ public class ClassloaderTypeTest {
     @Test
     public void testGetCurrentClassloaderType() {
         ClassloaderType clType = ClassloaderType.getCurrentClassloaderType();
-        assertThat(clType, anyOf(is(ClassloaderType.SUN), is(ClassloaderType.NET), is(ClassloaderType.SUREFIRE)));
+        assertThat(clType, anyOf(is(ClassloaderType.SUN), is(ClassloaderType.JDK), is(ClassloaderType.NET),
+                is(ClassloaderType.SUREFIRE)));
     }
 
     private static ClassLoader getCurrentClassLoader() {
