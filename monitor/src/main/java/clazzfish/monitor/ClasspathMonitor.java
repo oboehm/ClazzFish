@@ -31,12 +31,15 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.jar.Attributes;
@@ -116,13 +119,13 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	private FutureTask<String[]> getFutureCasspathClasses() {
-		FutureTask<String[]> classes = new FutureTask<>(() -> getClasspathClassArray());
+		FutureTask<String[]> classes = new FutureTask<>(this::getClasspathClassArray);
 		EXECUTOR.execute(classes);
 		return classes;
 	}
 
 	private FutureTask<Set<String>> getFutureUnusedClasses() {
-		FutureTask<Set<String>> classes = new FutureTask<>(() -> getClasspathClassSet());
+		FutureTask<Set<String>> classes = new FutureTask<>(this::getClasspathClassSet);
 		EXECUTOR.execute(classes);
 		return classes;
 	}
@@ -329,8 +332,8 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return class path
 	 * @since 1.1
 	 */
-	public Path whichFileSystem(final Class<?> clazz) {
-		return whichFileSystem(Converter.classToResource(clazz.getName()));
+	public Path whichPath(final Class<?> clazz) {
+		return whichPath(Converter.classToResource(clazz.getName()));
 	}
 
 	/**
@@ -343,13 +346,19 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return resource path
 	 * @since 1.1
 	 */
-	public Path whichFileSystem(final String resource) {
+	public Path whichPath(final String resource) {
 		URI uri = whichResourcePath(resource);
 		if ("jrt".equals(uri.getScheme())) {
 			FileSystem fs = FileSystems.getFileSystem(URI.create("jrt:/"));
 			return fs.getPath("modules", uri.getPath(), resource);
 		} else {
-			throw new UnsupportedOperationException(uri + " not yet supported");
+			try {
+				uri = this.classpathDigger.whichResource(resource);
+				return Paths.get(uri.toURL().getPath());
+			} catch (MalformedURLException ex) {
+				LOG.warn("Cannot convert {} to URL:", uri, ex);
+				return Paths.get(uri);
+			}
 		}
 	}
 

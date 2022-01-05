@@ -257,7 +257,7 @@ public class ClasspathDigger extends AbstractDigger {
 	protected static String[] getClasspath(final String key) {
 		String classpath = System.getProperty(key);
 		if (classpath == null) {
-			LOG.info(key + " is not set (not a SunVM?)");
+			LOG.debug(key + " is not set (not a SunVM or JDK 9+)");
 			return new String[0];
 		}
 		String cp[] = splitClasspath(classpath);
@@ -457,8 +457,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @return true if class is loaded
 	 */
 	public boolean isLoaded(final String classname) {
-		for (Iterator<Class<?>> iterator = getLoadedClasses().iterator(); iterator.hasNext();) {
-			Class<?> loaded = iterator.next();
+		for (Class<?> loaded : getLoadedClasses()) {
 			if (classname.equals(loaded.getName())) {
 				return true;
 			}

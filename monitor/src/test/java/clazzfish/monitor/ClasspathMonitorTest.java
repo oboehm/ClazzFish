@@ -436,12 +436,22 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     }
 
     @Test
-    public void testWhichFileSystem() {
-        Path path = cpMon.whichFileSystem(String.class);
-        assertNotNull(path);
-        LOG.info("String.class was found in {}.", path.toAbsolutePath());
+    public void testWhichPathString() {
+        Path path = checkPathOf(String.class);
         assertTrue(Files.exists(path));
-        assertThat(path.toString(), containsString("String"));
+    }
+
+    @Test
+    public void testWhichPathLogger() {
+        checkPathOf(Logger.class);
+    }
+
+    private Path checkPathOf(Class<?> clazz) {
+        Path path = cpMon.whichPath(clazz);
+        assertNotNull(path);
+        LOG.info("{} was found in {}.", clazz, path);
+        assertThat(path.toString(), containsString(clazz.getSimpleName()));
+        return path;
     }
 
     /**
@@ -569,7 +579,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     public void testGetConcreteClassList() {
         Collection<Class<?>> javaClasses = cpMon.getConcreteClassList("java");
         LOG.info("{} concrete Java classes found.", javaClasses.size());
-        for (Class c : javaClasses) {
+        for (Class<?> c : javaClasses) {
             assertThat(c.getName(), startsWith("java."));
         }
     }
