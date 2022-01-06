@@ -22,6 +22,7 @@ import clazzfish.monitor.util.ArchivEntry;
 import clazzfish.monitor.util.Converter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -427,12 +428,10 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
      */
     @Test
     public void testWhichClassJar() {
-        if (ClassloaderType.getCurrentClassloaderType() == SUN) {
-            LOG.info("testWhichClassJar() is started.");
-            JarFile jarfile = cpMon.whichClassJar(String.class);
-            assertNotNull(jarfile);
-            LOG.info("found: {}", jarfile.getName());
-        }
+        LOG.info("testWhichClassJar() is started.");
+        JarFile jarfile = cpMon.whichClassJar(Logger.class);
+        assertNotNull(jarfile);
+        LOG.info("found: {}", jarfile.getName());
     }
 
     @Test
@@ -571,6 +570,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     public void testRegisterAsMBeanString() {
         LOG.info("testRegisterAsMBeanString() is started.");
         ClasspathMonitor.registerAsMBean("test.ClasspathMonitor");
+        ClasspathMonitor.registerAsMBean("test.ClasspathMonitor");
         assertTrue(ClasspathMonitor.isRegisteredAsMBean(), cpMon + " is not registered as MBean");
         ClasspathMonitor.unregisterAsMBean();
     }
@@ -592,5 +592,47 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
         assertThat(c1, not(empty()));
         assertEquals(c1.size(), c2.size());
     }
-    
+
+    @Test
+    public void testGetLoadedPackageArray() {
+        Package[] packages = cpMon.getLoadedPackageArray();
+        assertThat(packages.length, greaterThan(0));
+    }
+
+    @Test
+    public void testGetLoadedPackagesAsString() {
+        String s = cpMon.getLoadedClassesAsString();
+        assertThat(s, not(emptyString()));
+    }
+
+    @Test
+    public void testGetClassList() {
+        Collection<Class<? extends Logger>> classList = cpMon.getClassList("org.slf4j.impl", Logger.class);
+        assertNotNull(classList);
+    }
+
+    @Test
+    public void testGetClasspathSet() {
+        SortedSet<URI> classes = cpMon.getClasspathSet();
+        assertFalse(classes.isEmpty());
+    }
+
+    @Test
+    public void testShutdownHook() {
+        ClasspathMonitor.addAsShutdownHook();
+        assertTrue(ClasspathMonitor.getInstance().isShutdownHook());
+        ClasspathMonitor.removeAsShutdownHook();
+    }
+
+    @Test
+    public void testSetMultiThreadingEnabled() {
+        cpMon.setMultiThreadingEnabled(true);
+        assertTrue(cpMon.isMultiThreadingEnabled());
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        cpMon.logMe();
+    }
+
 }

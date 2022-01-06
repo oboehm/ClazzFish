@@ -180,8 +180,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * to register it with another name you have to first unregister it.
 	 * </p>
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 * @see ClasspathMonitor#unregisterAsMBean()
 	 * @since 1.6
 	 */
@@ -296,9 +295,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	public URI whichResourcePath(final String resource) {
 		URI uri = this.classpathDigger.whichResource(resource);
-		if (uri == null) {
-			return null;
-		}
 		return ClasspathHelper.getParent(uri, resource);
 	}
 
