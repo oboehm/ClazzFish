@@ -32,6 +32,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
@@ -229,8 +230,7 @@ public class ConverterTest {
         props.put("b", "11");
         String expected = "a=10\nb=11\nc=12\n";
         assertEquals(expected, Converter.toLongString(props));
-        Object obj = props;
-        assertEquals(expected, Converter.toLongString(obj));
+        assertEquals(expected, Converter.toLongString((Object) props));
     }
 
     /**
@@ -279,11 +279,9 @@ public class ConverterTest {
      * For a file URL which represents a directory the {@link File#toURI()}
      * method generates an URI with a trailing slash ("/"). So should be
      * done also by {@link Converter#toURI(String)}.
-     *
-     * @throws MalformedURLException should not happen
      */
     @Test
-    public void testToURIwithDirname() throws MalformedURLException {
+    public void testToURIwithDirname() {
         File dir = SystemUtils.getJavaIoTmpDir();
         String url = "file:/" + FilenameUtils.separatorsToUnix(dir.getPath());
         LOG.info("Checking '{}' as URI ({}).", dir, url);
@@ -416,6 +414,12 @@ public class ConverterTest {
         assertEquals(s, Converter.toShortString(time));
     }
 
+    @Test
+    public void testToStringLocalDate() {
+        LocalDate date = LocalDate.of(2022, 1, 7);
+        assertEquals("07-Jan-2022", Converter.toString(date, "dd-MMM-yyyy"));
+    }
+
     /**
      * Test method for {@link Converter#serialize(Serializable)} and
      * {@link Converter#deserialize(byte[])}.
@@ -430,7 +434,7 @@ public class ConverterTest {
         assertEquals(obj, Converter.deserialize(serialized));
     }
 
-    private class InnerConverterTest {
+    private static class InnerConverterTest {
     }
 
 }

@@ -33,6 +33,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Time;
 import java.text.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -582,9 +586,9 @@ public final class Converter {
 	 */
 	public static String toLongString(final StackTraceElement[] stacktrace) {
 		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < stacktrace.length; i++) {
+		for (StackTraceElement stackTraceElement : stacktrace) {
 			buf.append("\tat ");
-			buf.append(stacktrace[i]);
+			buf.append(stackTraceElement);
 			buf.append('\n');
 		}
 		return buf.toString();
@@ -622,7 +626,7 @@ public final class Converter {
 	 *
 	 * @since 27-Jul-2009
 	 */
-	public static String[] toStringArray(final Set<? extends Object> set) {
+	public static String[] toStringArray(final Set<Object> set) {
 		Object[] objects = new Object[set.size()];
 		objects = set.toArray(objects);
 		return toStringArray(objects);
@@ -631,15 +635,39 @@ public final class Converter {
 	/**
 	 * Converts a date to string using the default locale.
 	 *
-	 * @param date
-	 *            a valid date
-	 * @param pattern
-	 *            e.g. "dd-MMM-yyyy"
+	 * @param date    a valid date
+	 * @param pattern e.g. "dd-MMM-yyyy"
 	 * @return e.g. "26-Nov-2009"
 	 */
 	public static String toString(final Date date, final String pattern) {
-		DateFormat df = new SimpleDateFormat(pattern);
-		return df.format(date);
+		LocalDateTime time = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+		return toString(time, pattern);
+	}
+
+	/**
+	 * Converts a date to string using English as default locale.
+	 *
+	 * @param date    a valid date
+	 * @param pattern e.g. "dd-MMM-yyyy"
+	 * @return e.g. "26-Nov-2009"
+	 * @since 1.1
+	 */
+	public static String toString(final LocalDate date, final String pattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
+		return formatter.format(date);
+	}
+
+	/**
+	 * Converts a date to string using English as default locale.
+	 *
+	 * @param time    a valid time
+	 * @param pattern e.g. "dd-MMM-yyyy HH:mm"
+	 * @return e.g. "07-Jan-2022 17:40"
+	 * @since 1.1
+	 */
+	public static String toString(final LocalDateTime time, final String pattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
+		return formatter.format(time);
 	}
 
 	/**
@@ -707,12 +735,12 @@ public final class Converter {
 		if (s.length() < 12) {
 			patterns = datePatterns;
 		}
-		for (int i = 0; i < patterns.length; i++) {
+		for (String pattern : patterns) {
 			try {
-				return toDate(s, patterns[i], lenient);
+				return toDate(s, pattern, lenient);
 			} catch (IllegalArgumentException iae) {
 				if (LOG.isTraceEnabled()) {
-					LOG.trace("Cannot convert '" + s + "' to Date with pattern " + patterns[i] + ":", iae);
+					LOG.trace("Cannot convert '" + s + "' to Date with pattern " + pattern + ":", iae);
 				}
 			}
 		}
@@ -735,13 +763,13 @@ public final class Converter {
 		String[] timePatterns = { "H:m:s", "H:m", "h:m", "K:m", "k:m" };
 		List<String> patterns = new ArrayList<>(datePatterns.length * (timePatterns.length + 1) + 1);
 		patterns.add("EEE MMM d HH:mm:ss zzz yyyy");
-		for (int i = 0; i < datePatterns.length; i++) {
-			for (int j = 0; j < timePatterns.length; j++) {
-				patterns.add(datePatterns[i] + " " + timePatterns[j]);
+		for (String datePattern : datePatterns) {
+			for (String timePattern : timePatterns) {
+				patterns.add(datePattern + " " + timePattern);
 			}
 		}
 		patterns.addAll(Arrays.asList(datePatterns));
-		return patterns.toArray(new String[patterns.size()]);
+		return patterns.toArray(new String[0]);
 	}
 
 	/**
@@ -799,7 +827,7 @@ public final class Converter {
 	 * @return the SortedSet
 	 * @since 1.0
 	 */
-	public static SortedSet toSortedSet(final Enumeration<?> enumeration) {
+	public static SortedSet<Object> toSortedSet(final Enumeration<?> enumeration) {
 		SortedSet<Object> set = new TreeSet<>();
 		while (enumeration.hasMoreElements()) {
 			Object element = enumeration.nextElement();
