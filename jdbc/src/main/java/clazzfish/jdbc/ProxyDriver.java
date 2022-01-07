@@ -196,8 +196,8 @@ public class ProxyDriver implements Driver {
 	 * Retrieves whether the driver thinks that it can open a connection to the
 	 * given URL. Accepted URLs are URLs beginning with:
 	 * <ul>
-	 * <li><tt>jdbc:proxy:</tt>...</li>
-	 * <li><tt>jdbc:jamon:</tt>... (if JAMon is in the classpath)</li>
+	 * <li><i>jdbc:proxy:</i>...</li>
+	 * <li><i>jdbc:jamon:</i>... (if JAMon is in the classpath)</li>
 	 * </ul>
 	 *
 	 * @param url the JDBC URL

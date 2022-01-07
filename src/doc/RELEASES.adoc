@@ -11,7 +11,12 @@ Other infos are present in the top link:../../README.md[README].
 |===
 |server |master |develop |configuration
 
-|https://travis-ci.org/oboehm/ClazzFish/[Travis-CI.org]
+|https://app.travis-ci.com/github/oboehm/ClazzFish[Travis-CI.com]
+|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://app.travis-ci.com/oboehm/ClazzFish.svg?branch=master[Build Status]]
+|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://app.travis-ci.com/oboehm/ClazzFish.svg?branch=develop[Build Status]]
+|s. link:../.travis.yml[.travis.yml]
+
+|https://travis-ci.org/oboehm/ClazzFish/[Travis-CI.org] (old)
 |https://travis-ci.org/oboehm/ClazzFish/branches[image:https://travis-ci.org/oboehm/ClazzFish.svg?branch=master[Build Status]]
 |https://travis-ci.org/oboehm/ClazzFish/branches[image:https://travis-ci.org/oboehm/ClazzFish.svg?branch=develop[Build Status]]
 |s. link:../.travis.yml[.travis.yml]
@@ -43,13 +48,9 @@ The CI build is started automatically after a commit and push to GitHub.
 
 == Release Notes
 
-=== 1.0 (13-Jul-2019)
+=== 1.0 and later
 
-* How to activate SQL logging?
-  The answer to this question you can find now in the link:SQL-Logging.adoc[documentation].
-  Also clazzfish-sample is added as new module which provides some example and ideas how to use ClazzFish.
-* _fixed_: too many classes found by ClasspathMonitor.getConcreteClassList()
-  (https://github.com/oboehm/ClazzFish/issues/1[issue #1])
+* see link:../../CHANGELOG.md[CHANGELOG]
 
 
 === 0.9 (01-Jan-2019)
@@ -79,7 +80,7 @@ This is a little checklist for the next release:
 
 .Ordered
 . create a release branch and change to it
-. remove -SNAPSHOT in pom.xml (`mvn versions:set` followd by `mvn versions:commit`)
+. remove -SNAPSHOT in pom.xml (`mvn versions:set` followed by `mvn versions:commit`)
 . build all artifacts:
   `mvn -B clean install source:jar javadoc:jar gpg:sign -Dgpg.passphrase=xx`
 . use the script `src/script/deploy.sh` to upload bundles to https://oss.sonatype.org/

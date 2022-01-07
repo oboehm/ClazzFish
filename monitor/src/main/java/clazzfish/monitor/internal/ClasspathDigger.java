@@ -506,7 +506,7 @@ public class ClasspathDigger extends AbstractDigger {
 	/**
 	 * Gets the loaded class list from patterntesting-agent. For this method you
 	 * must start the Java VM with PatternTesting Agent as Java agent
-	 * (<tt>java -javaagent:patterntesting-agent-1.x.x.jar ...</tt>) because
+	 * (<i>java -javaagent:patterntesting-agent-1.x.x.jar ...</i>) because
 	 * this MBean is needed for the loaded classes.
 	 * <p>
 	 * This class is protected for test reason.

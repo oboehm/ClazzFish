@@ -6,7 +6,7 @@
 
     <groupId>de.aosd.clazzfish</groupId>
     <artifactId>clazzfish</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>pom</packaging>
 
     <name>ClazzFish</name>
@@ -202,6 +202,14 @@
 <!--                <configuration>-->
 <!--                    <argLine>&#45;&#45;add-opens java.base/jdk.internal.loader=ALL-UNNAMED</argLine>-->
 <!--                </configuration>-->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
             </plugin>
 
         </plugins>
