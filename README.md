@@ -15,7 +15,6 @@ Originally it was part of [PatternTesting](http://patterntesting.org) but is now
 With v0.5 and v0.8 the first steps are done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
 The next steps will be:
 
-* support of JDK 11
 * provide basic documentation, code cleanup, polishing
 * use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath
 * extend documentation

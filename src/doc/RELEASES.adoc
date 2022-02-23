@@ -16,11 +16,6 @@ Other infos are present in the top link:../../README.md[README].
 |https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://app.travis-ci.com/oboehm/ClazzFish.svg?branch=develop[Build Status]]
 |s. link:../.travis.yml[.travis.yml]
 
-|https://travis-ci.org/oboehm/ClazzFish/[Travis-CI.org] (old)
-|https://travis-ci.org/oboehm/ClazzFish/branches[image:https://travis-ci.org/oboehm/ClazzFish.svg?branch=master[Build Status]]
-|https://travis-ci.org/oboehm/ClazzFish/branches[image:https://travis-ci.org/oboehm/ClazzFish.svg?branch=develop[Build Status]]
-|s. link:../.travis.yml[.travis.yml]
-
 |https://sonarcloud.io/projects[sonarcloud.io]
 |https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=de.aosd.clazzfish:clazzfish[Q-Gate]]
 |https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=de.aosd.clazzfish:clazzfish:develop[Q-Gate]]
@@ -48,29 +43,7 @@ The CI build is started automatically after a commit and push to GitHub.
 
 == Release Notes
 
-=== 1.0 and later
-
 * see link:../../CHANGELOG.md[CHANGELOG]
-
-
-=== 0.9 (01-Jan-2019)
-
-* clazzfish-jdbc is added as new module to support JDBC monitoring.
-  It provides a ProxyDriver as JDBC driver which allows you to log and monitor the SQL statements.
-  I.e. you can ask the monitor how often an SQL statement is called and how long does it takes.
-
-
-=== 0.8 (07-Nov-2018)
-
-* Java agent for IBM classloader provided (clazzfish-agent)
-
-
-=== 0.5 (10-Mar-2018)
-
-* The first version contains mainly a ClasspathMonitor and ResourcepathMonitor as JMX bean.
-  Originally these classes were part of the http://patterntesting.org[PatternTesting] project.
-  With https://issues.sonatype.org/browse/OSSRH-38331[OSSRH-38331] ClassFish is sync'd with Central Maven.
-
 
 
 

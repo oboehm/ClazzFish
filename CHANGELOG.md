@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ([CVE-2021-44832](https://github.com/advisories/GHSA-8489-44mv-ggj8))
 
 ### Added
-- support for Java 9 and higher added
+- support for Java 11 and higher added
 
 
 ## [1.0] (13-Jul-2019)
@@ -28,6 +28,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (https://github.com/oboehm/ClazzFish/issues/1[issue #1])
 
 
-## [0.9 and earlier]
+## [0.9] (01-Jan-2019)
 
-see [src/doc/RELEASES](src/doc/RELEASES.adoc)
+### Added
+
+* clazzfish-jdbc is added as new module to support JDBC monitoring.
+  It provides a ProxyDriver as JDBC driver which allows you to log and monitor the SQL statements.
+  I.e. you can ask the monitor how often an SQL statement is called and how long does it takes.
+
+
+## [0.8] (07-Nov-2018)
+
+### Added
+
+* Java agent for IBM classloader provided (clazzfish-agent)
+
+
+## [0.5] (10-Mar-2018)
+
+* The first version contains mainly a ClasspathMonitor and ResourcepathMonitor as JMX bean.
+  Originally these classes were part of the http://patterntesting.org[PatternTesting] project.
+  With https://issues.sonatype.org/browse/OSSRH-38331[OSSRH-38331] ClassFish is sync'd with Central Maven.
