@@ -47,5 +47,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5] (10-Mar-2018)
 
 * The first version contains mainly a ClasspathMonitor and ResourcepathMonitor as JMX bean.
-  Originally these classes were part of the http://patterntesting.org[PatternTesting] project.
-  With https://issues.sonatype.org/browse/OSSRH-38331[OSSRH-38331] ClassFish is sync'd with Central Maven.
+  Originally these classes were part of the [PatternTesting](http://patterntesting.org) project.
+  With [OSSRH-38331](https://issues.sonatype.org/browse/OSSRH-38331) ClassFish is sync'd with Central Maven.
