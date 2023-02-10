@@ -23,6 +23,7 @@ import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;
+import com.google.common.reflect.ClassPath;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This helper class digs into the classloader for information like used
@@ -201,7 +203,7 @@ public class ClasspathDigger extends AbstractDigger {
     }
 
     private static String[] getAsClasspath(final List<URL> repositoryURLs) {
-        return getAsClasspath(repositoryURLs.toArray(new URL[repositoryURLs.size()]));
+        return getAsClasspath(repositoryURLs.toArray(new URL[0]));
     }
 
 	private static String[] getAsClasspath(final URL[] repositoryURLs) {
@@ -234,8 +236,8 @@ public class ClasspathDigger extends AbstractDigger {
 		List<File> files = new ArrayList<>(classpath.length);
 		List<File> toBeRemoved = new ArrayList<>(classpath.length);
 		File webinfClasses = new File("WEB-INF", "classes");
-		for (int i = 0; i < classpath.length; i++) {
-			ExtendedFile f = new ExtendedFile(classpath[i]);
+		for (String s : classpath) {
+			ExtendedFile f = new ExtendedFile(s);
 			files.add(f);
 			if (f.endsWith(webinfClasses)) {
 				toBeRemoved.add(f.getBaseDir(webinfClasses));
@@ -260,7 +262,7 @@ public class ClasspathDigger extends AbstractDigger {
 			LOG.debug(key + " is not set (not a SunVM or JDK 9+)");
 			return new String[0];
 		}
-		String cp[] = splitClasspath(classpath);
+		String[] cp = splitClasspath(classpath);
 		return validatedClasspath(cp);
 	}
 
@@ -301,14 +303,14 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public String[] getPackageArray() {
 		Collection<String> packages = this.getPackages();
-		return packages.toArray(new String[packages.size()]);
+		return packages.toArray(new String[0]);
 	}
 
 	private Collection<String> getPackages() {
 		Collection<String> packages = new TreeSet<>();
 		String[] classpath = this.getClasspath();
-		for (int i = 0; i < classpath.length; i++) {
-			addPackages(packages, new File(classpath[i]));
+		for (String s : classpath) {
+			addPackages(packages, new File(s));
 		}
 		return packages;
 	}
@@ -361,8 +363,8 @@ public class ClasspathDigger extends AbstractDigger {
 	protected String[] getClasspathFromPackages() {
 		Set<URI> packageURIs = new LinkedHashSet<>();
 		Package[] packages = this.getLoadedPackageArray();
-		for (int i = 0; i < packages.length; i++) {
-			String resource = Converter.toResource(packages[i]);
+		for (Package aPackage : packages) {
+			String resource = Converter.toResource(aPackage);
 			URI uri = ResourcepathDigger.whichResource(resource, this.classLoader);
 			if (uri != null) {
 				URI path = ClasspathHelper.getParent(uri, resource);
@@ -400,7 +402,7 @@ public class ClasspathDigger extends AbstractDigger {
 				}
 			}
 			Set<URL> resourceSet = asSet(resources);
-			return new Vector<URL>(resourceSet).elements();
+			return new Vector<>(resourceSet).elements();
 		} catch (IOException ioe) {
 			throw new NotFoundException("resource '" + name + "' not found in classpath", ioe);
 		}
@@ -488,8 +490,18 @@ public class ClasspathDigger extends AbstractDigger {
 	 *
 	 * @return list of classes
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Class<?>> getLoadedClasses() {
+		try {
+			ClassPath classPath = ClassPath.from(this.classLoader);
+			Set<ClassPath.ClassInfo> classes = classPath.getAllClasses();
+			return classes.stream().map(ClassPath.ClassInfo::getClass).collect(Collectors.toList());
+		} catch (IOException ex) {
+			LOG.warn("Cannot ask {} for loaeded classes:", classLoader, ex);
+			return getLoadedClassesByReflection();
+		}
+	}
+
+	private List<Class<?>> getLoadedClassesByReflection() {
 		try {
 			Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
 			List<Class<?>> classList = (List<Class<?>>) field.get(classLoader);
