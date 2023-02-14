@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.event.TextEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -37,16 +35,12 @@ public class ReflectionHelperTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ReflectionHelperTest.class);
 
-    /** The Constant NULL_STRING. */
-    protected static final String NULL_STRING = null;
-
     /** The null string. */
     protected String nullString;
 
-    /** The not null. */
-    protected String notNull = "not null";
     private final String privateNullString = null;
     private String privateKey = "myPrivateKey";
+    private final int id = 4711;
 
     /**
      * This constructor inserted to avoid some warnings about never read local
@@ -185,9 +179,7 @@ public class ReflectionHelperTest {
      */
     @Test
     public void testGetIdFromField() {
-        AWTEvent event = new TextEvent("hello", 4711);
-        assertTrue(ReflectionHelper.hasId(event), "has id: " + event);
-        assertEquals(4711, ReflectionHelper.getId(event));
+        assertEquals(this.id, ReflectionHelper.getId(this));
     }
 
     /**
@@ -205,7 +197,7 @@ public class ReflectionHelperTest {
      */
     @Test
     public void testGetIdNotExisting() {
-        assertThrows(IllegalArgumentException.class, () -> ReflectionHelper.getId(this));
+        assertThrows(IllegalArgumentException.class, () -> ReflectionHelper.getId(new Date()));
     }
 
 }
