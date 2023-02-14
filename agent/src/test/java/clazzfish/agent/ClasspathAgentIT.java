@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,15 +39,15 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * start this class as java agent. This is done using the helper class
  * {@link ClasspathAgentLoader}. This is also the reason which this class has
  * the suffix 'IT' (for integration test).
- *
+ * <p>
  * If you want to start the jar file manually go the command line and start
  * the following command: <tt>mvn -DskipTests package</tt>.
- *
+ * </p><p>
  * Next you should add the following vmargs in the launch configuration:
  * <pre>
  * -javaagent:target/clazzfish-agent-x.x-SNAPSHOT.jar
  * </pre>
- *
+ * </p>
  * @author oboehm
  */
 public class ClasspathAgentIT {
@@ -65,8 +66,12 @@ public class ClasspathAgentIT {
     @BeforeAll
     public static void setUpObjectName() throws MalformedObjectNameException, IOException {
         mbean = new ObjectName(ClasspathAgent.MBEAN_NAME);
-        if (ClasspathAgent.getInstrumentation() == null) {
-            loadJavaAgentFrom(Paths.get("target"));
+        try {
+            if (ClasspathAgent.getInstrumentation() == null) {
+                loadJavaAgentFrom(Paths.get("target"));
+            }
+        } catch (IllegalStateException ex) {
+            LOG.log(Level.WARNING, "ClasspathAgent is not available:", ex);
         }
     }
     
@@ -85,12 +90,12 @@ public class ClasspathAgentIT {
      */
     @Test
     public void testGetInstrumentation() {
-        Instrumentation instrumentation = ClasspathAgent.getInstrumentation();
-        if (instrumentation == null) {
-            LOG.info("you must start " + ClasspathAgent.class + " as 'javaagent'");
-        } else {
+        if (agent.isActive()) {
+            Instrumentation instrumentation = ClasspathAgent.getInstrumentation();
             assertTrue(instrumentation.getAllLoadedClasses().length > 0, "no classes loaded?");
             LOG.info("loaded classes: " + instrumentation.getAllLoadedClasses().length);
+        } else {
+            LOG.info("you must start " + ClasspathAgent.class + " as 'javaagent'");
         }
     }
 
