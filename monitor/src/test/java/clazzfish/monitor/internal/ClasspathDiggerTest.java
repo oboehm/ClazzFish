@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.JMException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -69,24 +72,24 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         LOG.info("{} classes loaded.", classes.size());
     }
 
-//    /**
-//     * Test get loaded class list from patterntesting-agent. For this test you
-//     * must start the Java VM with PatternTesting Agent as Java agent:
-//     * <tt>java -javaagent:patterntesting-agent-1.x.x.jar ...</tt>
-//     *
-//     * @throws JMException the jM exception
-//     */
-//    @Test
-//    public void testGetLoadedClassListFromAgent() throws JMException {
-//        try {
-//            MBeanHelper.getObjectInstance(ClasspathDigger.AGENT_MBEAN);
-//            List<Class<?>> classes = digger.getLoadedClassListFromAgent();
-//            assertFalse(classes.isEmpty());
-//            LOG.info("{} classes loaded.", classes.size());
-//        } catch (InstanceNotFoundException e) {
-//            LOG.warn("You must use patterntesting-agent as Java agent for this test!");
-//        }
-//    }
+    /**
+     * Test get loaded class list from patterntesting-agent. For this test you
+     * must start the Java VM with PatternTesting Agent as Java agent:
+     * <tt>java -javaagent:clazzfish-agent-1.1.jar ...</tt>
+     *
+     * @throws JMException the jM exception
+     */
+    @Test
+    public void testGetLoadedClassListFromAgent() {
+        try {
+            MBeanHelper.getObjectInstance(ClasspathDigger.AGENT_MBEAN);
+            List<Class<?>> classes = digger.getLoadedClassListFromAgent();
+            assertFalse(classes.isEmpty());
+            LOG.info("{} classes loaded.", classes.size());
+        } catch (InstanceNotFoundException e) {
+            LOG.warn("You must use clazzfish-agent as Java agent for this test!");
+        }
+    }
 
     /**
      * Test for {@link ClasspathDigger#isLoaded(String)}.
@@ -159,10 +162,11 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
      * (Weblogic Server) or others. One (hard) way is to use the loaded
      * packages and look from which jar file or directory each package is
      * loaded.
-     *
+     * <p>
      * But how can it be tested if this is the correct classpath? I don't know.
      * So it is not really tested here. It is only manually compared which
      * parts of the classpath are missing.
+     * </p>
      */
     @Test
     public void testGetClasspathFromPackages() {
@@ -236,7 +240,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
     /**
      * Test method for {@link ClasspathDigger#getPackageArray()}.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetPackageArray() {
         String[] packages = digger.getPackageArray();

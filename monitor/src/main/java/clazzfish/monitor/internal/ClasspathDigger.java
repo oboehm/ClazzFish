@@ -518,7 +518,7 @@ public class ClasspathDigger extends AbstractDigger {
 	/**
 	 * Gets the loaded class list from patterntesting-agent. For this method you
 	 * must start the Java VM with PatternTesting Agent as Java agent
-	 * (<i>java -javaagent:patterntesting-agent-1.x.x.jar ...</i>) because
+	 * (<i>java -javaagent:clazzfish-agent-1.1.jar ...</i>) because
 	 * this MBean is needed for the loaded classes.
 	 * <p>
 	 * This class is protected for test reason.
@@ -533,8 +533,8 @@ public class ClasspathDigger extends AbstractDigger {
 					new Object[] { this.getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
 			return Arrays.asList(classes);
 		} catch (InstanceNotFoundException e) {
-			LOG.warn("MBean \"{}\" not found ({}) - be sure to call patterntesting as agent"
-					+ " ('java -javaagent:patterntesting-agent-1.x.x.jar...')", AGENT_MBEAN, e);
+			LOG.warn("MBean \"{}\" not found ({}) - be sure to call ClazzFish as agent"
+					+ " ('java -javaagent:clazzfish-agent-1.1.jar...')", AGENT_MBEAN, e);
 			return new ArrayList<>();
 		} catch (JMException e) {
 			LOG.warn("Cannot call 'getLoadedClasses(..)' from MBean \"{}\"", AGENT_MBEAN, e);
