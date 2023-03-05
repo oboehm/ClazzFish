@@ -32,10 +32,20 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.guava</groupId>-->
+<!--            <artifactId>guava</artifactId>-->
+<!--            <version>31.1-jre</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.154</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.toolfactory</groupId>
+            <artifactId>jvm-driver</artifactId>
+            <version>9.4.2</version>
         </dependency>
 
         <!-- logging -->
@@ -66,7 +76,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>9.0.56</version>
+            <version>9.0.73</version>
             <scope>test</scope>
         </dependency>
         <dependency>

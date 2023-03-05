@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -46,8 +47,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link ClasspathMonitorTest}.
  */
-public class ClasspathMonitorTest extends AbstractMonitorTest {
-    
+public class ClasspathMonitorTest extends AbstractMonitorTest implements Serializable {
+
+    private static final long serialVersionUID = 20230114L;
     private static final Logger LOG = LoggerFactory.getLogger(ClasspathMonitorTest.class);
     private static ClasspathMonitor cpMon;
     private static long instanceTime;
@@ -462,7 +464,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest {
     @Test
     public void testGetSerialVersionUID() throws IllegalAccessException {
         LOG.info("testGetSerialVersionUID() is started.");
-        Long uid = cpMon.getSerialVersionUID(String.class.getName());
+        Long uid = cpMon.getSerialVersionUID(getClass().getName());
         LOG.info("String.serialVersionUID=" + uid);
         assertNotNull(uid);
     }

@@ -23,7 +23,6 @@ import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;
-import com.google.common.reflect.ClassPath;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +40,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This helper class digs into the classloader for information like used
@@ -492,17 +490,6 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public List<Class<?>> getLoadedClasses() {
 		try {
-			ClassPath classPath = ClassPath.from(this.classLoader);
-			Set<ClassPath.ClassInfo> classes = classPath.getAllClasses();
-			return classes.stream().map(ClassPath.ClassInfo::getClass).collect(Collectors.toList());
-		} catch (IOException ex) {
-			LOG.warn("Cannot ask {} for loaeded classes:", classLoader, ex);
-			return getLoadedClassesByReflection();
-		}
-	}
-
-	private List<Class<?>> getLoadedClassesByReflection() {
-		try {
 			Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
 			List<Class<?>> classList = (List<Class<?>>) field.get(classLoader);
 			return new ArrayList<>(classList);
@@ -512,7 +499,16 @@ public class ClasspathDigger extends AbstractDigger {
 			LOG.debug("Cannot access field 'classes' of {}:", classLoader, ex);
 		}
 		LOG.debug("Will use agent to get loaded classed because classloader {} is not supported.", classLoader);
-		return getLoadedClassListFromAgent();
+		List<Class<?>> loadedClasses = getLoadedClassListFromAgent();
+		if (loadedClasses.isEmpty()) {
+			loadedClasses = getLoadedClassesFrom(Thread.currentThread().getContextClassLoader());
+		}
+		return loadedClasses;
+	}
+
+	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {
+		BoringClassLoader bcl = new BoringClassLoader(classLoader);
+		return new ArrayList<>(bcl.getLoadedClasses());
 	}
 
 	/**
