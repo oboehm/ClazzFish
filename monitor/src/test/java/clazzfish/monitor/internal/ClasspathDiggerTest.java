@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.InstanceNotFoundException;
-import javax.management.JMException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -76,8 +75,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
      * Test get loaded class list from patterntesting-agent. For this test you
      * must start the Java VM with PatternTesting Agent as Java agent:
      * <tt>java -javaagent:clazzfish-agent-1.1.jar ...</tt>
-     *
-     * @throws JMException the jM exception
      */
     @Test
     public void testGetLoadedClassListFromAgent() {
@@ -249,7 +246,9 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         assertFalse(pkgs.contains(null), "contains null values: " + pkgs);
         Package[] clPackages = Package.getPackages();
         LOG.info("{} packages found, {} packages loaded.", packages.length, clPackages.length);
-        assertTrue(packages.length >= clPackages.length, "elements missing in packages");
+        for (Package pkg : clPackages) {
+            assertThat(pkgs, hasItem(pkg.getName().replace('.', '/') + '/'));
+        }
     }
 
     /**

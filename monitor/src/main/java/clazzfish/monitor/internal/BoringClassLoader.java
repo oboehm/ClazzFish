@@ -68,7 +68,7 @@ public class BoringClassLoader extends ClassLoader {
                     } else {
                         loadedClassSet.add(loaded);
                     }
-                } catch (ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError ex) {
+                } catch (ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError | ExceptionInInitializerError ex) {
                     log.debug("'{}' is not found as class ({}).", classname, ex.getMessage());
                     log.trace("Details:", ex);
                 }
