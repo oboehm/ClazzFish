@@ -33,7 +33,6 @@ import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -532,7 +531,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public URI[] getDoubletClasspathURIs() {
 		LOG.trace("Calculating doublet-classpath.");
 		Set<URI> classpathSet = this.getClasspathSet(this.getDoubletList());
-		return classpathSet.toArray(new URI[classpathSet.size()]);
+		return classpathSet.toArray(new URI[0]);
 	}
 
 	private SortedSet<URI> getClasspathSet(final List<Class<?>> classes) {
@@ -682,10 +681,10 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	public String getLoadedClassesAsString() {
 		List<Class<?>> classes = getLoadedClassList();
-		Collections.sort(classes, new ObjectComparator());
+		classes.sort(new ObjectComparator());
 		StringBuilder sbuf = new StringBuilder();
-		for (Iterator<Class<?>> i = classes.iterator(); i.hasNext();) {
-			sbuf.append(i.next().toString().trim());
+		for (Class<?> aClass : classes) {
+			sbuf.append(aClass.toString().trim());
 			sbuf.append('\n');
 		}
 		return sbuf.toString().trim();
@@ -778,9 +777,9 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 		Collection<String> classlist = new ArrayList<>();
 		String[] classes = this.getClasspathClasses();
 		String prefix = packageName.endsWith(".") ? packageName : packageName + ".";
-		for (int i = 0; i < classes.length; i++) {
-			if (classes[i].startsWith(prefix)) {
-				classlist.add(classes[i]);
+		for (String aClass : classes) {
+			if (aClass.startsWith(prefix)) {
+				classlist.add(aClass);
 			}
 		}
 		return classlist;
@@ -819,10 +818,10 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the concrete class list
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<Class<? extends Object>> getConcreteClassList(final String packageName) {
+	public Collection<Class<?>> getConcreteClassList(final String packageName) {
 		assert packageName != null;
 		Collection<String> classList = this.getClasspathClassList(packageName);
-		Collection<Class<? extends Object>> classes = new ArrayList<>(classList.size());
+		Collection<Class<?>> classes = new ArrayList<>(classList.size());
 		for (String classname : classList) {
 			try {
 				Class<Object> clazz = (Class<Object>) Class.forName(classname);
@@ -865,7 +864,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 
 	private String[] getClasspathClassArray() {
         Set<String> classSet = this.classpathDigger.getClasses();
-		return classSet.toArray(new String[classSet.size()]);
+		return classSet.toArray(new String[0]);
 	}
 
 	/**
@@ -894,6 +893,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the loaded classpath (excluding the bootclasspath)
 	 */
 	public SortedSet<URI> getUsedClasspathSet() {
+		// TODO: optimize it, use BoringClassLoader#getUnusedPackages()
 		List<Class<?>> loadedClassList = this.getLoadedClassList();
 		SortedSet<URI> usedClasspathSet = new TreeSet<>();
 		for (Class<?> clazz : loadedClassList) {
@@ -943,7 +943,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public URI[] getUsedClasspathURIs() {
 		LOG.debug("calculating used classpath...");
 		SortedSet<URI> classpathSet = this.getUsedClasspathSet();
-		return classpathSet.toArray(new URI[classpathSet.size()]);
+		return classpathSet.toArray(new URI[0]);
 	}
 
 	/**

@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -45,10 +45,19 @@ class BoringClassLoaderTest {
     @Test
     void getAllPackageNames() {
         Set<String> packageNames = classLoader.getAllPackageNames();
+        assertThat(packageNames, not(hasItem("")));
         Package[] packages = Package.getPackages();
         for (Package pkg : packages) {
             assertThat(packageNames, hasItem(pkg.getName()));
         }
+    }
+
+    @Test
+    void getUnusedPackageNames() {
+        Set<String> unusedPackageNames = classLoader.getUnusedPackageNames();
+        assertThat(unusedPackageNames.size(), greaterThan(0));
+        Set<String> allPackageNames = classLoader.getAllPackageNames();
+        assertThat(unusedPackageNames.size(), lessThan(allPackageNames.size()));
     }
 
 }

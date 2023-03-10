@@ -62,6 +62,11 @@ public class BoringClassLoader extends ClassLoader {
         this.parent = parent;
     }
 
+    /**
+     * Gets all package names. Also the packages which are not yet loaded.
+     *
+     * @return set of all package names
+     */
     public Set<String> getAllPackageNames() {
         Set<String> packageNames;
         try (ScanResult scanResult = new ClassGraph()
@@ -74,6 +79,15 @@ public class BoringClassLoader extends ClassLoader {
         }
         for (Package pkg : getPackages()) {
             packageNames.add(pkg.getName());
+        }
+        packageNames.remove("");
+        return packageNames;
+    }
+
+    public Set<String> getUnusedPackageNames() {
+        Set<String> packageNames = getAllPackageNames();
+        for (Package pkg : getPackages()) {
+            packageNames.remove(pkg.getName());
         }
         return packageNames;
     }
