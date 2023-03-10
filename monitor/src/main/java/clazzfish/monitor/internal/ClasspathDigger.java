@@ -24,7 +24,6 @@ import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,7 +287,7 @@ public class ClasspathDigger extends AbstractDigger {
 	}
 
 	/**
-	 * Get all packages found in the classpath.
+	 * Get <b>all</b> packages found in the classpath.
 	 * <p>
 	 * In contradiction to {@link #getLoadedPackageArray()} we don't ask the
 	 * classloader (e.g. by calling
@@ -306,29 +305,11 @@ public class ClasspathDigger extends AbstractDigger {
 
 	private Collection<String> getPackages() {
 		Collection<String> packages = new TreeSet<>();
-		String[] classpath = this.getClasspath();
-		for (String s : classpath) {
-			addPackages(packages, new File(s));
+		BoringClassLoader bcl = BoringClassLoader.of(classLoader);
+		for (String name : bcl.getAllPackageNames()) {
+			packages.add(Converter.packageToResource(name) + '/');
 		}
 		return packages;
-	}
-
-	private static void addPackages(final Collection<String> packages, final File path) {
-		LOG.trace("Adding packages from {}...", path);
-		try {
-			if (path.isDirectory()) {
-				addPackagesFromDir(packages, path);
-			} else {
-				addElementsFromArchive(packages, path, "/");
-			}
-		} catch (IOException ioe) {
-			LOG.warn("Cannot add packages from {}:", path.getAbsolutePath(), ioe);
-		}
-	}
-
-	private static void addPackagesFromDir(final Collection<String> packages, final File dir) throws IOException {
-		ResourceWalker walker = new ResourceWalker(dir, DirectoryFileFilter.DIRECTORY);
-		packages.addAll(walker.getPackages());
 	}
 
 	private static void addElementsFromArchive(Collection<String> elements, File archive, String suffix)
@@ -507,7 +488,7 @@ public class ClasspathDigger extends AbstractDigger {
 	}
 
 	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {
-		BoringClassLoader bcl = new BoringClassLoader(classLoader);
+		BoringClassLoader bcl = BoringClassLoader.of(classLoader);
 		return new ArrayList<>(bcl.getLoadedClasses());
 	}
 

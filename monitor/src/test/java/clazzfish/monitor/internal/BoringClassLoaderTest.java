@@ -20,7 +20,10 @@ package clazzfish.monitor.internal;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -31,11 +34,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 class BoringClassLoaderTest {
 
+    private final BoringClassLoader classLoader = new BoringClassLoader();
+
     @Test
     void getLoadedClasses() {
-        BoringClassLoader cl = new BoringClassLoader();
-        Collection<Class<?>> loadedClasses = cl.getLoadedClasses();
+        Collection<Class<?>> loadedClasses = classLoader.getLoadedClasses();
         assertFalse(loadedClasses.isEmpty());
+    }
+
+    @Test
+    void getAllPackageNames() {
+        Set<String> packageNames = classLoader.getAllPackageNames();
+        Package[] packages = Package.getPackages();
+        for (Package pkg : packages) {
+            assertThat(packageNames, hasItem(pkg.getName()));
+        }
     }
 
 }

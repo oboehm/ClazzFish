@@ -17,10 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
+import io.github.classgraph.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +25,8 @@ import java.util.*;
 
 /**
  * Die Klasse BoringClassLoader is used for boring into some internals of
- * a {@link ClassLoader}.
+ * a {@link ClassLoader}. It uses "io.github.classgraph" for boring and
+ * encapsulate the needed API calls.
  *
  * @author oboehm
  * @since 2.0 (15.02.23)
@@ -39,15 +37,59 @@ public class BoringClassLoader extends ClassLoader {
     private final ClassLoader parent;
     private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
-    public BoringClassLoader() {
+    /**
+     * Creates a {@link BoringClassLoader} from the given classLoder.
+     * If the given classLoader itself is a {@link BoringClassLoader} it will
+     * be returned. In this case no new {@link BoringClassLoader} is created.
+     *
+     * @param classLoader the parent {@link ClassLoader}
+     * @return a new {@link BoringClassLoader} or the classLoader itself
+     */
+    public static BoringClassLoader of(ClassLoader classLoader) {
+        if (classLoader instanceof BoringClassLoader) {
+            return (BoringClassLoader) classLoader;
+        } else {
+            return new BoringClassLoader(classLoader);
+        }
+    }
+
+    BoringClassLoader() {
         this(Thread.currentThread().getContextClassLoader());
     }
 
-    public BoringClassLoader(ClassLoader parent) {
+    private BoringClassLoader(ClassLoader parent) {
         super(parent);
         this.parent = parent;
     }
 
+    public Set<String> getAllPackageNames() {
+        Set<String> packageNames;
+        try (ScanResult scanResult = new ClassGraph()
+                .enableExternalClasses()
+                .verbose(log.isTraceEnabled())
+                .scan()
+        ) {
+            PackageInfoList packageInfos = scanResult.getPackageInfo();
+            packageNames = new HashSet<>(packageInfos.getNames());
+        }
+        for (Package pkg : getPackages()) {
+            packageNames.add(pkg.getName());
+        }
+        return packageNames;
+    }
+
+    /**
+     * Gets the laoded classes which normally is stored in the classes field
+     * of the parent classloader. But since Java 11 it is no longer possible
+     * to access this field by reflection. So now the loaded packages are now
+     * scanned for the classes which might be loaded.
+     * <p>
+     * NOTE: This approach probably finds more classes as are really loaded by
+     * the real classloader.
+     * </p>
+     *
+     * @return all loaded classes (and probably a little bit more)
+     */
     public Set<Class<?>> getLoadedClasses() {
         Set<Class<?>> loadedClassSet = new HashSet<>();
         Package[] packages = parent.getDefinedPackages();
