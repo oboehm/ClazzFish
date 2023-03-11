@@ -35,8 +35,9 @@ import java.util.*;
 public class BoringClassLoader extends ClassLoader {
 
     private static final Logger log = LoggerFactory.getLogger(BoringClassLoader.class);
-    private final ClassLoader parent;
     private final Map<String, Class<?>> loadedClasses = new HashMap<>();
+    private String[] packageNames = new String[0];
+    private final SortedSet<URI> usedClasspath = new TreeSet<>();
 
     /**
      * Creates a {@link BoringClassLoader} from the given classLoder.
@@ -60,7 +61,6 @@ public class BoringClassLoader extends ClassLoader {
 
     private BoringClassLoader(ClassLoader parent) {
         super(parent);
-        this.parent = parent;
     }
 
     /**
@@ -133,16 +133,22 @@ public class BoringClassLoader extends ClassLoader {
         return loadedClassSet;
     }
 
-    public Set<URI> getUsedClassspath() {
-        Set<URI> usedClasspath = new TreeSet<>();
-        String[] packageNames = getPackageNames();
-        try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages(packageNames)
-                .verbose(log.isTraceEnabled())
-                .scan()) {
-            ResourceList rscList = scanResult.getAllResources();
-            for (Resource rsc : rscList) {
-                usedClasspath.add(rsc.getClasspathElementURI());
+    /**
+     * Scans the classpath to return a set of the used classpath.
+     *
+     * @return used classpath (sorted)
+     */
+    public SortedSet<URI> getUsedClassspath() {
+        if (usedClasspath.isEmpty()) {
+            String[] packageNames = getPackageNames();
+            try (ScanResult scanResult = new ClassGraph()
+                    .acceptPackages(packageNames)
+                    .verbose(log.isTraceEnabled())
+                    .scan()) {
+                ResourceList rscList = scanResult.getAllResources();
+                for (Resource rsc : rscList) {
+                    usedClasspath.add(rsc.getClasspathElementURI());
+                }
             }
         }
         return usedClasspath;
@@ -150,7 +156,11 @@ public class BoringClassLoader extends ClassLoader {
 
     private String[] getPackageNames() {
         Package[] packages = super.getPackages();
-        return Arrays.stream(packages).map(Package::getName).toArray(String[]::new);
+        if (packages.length != packageNames.length) {
+            packageNames = Arrays.stream(packages).map(Package::getName).toArray(String[]::new);
+            usedClasspath.clear();
+        }
+        return packageNames;
     }
 
     @Override

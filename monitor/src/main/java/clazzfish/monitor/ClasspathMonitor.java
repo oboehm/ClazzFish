@@ -18,6 +18,7 @@
 
 package clazzfish.monitor;
 
+import clazzfish.monitor.internal.BoringClassLoader;
 import clazzfish.monitor.internal.ClasspathDigger;
 import clazzfish.monitor.internal.DoubletDigger;
 import clazzfish.monitor.jmx.MBeanHelper;
@@ -83,7 +84,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 			"DoubletClasspathURIs", "Doublets", "LoadedClasses", "LoadedPackages", "IncompatibleClasses",
 			"IncompatibleClasspath", "IncompatibleClasspathURIs", "UnusedClasses", "UnusedClasspath", "UsedClasspath",
 			"UsedClasspathURIs" };
-	private static final URI NULL_URI = URI.create("http://null");
 
 	private final ClasspathDigger classpathDigger;
 	private final DoubletDigger doubletDigger;
@@ -94,7 +94,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	private final FutureTask<Set<String>> unusedClasses;
 
 	private final Map<Class<?>, URI> usedClassCache = new ConcurrentHashMap<>();
-	private final Map<Class<?>, URI> usedClasspathCache = new ConcurrentHashMap<>();
 	private final List<Class<?>> incompatibleClassList = new ArrayList<>();
 
 	static {
@@ -110,7 +109,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	protected ClasspathMonitor() {
 		this.classpathDigger = new ClasspathDigger();
-		this.cloader = this.classpathDigger.getClassLoader();
+		this.cloader = BoringClassLoader.of(this.classpathDigger.getClassLoader());
 		this.classpath = this.classpathDigger.getClasspath();
 		this.allClasspathClasses = getFutureCasspathClasses();
 		this.unusedClasses = getFutureUnusedClasses();
@@ -893,31 +892,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the loaded classpath (excluding the bootclasspath)
 	 */
 	public SortedSet<URI> getUsedClasspathSet() {
-		// TODO: optimize it, use BoringClassLoader#getUsedClasspath()
-		SortedSet<URI> usedClasspathSet = new TreeSet<>();
-		List<Class<?>> loadedClassList = this.getLoadedClassList();
-		for (Class<?> clazz : loadedClassList) {
-			URI classpathUri = this.getClasspathOf(clazz);
-			if (!NULL_URI.equals(classpathUri)) {
-				usedClasspathSet.add(classpathUri);
-			}
-		}
-		return usedClasspathSet;
-	}
-
-	private URI getClasspathOf(final Class<?> clazz) {
-		URI classpathUri = this.usedClasspathCache.get(clazz);
-		if (classpathUri == null) {
-			URI classUri = this.whichClass(clazz);
-			if (classUri == null) {
-				LOG.trace("URI for {} was not found (probably a proxy class).", clazz);
-				classpathUri = NULL_URI;
-			} else {
-				classpathUri = ClasspathHelper.getParent(classUri, clazz);
-			}
-			this.usedClasspathCache.put(clazz, classpathUri);
-		}
-		return classpathUri;
+		return BoringClassLoader.of(cloader).getUsedClassspath();
 	}
 
 	/**
