@@ -893,9 +893,9 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the loaded classpath (excluding the bootclasspath)
 	 */
 	public SortedSet<URI> getUsedClasspathSet() {
-		// TODO: optimize it, use BoringClassLoader#getUnusedPackages()
-		List<Class<?>> loadedClassList = this.getLoadedClassList();
+		// TODO: optimize it, use BoringClassLoader#getUsedClasspath()
 		SortedSet<URI> usedClasspathSet = new TreeSet<>();
+		List<Class<?>> loadedClassList = this.getLoadedClassList();
 		for (Class<?> clazz : loadedClassList) {
 			URI classpathUri = this.getClasspathOf(clazz);
 			if (!NULL_URI.equals(classpathUri)) {

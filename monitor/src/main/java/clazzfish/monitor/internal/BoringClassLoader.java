@@ -21,6 +21,7 @@ import io.github.classgraph.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -106,8 +107,7 @@ public class BoringClassLoader extends ClassLoader {
      */
     public Set<Class<?>> getLoadedClasses() {
         Set<Class<?>> loadedClassSet = new HashSet<>();
-        Package[] packages = parent.getDefinedPackages();
-        String[] packageNames = Arrays.stream(packages).map(Package::getName).toArray(String[]::new);
+        String[] packageNames = getPackageNames();
         try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .acceptPackages(packageNames)
@@ -131,6 +131,26 @@ public class BoringClassLoader extends ClassLoader {
             }
         }
         return loadedClassSet;
+    }
+
+    public Set<URI> getUsedClassspath() {
+        Set<URI> usedClasspath = new TreeSet<>();
+        String[] packageNames = getPackageNames();
+        try (ScanResult scanResult = new ClassGraph()
+                .acceptPackages(packageNames)
+                .verbose(log.isTraceEnabled())
+                .scan()) {
+            ResourceList rscList = scanResult.getAllResources();
+            for (Resource rsc : rscList) {
+                usedClasspath.add(rsc.getClasspathElementURI());
+            }
+        }
+        return usedClasspath;
+    }
+
+    private String[] getPackageNames() {
+        Package[] packages = super.getPackages();
+        return Arrays.stream(packages).map(Package::getName).toArray(String[]::new);
     }
 
     @Override

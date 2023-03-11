@@ -19,6 +19,7 @@ package clazzfish.monitor.internal;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
 
@@ -58,6 +59,12 @@ class BoringClassLoaderTest {
         assertThat(unusedPackageNames.size(), greaterThan(0));
         Set<String> allPackageNames = classLoader.getAllPackageNames();
         assertThat(unusedPackageNames.size(), lessThan(allPackageNames.size()));
+    }
+
+    @Test
+    void getUsedClasspath() {
+        Set<URI> usedClasspath = classLoader.getUsedClassspath();
+        assertThat(usedClasspath.size(), greaterThan(0));
     }
 
 }
