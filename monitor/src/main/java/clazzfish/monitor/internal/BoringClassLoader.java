@@ -119,11 +119,9 @@ public class BoringClassLoader extends ClassLoader {
                 try {
                     Class<?> loaded = super.findLoadedClass(classname);
                     if (loaded == null) {
-                        Class<?> clazz = Class.forName(classname);
-                        loadedClassSet.add(clazz);
-                    } else {
-                        loadedClassSet.add(loaded);
+                        loaded = findClass(classname);
                     }
+                    loadedClassSet.add(loaded);
                 } catch (ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError | ExceptionInInitializerError ex) {
                     log.debug("'{}' is not found as class ({}).", classname, ex.getMessage());
                     log.trace("Details:", ex);
@@ -165,12 +163,21 @@ public class BoringClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        Class<?> found = super.findClass(name);
+        Class<?> found = loadedClasses.get(name);
         if (found != null) {
-            loadedClasses.put(name, found);
             return found;
         }
-        return loadedClasses.get(name);
+        try {
+            found = super.findClass(name);
+        } catch (ClassNotFoundException ex) {
+            log.debug("Class '{}' was not found by superclass.", name);
+            log.trace("Details:", ex);
+            found = Class.forName(name);
+        }
+        if (found != null) {
+            loadedClasses.put(name, found);
+        }
+        return found;
     }
 
 //    private static Map<String, Class<?>> scanStacktrace(StackTraceElement[] stacktrace) {

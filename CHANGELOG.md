@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- works now on Java 17
-
+- support for Java 9+
+- based on [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner)
 
 ## [1.1] (07-Jan-2022)
 

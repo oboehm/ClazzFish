@@ -44,6 +44,13 @@ class BoringClassLoaderTest {
     }
 
     @Test
+    void getLoadedClassesTwice() {
+        Collection<Class<?>> l1 = classLoader.getLoadedClasses();
+        Collection<Class<?>> l2 = classLoader.getLoadedClasses();
+        assertThat(l2, hasItems(l1.toArray(new Class<?>[0])));
+    }
+
+    @Test
     void getAllPackageNames() {
         Set<String> packageNames = classLoader.getAllPackageNames();
         assertThat(packageNames, not(hasItem("")));
