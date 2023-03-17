@@ -1,5 +1,3 @@
-[![Q-Gate](https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=de.aosd.clazzfish:clazzfish)](https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=coverage)](https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish)
 
@@ -10,14 +8,11 @@ Originally it was part of [PatternTesting](http://patterntesting.org) but is now
 
 
 
-## Roadmap
+## History
 
-With v0.5 and v0.8 the first steps are done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
-The next steps will be:
-
-* provide basic documentation, code cleanup, polishing
-* use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath
-* extend documentation
+With v0.5 and v0.8 the first steps were done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
+V1.x is mainly for Java 8.
+V2.x will support Java 9 and beyond and uses now the [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath.
 
 
 

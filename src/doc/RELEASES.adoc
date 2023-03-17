@@ -11,29 +11,11 @@ Other infos are present in the top link:../../README.md[README].
 |===
 |server |master |develop |configuration
 
-|https://app.travis-ci.com/github/oboehm/ClazzFish[Travis-CI.com]
-|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://app.travis-ci.com/oboehm/ClazzFish.svg?branch=master[Build Status]]
-|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://app.travis-ci.com/oboehm/ClazzFish.svg?branch=develop[Build Status]]
-|s. link:../.travis.yml[.travis.yml]
+|https://github.com/oboehm/ClazzFish/actions[GitHub Actions]
+|-
+|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://github.com/oboehm/ClazzFish/actions/workflows/maven.yml/badge.svg[Build Status]]
+|s. link:../.github/workflows/maven.yml[maven.yml]
 
-|https://sonarcloud.io/projects[sonarcloud.io]
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=de.aosd.clazzfish:clazzfish[Q-Gate]]
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=de.aosd.clazzfish:clazzfish:develop[Q-Gate]]
-|`sonar:sonar`
-
-|
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=coverage[Coverage]]
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish%3Adevelop&metric=coverage[Coverage]]
-|
-
-|
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=sqale_rating[Maintenance]]
- https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=reliability_rating[Reliability]]
- https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish&metric=security_rating[Security]]
-|https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish%3Adevelop&metric=sqale_rating[Maintenance]]
- https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish%3Adevelop&metric=reliability_rating[Reliability]]
- https://sonarcloud.io/dashboard?id=de.aosd.clazzfish%3Aclazzfish%3Adevelop[image:https://sonarcloud.io/api/project_badges/measure?project=de.aosd.clazzfish%3Aclazzfish%3Adevelop&metric=security_rating[Security]]
-|
 
 |===
 
