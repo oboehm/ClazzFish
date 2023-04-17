@@ -87,6 +87,20 @@ Other JDBC drivers must be registered manually (as in the example above).
 
 == Logging
 
+=== Log4J
+
+If you want to use Log4J add `org.apache.logging.log4j:log4j-slf4j2-impl` to your dependencies.
+In Maven this looks like
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-slf4j2-impl</artifactId>
+</dependency>
+----
+
 To log the SQL statements set the log level for `clazzfish.jdbc.SqlStatistic` to `DEBUG`:
 
 .Logger Configuration
@@ -115,6 +129,13 @@ This is the output of the log you can see if you start the unit test
 link:../../sample/src/test/java/clazzfish/sample/jdbc/BankRepositoryTest.java[BankRepositoryTest]
 with link:../../sample/src/main/resources/log4j2.xml[log4j2.xml] as LOG4J configuration
 in link:../../sample[clazzfish-sample].
+
+
+
+=== Other Logging Frameworks
+
+Logging is based on SLF4J.
+So if you want to use other logging framewors see the https://xxx[https://sematext.com/blog/slf4j-tutorial/].
 
 
 

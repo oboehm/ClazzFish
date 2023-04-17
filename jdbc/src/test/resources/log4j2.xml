@@ -7,6 +7,7 @@
   </Appenders>
   <Loggers>
     <Logger name="clazzfish.monitor" level="INFO" />
+    <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG" />
     <Root level="INFO">
       <AppenderRef ref="CONSOLE" />
     </Root>
