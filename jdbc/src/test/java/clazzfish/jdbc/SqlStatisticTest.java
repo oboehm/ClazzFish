@@ -32,13 +32,15 @@ import javax.management.openmbean.TabularData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link SqlStatistic} class.
@@ -190,6 +192,31 @@ public class SqlStatisticTest {
         String mbeanName = "test.mon.SqlStat";
         SqlStatistic.registerAsMBean(mbeanName);
         assertTrue(MBeanHelper.isRegistered(mbeanName), "not registered: " + mbeanName);
+    }
+
+    /**
+     * Unit test for issue #14.
+     *
+     * @throws SQLException in case of error
+     * @throws IOException in case of error
+     */
+    @Test
+    public void testLog() throws SQLException, IOException {
+        ProxyDriver.register();
+        try (Connection connection = DriverManager.getConnection("jdbc:proxy:hsqldb:mem:testdb")) {
+            assertNotNull(connection);
+            executeUpdate("CREATE TABLE users (name VARCHAR(50), password VARCHAR(16))", connection);
+            executeUpdate("INSERT INTO users (name, password) VALUES ('James', 'secret')", connection);
+        }
+        File logfile = new File("target", "sql.log");   // see log4j2.xml
+        String sqls = FileUtils.readFileToString(logfile, StandardCharsets.UTF_8);
+        assertThat("see " + logfile, sqls, not(containsString("secret")));
+    }
+
+    private static void executeUpdate(final String sql, final Connection connection) throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+        }
     }
 
 }

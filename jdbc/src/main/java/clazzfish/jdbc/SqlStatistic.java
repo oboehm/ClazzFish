@@ -29,6 +29,7 @@ import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -108,7 +109,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	public static void stop(final ProfileMonitor mon, final String command, final Object returnValue) {
 		mon.stop();
 		if (LOG.isDebugEnabled()) {
-			String msg = '"' + command + "\" returned with " + Converter.toShortString(returnValue) + " after "
+			String msg = '"' + filter(command) + "\" returned with " + Converter.toShortString(returnValue) + " after "
 					+ mon.getLastTime();
 			if (LOG.isTraceEnabled()) {
 				StackTraceElement[] stacktrace = StackTraceScanner.getCallerStackTrace(new Pattern[0],
@@ -118,6 +119,41 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 				LOG.debug("{}.", msg);
 			}
 		}
+	}
+
+	private static String filter(String command) {
+		String normalized = command.toUpperCase().trim();
+		if (normalized.startsWith("INSERT") && normalized.contains("PASSW")) {
+			return maskPassword(command);
+		}
+		return command;
+	}
+
+	// parses a string like "INSERT INTO users (name, password) VALUES ('James', 'secret')"
+	private static String maskPassword(String command) {
+		Pattern pattern = Pattern.compile("(.*)\\((.*)\\)(.*)\\((.*)\\)(.*)", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(command);
+		if (!matcher.matches()) {
+			return command;
+		}
+		String[] argnames = matcher.group(2).trim().split(",");
+		String[] values = matcher.group(4).trim().split(",");
+		StringBuilder buf = new StringBuilder(matcher.group(1)).append('(');
+		for (int i = 0; i < argnames.length; i++) {
+			String arg = argnames[i].trim();
+			buf.append(arg).append(", ");
+			if (arg.toUpperCase().startsWith("PASSW")) {
+				values[i] = "...";
+			}
+		}
+		buf.delete(buf.length()-2, buf.length());
+		buf.append(')').append(matcher.group(3)).append('(');
+		for (int i = 0; i < values.length; i++) {
+			buf.append(values[i]).append(", ");
+		}
+		buf.delete(buf.length()-2, buf.length());
+		buf.append(')').append(matcher.group(5));
+		return buf.toString();
 	}
 
 	/**

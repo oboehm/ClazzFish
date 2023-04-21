@@ -2,12 +2,17 @@
 <Configuration status="WARN" xmlns="http://logging.apache.org/log4j/2.0/config">
   <Appenders>
     <Console name="CONSOLE" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} %4.4level [%-4.4t] %-23.23C{3} - %msg%n" />
+      <PatternLayout pattern="%d{HH:mm:ss} %3.-3level [%-4.4t] %-23.23C{3} - %msg%n" />
     </Console>
+    <File name="LOGFILE" fileName="target/sql.log" append="false">
+      <PatternLayout pattern="%msg%n" />
+    </File>
   </Appenders>
   <Loggers>
     <Logger name="clazzfish.monitor" level="INFO" />
-    <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG" />
+    <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG">
+      <AppenderRef ref="LOGFILE" />
+    </Logger>
     <Root level="INFO">
       <AppenderRef ref="CONSOLE" />
     </Root>
