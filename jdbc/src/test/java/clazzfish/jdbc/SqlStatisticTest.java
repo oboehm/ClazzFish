@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class SqlStatisticTest {
 
-    private static Logger log = LoggerFactory.getLogger(SqlStatisticTest.class);
-    private static String[] sqls = {
+    private static final Logger log = LoggerFactory.getLogger(SqlStatisticTest.class);
+    private static final String[] sqls = {
         "SELECT a FROM b",
         "SELECT a FROM c",
         "SELECT a FROM d",
@@ -207,6 +207,7 @@ public class SqlStatisticTest {
             assertNotNull(connection);
             executeUpdate("CREATE TABLE users (name VARCHAR(50), password VARCHAR(16))", connection);
             executeUpdate("INSERT INTO users (name, password) VALUES ('James', 'secret')", connection);
+            executeUpdate("UPDATE users SET password = 'topsecret' WHERE name = 'James'", connection);
         }
         File logfile = new File("target", "sql.log");   // see log4j2.xml
         String sqls = FileUtils.readFileToString(logfile, StandardCharsets.UTF_8);

@@ -20,6 +20,7 @@
 
 package clazzfish.jdbc;
 
+import clazzfish.jdbc.internal.PasswordFilter;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import clazzfish.jdbc.monitor.ProfileMonitor;
@@ -29,7 +30,6 @@ import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -59,10 +59,10 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	protected SqlStatistic() {
 		super("SQL");
 	}
-	
+
 	/**
 	 * To start a new statistic call this method. In contradiction to
-	 * {@link AbstractStatistic#reset()} old {@link ProfileMonitor}s will 
+	 * {@link AbstractStatistic#reset()} old {@link ProfileMonitor}s will
 	 * removed.
 	 */
 	@Override
@@ -99,17 +99,14 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	 * Stops the given 'mon' and logs the given command with the needed time if
 	 * debug is enabled.
 	 *
-	 * @param mon
-	 *            the mon
-	 * @param command
-	 *            the command
-	 * @param returnValue
-	 *            the return value
+	 * @param mon         the monitor
+	 * @param command     the SQL command
+	 * @param returnValue the monitored return value
 	 */
 	public static void stop(final ProfileMonitor mon, final String command, final Object returnValue) {
 		mon.stop();
 		if (LOG.isDebugEnabled()) {
-			String msg = '"' + filter(command) + "\" returned with " + Converter.toShortString(returnValue) + " after "
+			String msg = '"' + PasswordFilter.filter(command) + "\" returned with " + Converter.toShortString(returnValue) + " after "
 					+ mon.getLastTime();
 			if (LOG.isTraceEnabled()) {
 				StackTraceElement[] stacktrace = StackTraceScanner.getCallerStackTrace(new Pattern[0],
@@ -121,41 +118,6 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 		}
 	}
 
-	private static String filter(String command) {
-		String normalized = command.toUpperCase().trim();
-		if (normalized.startsWith("INSERT") && normalized.contains("PASSW")) {
-			return maskPassword(command);
-		}
-		return command;
-	}
-
-	// parses a string like "INSERT INTO users (name, password) VALUES ('James', 'secret')"
-	private static String maskPassword(String command) {
-		Pattern pattern = Pattern.compile("(.*)\\((.*)\\)(.*)\\((.*)\\)(.*)", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(command);
-		if (!matcher.matches()) {
-			return command;
-		}
-		String[] argnames = matcher.group(2).trim().split(",");
-		String[] values = matcher.group(4).trim().split(",");
-		StringBuilder buf = new StringBuilder(matcher.group(1)).append('(');
-		for (int i = 0; i < argnames.length; i++) {
-			String arg = argnames[i].trim();
-			buf.append(arg).append(", ");
-			if (arg.toUpperCase().startsWith("PASSW")) {
-				values[i] = "...";
-			}
-		}
-		buf.delete(buf.length()-2, buf.length());
-		buf.append(')').append(matcher.group(3)).append('(');
-		for (int i = 0; i < values.length; i++) {
-			buf.append(values[i]).append(", ");
-		}
-		buf.delete(buf.length()-2, buf.length());
-		buf.append(')').append(matcher.group(5));
-		return buf.toString();
-	}
-
 	/**
 	 * You can register the instance as shutdown hook. If the VM is terminated
 	 * the profile values are logged and dumped to a CSV file in the tmp
@@ -165,7 +127,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 		Runtime.getRuntime().addShutdownHook(SQL_INSTANCE);
 		LOG.debug("{} is registered as shutdown hook.", SQL_INSTANCE);
 	}
-	
+
 	/**
 	 * With this method you can register the monitor with your own name. This is
 	 * e.g. useful if you have an application server with several applications.
@@ -179,5 +141,5 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	public static void registerAsMBean(final String name) {
 		getInstance().registerMeAsMBean(MBeanHelper.getAsObjectName(name));
 	}
-	
+
 }
