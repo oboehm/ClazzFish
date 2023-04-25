@@ -44,7 +44,7 @@ public class PasswordFilter {
         if (normalized.contains("PASSW")) {
             if (normalized.startsWith("INSERT")) {
                 return maskInsertPassword(command);
-            } else if (normalized.startsWith("UPDATE")) {
+            } else {
                 return maskUpdatePassword(command);
             }
         }

@@ -30,7 +30,6 @@ import javax.management.ObjectName;
 import java.io.*;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -560,7 +559,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 		Field[] fields = cl.getDeclaredFields();
 		try {
 			AccessibleObject.setAccessible(fields, true);
-		} catch (InaccessibleObjectException ex) {
+		} catch (RuntimeException ex) {
 			LOG.info("Start JVM with '--add-opens java.base/jdk.internal.loader=ALL-UNNAMED' to dump fields of {}.", cl);
 			LOG.debug("Details:", ex);
 		}
@@ -722,7 +721,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 				used.add(classname);
 			}
 		}
-		unusedSet.removeAll(used);
+		used.forEach(unusedSet::remove);
 		String[] unused = new String[unusedSet.size()];
 		unusedSet.toArray(unused);
 		return unused;

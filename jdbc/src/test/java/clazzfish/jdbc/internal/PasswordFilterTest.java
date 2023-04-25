@@ -39,18 +39,26 @@ class PasswordFilterTest {
     @Test
     void filterInsert() {
         String sql = "INSERT INTO users (password, name) VALUES ('secret', 'James')";
-        String filtered = PasswordFilter.filter(sql);
-        assertNotEquals(sql, filtered);
-        log.info("filtered = \"{}\"", filtered);
+        checkFilter(sql);
     }
 
     @Test
     void filterUpdate() {
-        String sql = "UPDATE users SET password = 'geheim' WHERE id = 007";
-        String filtered = PasswordFilter.filter(sql);
-        assertNotEquals(sql, filtered);
-        assertThat(filtered, not(containsString("geheim")));
-        log.info("filtered = \"{}\"", filtered);
+        String sql = "UPDATE users SET password = 'secret' WHERE id = 007";
+        checkFilter(sql);
     }
 
+    @Test
+    void filterSelect() {
+        String sql = "SELECT id FROM online l, kunden k WHERE l.id = k.id AND l.password = 'secret'";
+        checkFilter(sql);
+    }
+
+
+    private static void checkFilter(String sql) {
+        String filtered = PasswordFilter.filter(sql);
+        assertNotEquals(sql, filtered);
+        assertThat(filtered, not(containsString("secret")));
+        log.info("filtered = \"{}\"", filtered);
+    }
 }
