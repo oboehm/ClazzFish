@@ -45,13 +45,14 @@ public class ProxyDriver implements Driver {
 	private static final Logger LOG = LoggerFactory.getLogger(ProxyDriver.class);
 	private static final Map<String, String> KNOWN_DRIVERS = new HashMap<>();
 
-	/** Register class as JDBC driver. */
+	/* Register class as JDBC driver. */
 	static {
 		register();
 		KNOWN_DRIVERS.put("hsqldb", "org.hsqldb.jdbc.JDBCDriver");
 		KNOWN_DRIVERS.put("informix-sqli", "com.informix.jdbc.IfxDriver");
 		KNOWN_DRIVERS.put("jturbo", "com.newatlanta.jturbo.driver.Driver");
 		KNOWN_DRIVERS.put("sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		KNOWN_DRIVERS.put("postgresql", "org.postgresql.Driver");
 	}
 
 	private static String getKnownDriverFor(final String jdbcURL) {
@@ -177,7 +178,7 @@ public class ProxyDriver implements Driver {
 			if (driverName != null) {
 				Class<? extends Driver> driverClass = (Class<? extends Driver>) Class.forName(driverName);
 				LOG.debug("Driver {} for URL \"{}\" loaded.", driverName, jdbcURL);
-				Driver driver = driverClass.newInstance();
+				Driver driver = driverClass.getDeclaredConstructor().newInstance();
 				DriverManager.registerDriver(driver);
 				LOG.debug("Driver {} for URL \"{}\" registered.", driver, jdbcURL);
 			}

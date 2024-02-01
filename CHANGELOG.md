@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- clazzfish-jdbc: now with PostgreSQL support
+
 ### Changed
 - update to Java 17
 - using testcontainers for integration tests

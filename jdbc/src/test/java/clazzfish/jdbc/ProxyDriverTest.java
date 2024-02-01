@@ -192,27 +192,6 @@ public final class ProxyDriverTest extends AbstractDbTest {
     }
 
     /**
-     * Here we test if we can execute SQL statements with the
-     * {@link ProxyDriver}.
-     *
-     * @throws SQLException the SQL exception
-     */
-    @Test
-    public void testSQL() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(JDBC_PROXY_HSQLDB);
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("insert into PERSONS (ID, NAME, CITY) VALUES (1, 'Dagobert Duck', 'Ducktales')");
-            stmt.execute("select NAME, CITY from PERSONS where CITY = 'Ducktales'");
-            try (ResultSet rs = stmt.getResultSet()) {
-                while (rs.next()) {
-                    assertEquals("Ducktales", rs.getString(2));
-                    log.info("name = {}", rs.getString(1));
-                }
-            }
-        }
-    }
-
-    /**
      * If autocommit is off and we forgot a commit after an update statement
      * we want to see a warning in the log. But only if there was not a
      * rollback before.

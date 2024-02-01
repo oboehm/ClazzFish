@@ -17,6 +17,7 @@
  */
 package clazzfish.jdbc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ProxyDriverIT {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyDriverIT.class);
-    static PostgreSQLContainer<?> postgres =
+    private static final ProxyDriver driver = new ProxyDriver();
+    private static final PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:15-alpine").waitingFor(Wait.defaultWaitStrategy());
 
     @BeforeAll
@@ -47,9 +49,21 @@ public class ProxyDriverIT {
     }
 
     @Test
-    public void testSQL() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(),
-                postgres.getPassword());
+    public void testHsqldbProxy() throws SQLException {
+        testSQL("jdbc:proxy:hsqldb:mem:testdb", "testuser", "secret");
+    }
+
+    @Test
+    public void testPostgresProxy() throws SQLException {
+        String jdbcURL = postgres.getJdbcUrl();
+        jdbcURL = "jdbc:proxy:" + StringUtils.substringAfter(jdbcURL, "jdbc:");
+        assertEquals(postgres.getJdbcUrl(), ProxyDriver.getRealURL(jdbcURL));
+        testSQL(jdbcURL, postgres.getUsername(), postgres.getPassword());
+    }
+
+    public void testSQL(String jdbcURL, String user, String passwd) throws SQLException {
+        driver.acceptsURL(jdbcURL);
+        try (Connection conn = DriverManager.getConnection(jdbcURL, user, passwd);
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("create table PERSONS (ID int, NAME varchar(255), CITY varchar(255))");
             stmt.executeUpdate("insert into PERSONS (ID, NAME, CITY) VALUES (1, 'Dagobert Duck', 'Ducktales')");
