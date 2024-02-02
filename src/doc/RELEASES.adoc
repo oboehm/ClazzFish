@@ -44,6 +44,7 @@ This is a little checklist for the next release:
   select "Staging Repositories" on oss.sonatype.org, press "Refresh" and then "Close" and "Release".
 . build the Javadoc (`mvn javadoc:aggregate`) and transfer `target/site/apidocs` to http://aosd.de/ClazzFish/
 . checkin the pom.xml (if not already done), label the sources, e.g. with "clazzfish-0.9" and push it (`git push --tags`)
+. publish release notes: go to https://github.com/oboehm/ClazzFish/releases[Releases], https://github.com/oboehm/ClazzFish/releases/new[Draft a new release] and publish it
 . merge the release branch to master and develop branch
 . change to develop branch and start next SNAPSHOT
 . after a few days: check ClazzFish with http://search.maven.org/#search%7Cga%7C1%7Cclazzfish[search.maven.org]
