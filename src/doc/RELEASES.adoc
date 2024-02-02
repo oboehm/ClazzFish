@@ -13,7 +13,7 @@ Other infos are present in the top link:../../README.md[README].
 
 |https://github.com/oboehm/ClazzFish/actions[GitHub Actions]
 |-
-|https://app.travis-ci.com/github/oboehm/ClazzFish/branches[image:https://github.com/oboehm/ClazzFish/actions/workflows/maven.yml/badge.svg[Build Status]]
+|https://github.com/oboehm/gdv.xport/actions/workflows/maven.yml[image:https://github.com/oboehm/ClazzFish/actions/workflows/maven.yml/badge.svg[Build Status]]
 |s. link:../.github/workflows/maven.yml[maven.yml]
 
 
