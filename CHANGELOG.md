@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - clazzfish-jdbc: passwords are suppressed during SQL logging
+  (https://github.com/oboehm/ClazzFish/issues/14[issue #14])
 - documentation of [SQL-Logging](src/doc/SQL-Logging.adoc) continued
 
 
