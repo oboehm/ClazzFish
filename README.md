@@ -6,6 +6,17 @@
 ClazzFish is a collection of different modules, which help you to dive into the classpath of your application and to monitor it.
 Originally it was part of [PatternTesting](http://patterntesting.org) but is now extracted to a separate project.
 
+To start the monitor classes just call the main method in the Starter class:
+
+     clazzfish.monitor.Starter.main()
+
+But before you start your application add clazzfish-agent as Java agent to your VM args, e.g.
+
+     java -javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar ...
+
+This is needed for Java 9 and later because the internals of the classloader are no longer accessible.
+If the agent is started and the library loaded you can use the `jconsole` to examine the loaded classes and resources.
+Or you can look for classes and classpathes which are unused.
 
 
 ## History
