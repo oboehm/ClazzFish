@@ -921,7 +921,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	/**
-	 * The unused classpath is the path which are not used by the classloader.
+	 * The unused classpath is the path which is not used by the classloader.
 	 *
 	 * @return the unused classpath (sorted)
 	 */

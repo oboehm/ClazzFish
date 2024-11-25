@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- update to Java 17
+
 ### Added
 - Starter class to automatically register the monitor classes to JMX
   (https://github.com/oboehm/ClazzFish/issues/15[issue #15])
@@ -18,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - clazzfish-jdbc: now with PostgreSQL support
 
 ### Changed
-- update to Java 17
+- update to Java 17 as build environment
 - using testcontainers for integration tests
 
 
