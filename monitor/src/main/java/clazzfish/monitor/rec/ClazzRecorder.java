@@ -18,14 +18,13 @@
 package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
+import clazzfish.monitor.util.Converter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The ClazzRecorder collects classes and resources to find classes which are
@@ -38,7 +37,7 @@ public class ClazzRecorder {
 
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
     private final ClasspathMonitor classpathMonitor;
-    private final Set<PathRecord> classes;
+    private final SortedSet<PathRecord> classes;
 
     public static ClazzRecorder getInstance() {
         return INSTANCE;
@@ -53,8 +52,8 @@ public class ClazzRecorder {
         this.classes = collectClasses(classpathMonitor);
     }
 
-    private static Set<PathRecord> collectClasses(ClasspathMonitor cpmon) {
-        Set<PathRecord> classes = new HashSet<>();
+    private static SortedSet<PathRecord> collectClasses(ClasspathMonitor cpmon) {
+        SortedSet<PathRecord> classes = new TreeSet<>();
         for (String classname : cpmon.getClasspathClasses()) {
             URI uri = getUri(cpmon, classname);
             classes.add(new PathRecord(uri, classname, 0));
@@ -65,14 +64,18 @@ public class ClazzRecorder {
     private static URI getUri(ClasspathMonitor cpmon, String classname) {
         URI uri = cpmon.whichClass(classname);
         String s = Objects.toString(uri, "");
-        int i = s.indexOf('!');
-        if (i > 0) {
-            uri = URI.create(s.substring(0, i));
+        String resource = Converter.classToResource(classname);
+        if (s.endsWith(resource)) {
+            s = s.substring(0, s.length() - resource.length() - 1);
+            if (s.endsWith("!")) {
+                s = s.substring(0, s.length() - 1);
+            }
+            uri = URI.create(s);
         }
         return uri;
     }
 
-    public Set<PathRecord> getClasses() {
+    public SortedSet<PathRecord> getClasses() {
         return classes;
     }
 
