@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -55,10 +56,20 @@ public class ClazzRecorder {
     private static Set<PathRecord> collectClasses(ClasspathMonitor cpmon) {
         Set<PathRecord> classes = new HashSet<>();
         for (String classname : cpmon.getClasspathClasses()) {
-            URI uri = cpmon.whichClass(classname);
+            URI uri = getUri(cpmon, classname);
             classes.add(new PathRecord(uri, classname, 0));
         }
         return classes;
+    }
+
+    private static URI getUri(ClasspathMonitor cpmon, String classname) {
+        URI uri = cpmon.whichClass(classname);
+        String s = Objects.toString(uri, "");
+        int i = s.indexOf('!');
+        if (i > 0) {
+            uri = URI.create(s.substring(0, i));
+        }
+        return uri;
     }
 
     public Set<PathRecord> getClasses() {
