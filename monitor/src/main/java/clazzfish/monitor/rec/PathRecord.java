@@ -27,4 +27,9 @@ import java.net.URI;
  * @since 2.3 (25.11.24)
  */
 public record PathRecord(URI classpath, String classname, int count) {
+
+    public String toCSV() {
+        return classpath + ";" + classname + ";" + count;
+    }
+
 }

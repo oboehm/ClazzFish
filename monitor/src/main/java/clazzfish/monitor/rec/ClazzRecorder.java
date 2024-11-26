@@ -19,6 +19,9 @@ package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,22 +35,42 @@ import java.util.Set;
  */
 public class ClazzRecorder {
 
-    private final ClasspathMonitor classpathMonitor = ClasspathMonitor.getInstance();
+    private static final ClazzRecorder INSTANCE = new ClazzRecorder();
+    private final ClasspathMonitor classpathMonitor;
+    private final Set<PathRecord> classes;
 
-    public Set<PathRecord> collectClasses() {
+    public static ClazzRecorder getInstance() {
+        return INSTANCE;
+    }
+
+    private ClazzRecorder() {
+        this(ClasspathMonitor.getInstance());
+    }
+
+    private ClazzRecorder(ClasspathMonitor classpathMonitor) {
+        this.classpathMonitor = classpathMonitor;
+        this.classes = collectClasses(classpathMonitor);
+    }
+
+    private static Set<PathRecord> collectClasses(ClasspathMonitor cpmon) {
         Set<PathRecord> classes = new HashSet<>();
-        for (String classname : classpathMonitor.getLoadedClasses()) {
-            classes.add(toPathRecord(classname, 1));
-        }
-        for (String classname : classpathMonitor.getUnusedClasses()) {
-            classes.add(toPathRecord(classname, 0));
+        for (String classname : cpmon.getClasspathClasses()) {
+            URI uri = cpmon.whichClass(classname);
+            classes.add(new PathRecord(uri, classname, 0));
         }
         return classes;
     }
 
-    private PathRecord toPathRecord(String classname, int count) {
-        URI uri = classpathMonitor.whichClass(classname);
-        return new PathRecord(uri, classname, count);
+    public Set<PathRecord> getClasses() {
+        return classes;
+    }
+
+    public void exportCSV(File csvFile) throws FileNotFoundException {
+        try (PrintWriter writer = new PrintWriter(csvFile)) {
+            for (PathRecord rec : classes) {
+                writer.println(rec.toCSV());
+            }
+        }
     }
 
 }

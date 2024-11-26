@@ -18,10 +18,15 @@
 package clazzfish.monitor.rec;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link ClazzRecorder}.
@@ -31,12 +36,23 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 class ClazzRecorderTest {
 
-    private final ClazzRecorder recorder = new ClazzRecorder();
+    private static final Logger log = LoggerFactory.getLogger(ClazzRecorderTest.class);
+    private final ClazzRecorder recorder = ClazzRecorder.getInstance();
 
     @Test
-    void collectClasses() {
-        Set<PathRecord> classes = recorder.collectClasses();
+    void getClasses() {
+        Set<PathRecord> classes = recorder.getClasses();
         assertFalse(classes.isEmpty());
+    }
+
+    @Test
+    void exportCSV() throws FileNotFoundException {
+        File csvFile = new File("target", "clazzes.csv");
+        if (!csvFile.exists() && csvFile.delete()) {
+            log.info("{} was deleted.", csvFile);
+        }
+        recorder.exportCSV(csvFile);
+        assertTrue(csvFile.exists());
     }
 
 }
