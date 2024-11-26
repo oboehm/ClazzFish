@@ -26,10 +26,26 @@ import java.net.URI;
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public record PathRecord(URI classpath, String classname, int count) {
+public record PathRecord(URI classpath, String classname, int count) implements Comparable<PathRecord> {
+
+    public PathRecord(URI classpath, String classname) {
+        this(classpath, classname, 0);
+    }
 
     public String toCSV() {
         return classpath + ";" + classname + ";" + count;
+    }
+
+    @Override
+    public int compareTo(PathRecord other) {
+        int n = this.classpath.compareTo(other.classpath);
+        if (n == 0) {
+            n = this.classname.compareTo(other.classname);
+        }
+        if (n == 0) {
+            n = this.count - other.count;
+        }
+        return n;
     }
 
 }
