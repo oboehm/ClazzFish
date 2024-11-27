@@ -76,12 +76,20 @@ public class ClazzRecorder {
     }
 
     public SortedSet<PathRecord> getClasses() {
-        return classes;
+        SortedSet<PathRecord> statistics = new TreeSet<>();
+        for (PathRecord record : classes) {
+            if (classpathMonitor.isLoaded(record.classname())) {
+                statistics.add(new PathRecord(record.classpath(), record.classname(), record.count()+1));
+            } else {
+                statistics.add(record);
+            }
+        }
+        return statistics;
     }
 
     public void exportCSV(File csvFile) throws FileNotFoundException {
         try (PrintWriter writer = new PrintWriter(csvFile)) {
-            for (PathRecord rec : classes) {
+            for (PathRecord rec : getClasses()) {
                 writer.println(rec.toCSV());
             }
         }

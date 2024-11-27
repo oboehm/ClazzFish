@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,6 +45,17 @@ class ClazzRecorderTest {
     void getClasses() {
         Set<PathRecord> classes = recorder.getClasses();
         assertFalse(classes.isEmpty());
+        checkClasses(classes, this.getClass().getName());
+    }
+
+    private static void checkClasses(Set<PathRecord> classes, String classname) {
+        for (PathRecord record : classes) {
+            if (classname.equals(record.classname())) {
+                assertThat(record.count(), greaterThan(0));
+                return;
+            }
+        }
+        throw new AssertionError(classname + " not found in set of classes");
     }
 
     @Test
