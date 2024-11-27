@@ -23,6 +23,7 @@ import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClazzRecordTest {
 
@@ -31,6 +32,15 @@ class ClazzRecordTest {
         ClazzRecord a = new ClazzRecord(URI.create("file:a.jar"), "hello");
         ClazzRecord b = new ClazzRecord(URI.create("file:b.jar"), "world");
         assertThat(a.compareTo(b),  lessThan(0));
+    }
+
+    @Test
+    void testEquals() {
+        ClazzRecord r0 = new ClazzRecord(URI.create("file:a.jar"), "hello");
+        ClazzRecord r1 = new ClazzRecord(URI.create("file:a.jar"), "hello", 1);
+        assertEquals(r0, r1);
+        assertEquals(r0.hashCode(), r1.hashCode());
+        assertEquals(0, r0.compareTo(r1));
     }
 
 }

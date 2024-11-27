@@ -42,10 +42,27 @@ public record ClazzRecord(URI classpath, String classname, int count) implements
         if (n == 0) {
             n = this.classname.compareTo(other.classname);
         }
-        if (n == 0) {
-            n = this.count - other.count;
-        }
         return n;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof ClazzRecord) {
+            return compareTo((ClazzRecord) o) == 0;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return classname.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return toCSV();
     }
 
 }
