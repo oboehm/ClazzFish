@@ -42,14 +42,14 @@ class ClazzRecorderTest {
     private final ClazzRecorder recorder = ClazzRecorder.getInstance();
 
     @Test
-    void getClasses() {
-        Set<PathRecord> classes = recorder.getClasses();
+    void getStatistics() {
+        Set<ClazzRecord> classes = recorder.getStatistics();
         assertFalse(classes.isEmpty());
         checkClasses(classes, this.getClass().getName());
     }
 
-    private static void checkClasses(Set<PathRecord> classes, String classname) {
-        for (PathRecord record : classes) {
+    private static void checkClasses(Set<ClazzRecord> classes, String classname) {
+        for (ClazzRecord record : classes) {
             if (classname.equals(record.classname())) {
                 assertThat(record.count(), greaterThan(0));
                 return;

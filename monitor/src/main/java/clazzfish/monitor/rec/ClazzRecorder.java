@@ -37,7 +37,7 @@ public class ClazzRecorder {
 
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
     private final ClasspathMonitor classpathMonitor;
-    private final SortedSet<PathRecord> classes;
+    private final SortedSet<ClazzRecord> classes;
 
     public static ClazzRecorder getInstance() {
         return INSTANCE;
@@ -52,11 +52,11 @@ public class ClazzRecorder {
         this.classes = collectClasses(classpathMonitor);
     }
 
-    private static SortedSet<PathRecord> collectClasses(ClasspathMonitor cpmon) {
-        SortedSet<PathRecord> classes = new TreeSet<>();
+    private static SortedSet<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
+        SortedSet<ClazzRecord> classes = new TreeSet<>();
         for (String classname : cpmon.getClasspathClasses()) {
             URI uri = getUri(cpmon, classname);
-            classes.add(new PathRecord(uri, classname, 0));
+            classes.add(new ClazzRecord(uri, classname, 0));
         }
         return classes;
     }
@@ -75,11 +75,11 @@ public class ClazzRecorder {
         return uri;
     }
 
-    public SortedSet<PathRecord> getClasses() {
-        SortedSet<PathRecord> statistics = new TreeSet<>();
-        for (PathRecord record : classes) {
+    public SortedSet<ClazzRecord> getStatistics() {
+        SortedSet<ClazzRecord> statistics = new TreeSet<>();
+        for (ClazzRecord record : classes) {
             if (classpathMonitor.isLoaded(record.classname())) {
-                statistics.add(new PathRecord(record.classpath(), record.classname(), record.count()+1));
+                statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
             } else {
                 statistics.add(record);
             }
@@ -89,7 +89,7 @@ public class ClazzRecorder {
 
     public void exportCSV(File csvFile) throws FileNotFoundException {
         try (PrintWriter writer = new PrintWriter(csvFile)) {
-            for (PathRecord rec : getClasses()) {
+            for (ClazzRecord rec : getStatistics()) {
                 writer.println(rec.toCSV());
             }
         }

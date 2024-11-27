@@ -24,12 +24,12 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 
-class PathRecordTest {
+class ClazzRecordTest {
 
     @Test
     void compareTo() {
-        PathRecord a = new PathRecord(URI.create("file:a.jar"), "hello");
-        PathRecord b = new PathRecord(URI.create("file:b.jar"), "world");
+        ClazzRecord a = new ClazzRecord(URI.create("file:a.jar"), "hello");
+        ClazzRecord b = new ClazzRecord(URI.create("file:b.jar"), "world");
         assertThat(a.compareTo(b),  lessThan(0));
     }
 

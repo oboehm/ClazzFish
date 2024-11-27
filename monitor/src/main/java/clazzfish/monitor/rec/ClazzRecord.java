@@ -20,15 +20,15 @@ package clazzfish.monitor.rec;
 import java.net.URI;
 
 /**
- * The PathRecord stores the relation of a class to its classpath and some
+ * The ClazzRecord stores the relation of a class to its classpath and some
  * collected data.
  *
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public record PathRecord(URI classpath, String classname, int count) implements Comparable<PathRecord> {
+public record ClazzRecord(URI classpath, String classname, int count) implements Comparable<ClazzRecord> {
 
-    public PathRecord(URI classpath, String classname) {
+    public ClazzRecord(URI classpath, String classname) {
         this(classpath, classname, 0);
     }
 
@@ -37,7 +37,7 @@ public record PathRecord(URI classpath, String classname, int count) implements 
     }
 
     @Override
-    public int compareTo(PathRecord other) {
+    public int compareTo(ClazzRecord other) {
         int n = this.classpath.compareTo(other.classpath);
         if (n == 0) {
             n = this.classname.compareTo(other.classname);
