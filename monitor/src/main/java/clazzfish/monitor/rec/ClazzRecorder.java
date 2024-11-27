@@ -77,8 +77,9 @@ public class ClazzRecorder {
 
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
+        List<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).toList();
         for (ClazzRecord record : classes) {
-            if (classpathMonitor.isLoaded(record.classname())) {
+            if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
             } else {
                 statistics.add(record);
