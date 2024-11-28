@@ -32,6 +32,11 @@ public record ClazzRecord(URI classpath, String classname, int count) implements
         this(classpath, classname, 0);
     }
 
+    public static ClazzRecord fromCSV(String line) {
+        String[] parts = line.split(";");
+        return new ClazzRecord(URI.create(parts[0]), parts[1], Integer.parseInt(parts[2]));
+    }
+
     public String toCSV() {
         return classpath + ";" + classname + ";" + count;
     }

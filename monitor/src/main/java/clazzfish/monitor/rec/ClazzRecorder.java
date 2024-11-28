@@ -19,10 +19,10 @@ package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.util.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
  */
 public class ClazzRecorder {
 
+    private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
     private final ClasspathMonitor classpathMonitor;
     private final SortedSet<ClazzRecord> classes;
@@ -91,11 +92,30 @@ public class ClazzRecorder {
     }
 
     public void exportCSV(File csvFile) throws FileNotFoundException {
+        SortedSet<ClazzRecord> statistics = getStatistics();
         try (PrintWriter writer = new PrintWriter(csvFile)) {
-            for (ClazzRecord rec : getStatistics()) {
+            for (ClazzRecord rec : statistics) {
                 writer.println(rec.toCSV());
             }
         }
+        log.debug("{} class records to {} exported.", statistics.size(), csvFile);
+    }
+
+    public void importCSV(File csvFile) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+            while (reader.ready()) {
+                String line = reader.readLine();
+                ClazzRecord r = ClazzRecord.fromCSV(line);
+                String classname = r.classname();
+                Optional<ClazzRecord> any = classes.stream().filter(cr -> classname.equals(cr.classname())).findAny();
+                if (any.isPresent()) {
+                    classes.remove(any.get());
+                    r = new ClazzRecord(r.classpath(), r.classname(), r.count()+any.get().count());
+                    classes.add(r);
+                }
+            }
+        }
+        log.debug("Class records from {} imported.", csvFile);
     }
 
 }

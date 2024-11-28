@@ -23,10 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,17 +46,7 @@ class ClazzRecorderTest {
     void getStatistics() {
         Set<ClazzRecord> classes = recorder.getStatistics();
         assertFalse(classes.isEmpty());
-        checkClasses(classes, this.getClass().getName());
-    }
-
-    private static void checkClasses(Set<ClazzRecord> classes, String classname) {
-        for (ClazzRecord record : classes) {
-            if (classname.equals(record.classname())) {
-                assertThat(record.count(), greaterThan(0));
-                return;
-            }
-        }
-        throw new AssertionError(classname + " not found in set of classes");
+        checkClasses(classes, this.getClass().getName(), 1);
     }
 
     @Test
@@ -66,6 +57,24 @@ class ClazzRecorderTest {
         }
         recorder.exportCSV(csvFile);
         assertTrue(csvFile.exists());
+    }
+
+    @Test
+    void importCSV() throws IOException {
+        File csvFile = new File("target", "clazzes.csv");
+        recorder.exportCSV(csvFile);
+        recorder.importCSV(csvFile);
+        checkClasses(recorder.getStatistics(), this.getClass().getName(), 2);
+    }
+
+    private static void checkClasses(Set<ClazzRecord> classes, String classname, int n) {
+        for (ClazzRecord record : classes) {
+            if (classname.equals(record.classname())) {
+                assertThat(record.count(), greaterThanOrEqualTo(n));
+                return;
+            }
+        }
+        throw new AssertionError(classname + " not found in set of classes");
     }
 
 }
