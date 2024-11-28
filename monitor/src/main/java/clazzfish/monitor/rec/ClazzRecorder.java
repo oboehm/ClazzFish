@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The ClazzRecorder collects classes and resources to find classes which are
@@ -77,7 +78,8 @@ public class ClazzRecorder {
 
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
-        List<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).toList();
+        Set<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).collect(
+                Collectors.toSet());
         for (ClazzRecord record : classes) {
             if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
