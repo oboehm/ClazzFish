@@ -53,6 +53,15 @@ public class ClazzRecorder {
     private ClazzRecorder(ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
         this.classes = collectClasses(classpathMonitor);
+        File csvFile = getCsvFile();
+        if (csvFile.exists()) {
+            try {
+                importCSV(csvFile);
+            } catch (IOException ex) {
+                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
+                log.debug("Details:", ex);
+            }
+        }
     }
 
     private static SortedSet<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
@@ -93,12 +102,12 @@ public class ClazzRecorder {
     }
 
     public File exportCSV() throws FileNotFoundException {
-        String mainClass = getMainClass();
-        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+        File csvFile = getCsvFile();
+        File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {
             log.info("Export dir {} was created.", dir);
         }
-        return exportCSV(new File(dir, "statistics.csv"));
+        return exportCSV(csvFile);
     }
 
     public File exportCSV(File csvFile) throws FileNotFoundException {
@@ -127,6 +136,12 @@ public class ClazzRecorder {
             }
         }
         log.debug("Class records from {} imported.", csvFile);
+    }
+
+    private static File getCsvFile() {
+        String mainClass = getMainClass();
+        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+        return new File(dir, "statistics.csv");
     }
 
     // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
