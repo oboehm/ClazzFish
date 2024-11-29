@@ -20,7 +20,7 @@ package clazzfish.monitor;
 import clazzfish.monitor.jmx.MBeanHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for @link Starter}.
@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StarterTest {
 
     @Test
-    void main() {
-        Starter.main();
+    void main() throws ClassNotFoundException {
+        assertEquals(Starter.class, Class.forName(Starter.class.getName()));
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ClasspathMonitor"));
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ResourcepathMonitor"));
     }

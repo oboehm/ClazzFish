@@ -35,6 +35,7 @@ public final class Starter implements Serializable {
 
     static {
         ServiceLoader.load(Serializable.class).forEach(r -> log.debug("Loading {}...", r));
+        main();
     }
 
     public static void main(String... args) {
