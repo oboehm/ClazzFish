@@ -32,8 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This abstract base class has some support to for registration and
@@ -191,7 +191,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     private void dumpArray(final File dir, final String title) throws IOException {
         File dumpFile = new File(dir, title + ".txt");
         LOG.debug("Dumping '{}' to {}...", title, dumpFile);
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8")) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), StandardCharsets.UTF_8)) {
             dumpArray(new BufferedWriter(writer), title);
         }
     }
@@ -246,7 +246,6 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
                 LOG.debug("Directory '{}' successful created.", dumpDir);
             } else {
                 LOG.error("Cannot create dir '{}' and will give up.", dumpDir);
-                return;
             }
         }
     }
@@ -277,7 +276,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     protected static void dumpArray(Object[] array, File dir, String title) throws IOException {
         File dumpFile = new File(dir, title + ".txt");
         LOG.debug("Dumping '{}' to {}...", title, dumpFile);
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8")) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dumpFile), StandardCharsets.UTF_8)) {
             dumpArray(array, new BufferedWriter(writer), title);
         }
     }
@@ -310,17 +309,6 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     protected static void dumpHeadline(final BufferedWriter writer, final String headline) throws IOException {
         writer.write("----- " + headline + " -----");
         writer.newLine();
-    }
-
-    /**
-     * We remove the URI prefix from the result to be in-line with the other
-     * classpath methods.
-     *
-     * @param uris a collection with URIs
-     * @return the string array
-     */
-    protected static String[] toStringArray(Collection<URI> uris) {
-        return toStringArray(uris.toArray(new URI[uris.size()]));
     }
 
     /**

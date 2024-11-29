@@ -42,9 +42,10 @@ public interface AbstractMonitorMBean extends Shutdownable {
 	 * This operation dumps the different MBean attributes to a temporary file
 	 * with a common prefix (the name of the class, e.g. ClasspathMonitor) and
 	 * the extension ".txt".
-	 *
+	 * <p>
 	 * To be able to see the name of the temporary file in the 'jconsole' it
 	 * should be returned as value.
+	 * </p>
 	 *
 	 * @return the temporary file
 	 * @throws IOException Signals that an I/O exception has occurred.
