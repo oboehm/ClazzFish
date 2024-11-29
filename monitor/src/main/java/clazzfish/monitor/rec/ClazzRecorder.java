@@ -19,6 +19,7 @@ package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.util.Converter;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,16 @@ public class ClazzRecorder {
         return statistics;
     }
 
-    public void exportCSV(File csvFile) throws FileNotFoundException {
+    public File exportCSV() throws FileNotFoundException {
+        String mainClass = getMainClass();
+        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+        if (dir.mkdirs()) {
+            log.info("Export dir {} was created.", dir);
+        }
+        return exportCSV(new File(dir, "statistics.csv"));
+    }
+
+    public File exportCSV(File csvFile) throws FileNotFoundException {
         SortedSet<ClazzRecord> statistics = getStatistics();
         try (PrintWriter writer = new PrintWriter(csvFile)) {
             for (ClazzRecord rec : statistics) {
@@ -99,6 +109,7 @@ public class ClazzRecorder {
             }
         }
         log.debug("{} class records to {} exported.", statistics.size(), csvFile);
+        return csvFile;
     }
 
     public void importCSV(File csvFile) throws IOException {
@@ -116,6 +127,54 @@ public class ClazzRecorder {
             }
         }
         log.debug("Class records from {} imported.", csvFile);
+    }
+
+    // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
+    private static String getMainClass() {
+        // find the class that called us, and use their "target/classes"
+        final Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();
+        for (Map.Entry<Thread, StackTraceElement[]> trace : traces.entrySet()) {
+            if ("main".equals(trace.getKey().getName())) {
+                // Using a thread named main is best...
+                final StackTraceElement[] els = trace.getValue();
+                int i = els.length - 1;
+                StackTraceElement best = els[--i];
+                String cls = best.getClassName();
+                while (i > 0 && isSystemClass(cls)) {
+                    // if the main class is likely an ide,
+                    // then we should look higher...
+                    while (i-- > 0) {
+                        if ("main".equals(els[i].getMethodName())) {
+                            best = els[i];
+                            cls = best.getClassName();
+                            break;
+                        }
+                    }
+                }
+                if (isSystemClass(cls)) {
+                    i = els.length - 1;
+                    best = els[i];
+                    while (isSystemClass(cls) && i --> 0) {
+                        best = els[i];
+                        cls = best.getClassName();
+                    }
+                }
+                return best.getClassName();
+            }
+        }
+        return "unknown";
+    }
+
+    private static boolean isSystemClass(String cls) {
+        return cls.startsWith("java.") ||
+                cls.startsWith("jdk.") ||
+                cls.startsWith("sun.") ||
+                cls.startsWith("org.apache.maven.") ||
+                cls.contains(".intellij.") ||
+                cls.startsWith("org.junit") ||
+                cls.startsWith("junit.") ||
+                cls.contains(".eclipse") ||
+                cls.contains("netbeans");
     }
 
 }

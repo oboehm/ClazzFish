@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ClazzRecorderTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ClazzRecorderTest.class);
     private final ClazzRecorder recorder = ClazzRecorder.getInstance();
 
     @Test
@@ -51,11 +50,7 @@ class ClazzRecorderTest {
 
     @Test
     void exportCSV() throws FileNotFoundException {
-        File csvFile = new File("target", "clazzes.csv");
-        if (!csvFile.exists() && csvFile.delete()) {
-            log.info("{} was deleted.", csvFile);
-        }
-        recorder.exportCSV(csvFile);
+        File csvFile = recorder.exportCSV();
         assertTrue(csvFile.exists());
     }
 
