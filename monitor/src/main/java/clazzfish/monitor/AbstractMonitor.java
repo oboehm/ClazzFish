@@ -42,60 +42,10 @@ import java.util.Collection;
  *
  * @author oliver
  */
-public abstract class AbstractMonitor extends Thread implements AbstractMonitorMBean {
+public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner implements AbstractMonitorMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitor.class);
-    private boolean shutdownHook = false;
     private ObjectName mbeanName = MBeanHelper.getAsObjectName(this.getClass());
-
-    /**
-     * Here you can ask if the ClasspathMonitor was already registeres ad
-     * shutdown hook.
-     *
-     * @return true if it is registered as shutdown hook.
-     */
-    @Override
-    public synchronized boolean isShutdownHook() {
-        return shutdownHook;
-    }
-
-    /**
-     * To be able to register the instance as shutdown hook via JMX we can't use
-     * a static method - this is the reason why this additional method was
-     * added.
-     * <p>
-     * If this monitor class is registered as shutdown hook from a web 
-     * application a dump to a directory may not be possible because the
-     * application server (e.g. Tomcat) has been stopped already the web
-     * application instance. This was the problem as decribed in
-     * <a href="https://sourceforge.net/p/patterntesting/bugs/37/">bugs/37</a>.
-     * </p>
-     * <p>
-     * In this situation it is not possible to add monitor as shutdown hook.
-     * </p>
-     */
-    @Override
-    public void addMeAsShutdownHook() {
-        ClassloaderType type = ClassloaderType.getCurrentClassloaderType();
-        if (type.isWeb()) {
-            LOG.info("Registration as shutdown hook is ignored inside {}.", type);
-        } else {
-            Runtime.getRuntime().addShutdownHook(this);
-            this.shutdownHook = true;
-            LOG.debug("{} is registered as shutdown hook", this);
-        }
-    }
-
-    /**
-     * If you want to unregister the instance as shutdown hook you can use this
-     * (not static) method.
-     */
-    @Override
-    public void removeMeAsShutdownHook() {
-        Runtime.getRuntime().removeShutdownHook(this);
-        this.shutdownHook = false;
-        LOG.debug("{} is de-registered as shutdown hook", this);
-    }
 
     /**
      * This method is called when the ClasspathMonitor is registered as shutdown

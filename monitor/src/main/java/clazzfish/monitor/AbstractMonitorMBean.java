@@ -19,6 +19,7 @@
 package clazzfish.monitor;
 
 import clazzfish.monitor.jmx.Description;
+import clazzfish.monitor.util.Shutdownable;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.io.IOException;
  *
  * @author oliver
  */
-public interface AbstractMonitorMBean {
+public interface AbstractMonitorMBean extends Shutdownable {
 
 	/**
 	 * Prints the different MBean attributes to the log output.
@@ -60,27 +61,5 @@ public interface AbstractMonitorMBean {
 	 */
 	@Description("dumps all attributs to the given directory")
 	void dumpMe(final String dirname) throws IOException;
-
-	/**
-	 * To be able to register the instance as shutdown hook you can use this
-	 * (non static) method.
-	 */
-	@Description("to register monitor as shutdown hook")
-	void addMeAsShutdownHook();
-
-	/**
-	 * If you want to unregister the instance as shutdown hook you can use this
-	 * method.
-	 */
-	@Description("to de-register monitor as shutdown hook")
-	void removeMeAsShutdownHook();
-
-	/**
-	 * Here you can ask if the monitor was already registeres ad shutdown hook.
-	 *
-	 * @return true if it is registered as shutdown hook.
-	 */
-	@Description("returns true if monitor was registered as shutdown hook")
-	boolean isShutdownHook();
 
 }

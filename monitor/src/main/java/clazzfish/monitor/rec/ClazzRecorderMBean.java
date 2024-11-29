@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.rec;
 
+import clazzfish.monitor.util.Shutdownable;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -26,7 +28,7 @@ import java.io.IOException;
  * @author oboehm
  * @since 2.3 (29.11.24)
  */
-public interface ClazzRecorderMBean {
+public interface ClazzRecorderMBean extends Shutdownable {
 
     /**
      * Exports the statistics of the collected classes to the file with the

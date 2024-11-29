@@ -20,6 +20,7 @@
 
 package clazzfish.monitor;
 
+import clazzfish.monitor.util.Shutdownable;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public abstract class AbstractMonitorTest {
      *
      * @param mon the monitor for testing.
      */
-    public static void testAddAsShutdownHook(final AbstractMonitor mon) {
+    public static void testAddAsShutdownHook(final Shutdownable mon) {
         LOG.info("testAddAsShutdownHook() is started with {}.", mon);
         mon.addMeAsShutdownHook();
         assertTrue(mon.isShutdownHook(), mon + " should be registered as shutdown hook");
