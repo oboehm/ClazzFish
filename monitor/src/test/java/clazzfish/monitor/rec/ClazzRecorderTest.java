@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.rec;
 
+import clazzfish.monitor.jmx.MBeanHelper;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -38,6 +39,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ClazzRecorderTest {
 
     private final ClazzRecorder recorder = ClazzRecorder.getInstance();
+
+    @Test
+    void registerMeAsMBean() {
+        recorder.registerMeAsMBean();
+        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec"));
+    }
+
+    @Test
+    void doubleRegistration() {
+        registerMeAsMBean();
+        registerMeAsMBean();
+    }
 
     @Test
     void getStatistics() {

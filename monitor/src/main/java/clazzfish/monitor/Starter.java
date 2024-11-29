@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor;
 
+import clazzfish.monitor.rec.ClazzRecorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public final class Starter implements Serializable {
     public static void main(String... args) {
         ClasspathMonitor.getInstance().registerMeAsMBean();
         ResourcepathMonitor.getInstance().registerMeAsMBean();
+        ClazzRecorder.getInstance().registerMeAsMBean();
         log.debug("ClazzFish library is started and ready.");
     }
 

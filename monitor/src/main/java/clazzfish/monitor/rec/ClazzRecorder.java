@@ -18,6 +18,7 @@
 package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
+import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.Converter;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public class ClazzRecorder {
+public class ClazzRecorder implements ClazzRecorderMBean {
 
     private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
@@ -87,6 +88,10 @@ public class ClazzRecorder {
         return uri;
     }
 
+    public void registerMeAsMBean() {
+        MBeanHelper.registerMBean(MBeanHelper.getAsObjectName(this.getClass()), this);
+    }
+
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
         Set<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).collect(
@@ -108,6 +113,11 @@ public class ClazzRecorder {
             log.info("Export dir {} was created.", dir);
         }
         return exportCSV(csvFile);
+    }
+
+    @Override
+    public File exportCSV(String filename) throws FileNotFoundException {
+        return exportCSV(new File(filename)).getAbsoluteFile();
     }
 
     public File exportCSV(File csvFile) throws FileNotFoundException {
