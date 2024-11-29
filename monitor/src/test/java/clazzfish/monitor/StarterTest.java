@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class StarterTest {
 
     @Test
-    void testRegistration() throws ClassNotFoundException {
-        assertEquals(Starter.class, Class.forName(Starter.class.getName()));
+    void testRegistration() {
+        Starter.main();
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ClasspathMonitor"));
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ResourcepathMonitor"));
         assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec"));
