@@ -33,7 +33,15 @@ import java.util.stream.Collectors;
 
 /**
  * The ClazzRecorder collects classes and resources to find classes which are
- * likely to be dead.
+ * likely to be dead. At the end a little statistics is eported to a file
+ * 'clazzfish/a.b.MyMain/statistics.csv' in the temp direktory.
+ * If you want another directory or filename where this statistics should be
+ * stored you can use one of the system properties
+ * <ol>
+ *     <li>clazzfish.statistics.dir</li>
+ *     <li>clazzfish.statistics.file</li>
+ * </ol>
+ * Please use only one of this environment options.
  *
  * @author oboehm
  * @since 2.3 (25.11.24)
@@ -63,6 +71,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         this.classpathMonitor = classpathMonitor;
         this.classes = collectClasses(classpathMonitor);
         csvFile = getCsvFile();
+        log.debug("Statistics will be imported from / exported to '{}'.", csvFile);
         if (csvFile.exists()) {
             try {
                 importCSV(csvFile);
@@ -172,8 +181,13 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private static File getCsvFile() {
         String mainClass = getMainClass();
-        File dir = getCsvDir(mainClass);
-        return new File(dir, "statistics.csv");
+        String filename = System.getProperty("clazzfish.statistics.file");
+        if (StringUtils.isBlank(filename)) {
+            File dir = getCsvDir(mainClass);
+            return new File(dir, "statistics.csv");
+        } else {
+            return new File(filename);
+        }
     }
 
     private static File getCsvDir(String mainClass) {
