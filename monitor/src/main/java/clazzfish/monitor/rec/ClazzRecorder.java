@@ -43,6 +43,12 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
     private final ClasspathMonitor classpathMonitor;
     private final SortedSet<ClazzRecord> classes;
+    private final File csvFile;
+
+    static {
+        log.trace("{} will be registered as shudown hook.", INSTANCE);
+        INSTANCE.addMeAsShutdownHook();
+    }
 
     public static ClazzRecorder getInstance() {
         return INSTANCE;
@@ -55,7 +61,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     private ClazzRecorder(ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
         this.classes = collectClasses(classpathMonitor);
-        File csvFile = getCsvFile();
+        csvFile = getCsvFile();
         if (csvFile.exists()) {
             try {
                 importCSV(csvFile);
@@ -108,7 +114,6 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     public File exportCSV() throws FileNotFoundException {
-        File csvFile = getCsvFile();
         File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {
             log.info("Export dir {} was created.", dir);
@@ -157,6 +162,11 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
             log.info("The class statistics could not be exported ({}).", ex.getMessage());
             log.debug("Details:", ex);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "-" + csvFile;
     }
 
     private static File getCsvFile() {
