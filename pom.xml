@@ -165,11 +165,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <clazzfish.statistics.dir>target/statistics</clazzfish.statistics.dir>
+                    </systemPropertyVariables>
+                </configuration>
                 <version>3.5.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <clazzfish.statistics.dir>target/statistics</clazzfish.statistics.dir>
+                    </systemPropertyVariables>
+                </configuration>
                 <version>3.5.2</version>
             </plugin>
             <plugin>

@@ -21,6 +21,7 @@ import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,8 +172,17 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private static File getCsvFile() {
         String mainClass = getMainClass();
-        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+        File dir = getCsvDir(mainClass);
         return new File(dir, "statistics.csv");
+    }
+
+    private static File getCsvDir(String mainClass) {
+        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+        String dirname = System.getProperty("clazzfish.statistics.dir");
+        if (StringUtils.isNotBlank(dirname)) {
+            dir = new File(dirname);
+        }
+        return dir;
     }
 
     // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
