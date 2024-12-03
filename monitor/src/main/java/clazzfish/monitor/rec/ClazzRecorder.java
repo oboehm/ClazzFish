@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 /**
  * The ClazzRecorder collects classes and resources to find classes which are
- * likely to be dead. At the end a little statistics is eported to a file
+ * likely to be dead. At the end a little statistics is reported to a file
  * 'clazzfish/a.b.MyMain/statistics.csv' in the temp direktory.
  * If you want another directory or filename where this statistics should be
  * stored you can use one of the system properties
@@ -48,6 +48,10 @@ import java.util.stream.Collectors;
  *     <li>CLAZZFISH_STATISTICS_DIR</li>
  *     <li>CLAZZFISH_STATISTICS_FILE</li>
  * </ol>
+ * </p>
+ * <p>
+ * NOTE: If a system property like 'appname' is set which looks like a program
+ * name this property is used instead of the Main classname.
  * </p>
  *
  * @author oboehm
@@ -187,18 +191,22 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     private static File getCsvFile() {
-        String mainClass = getMainClass();
         String filename = getEnvironment("clazzfish.statistics.file");
+        if (StringUtils.isNotBlank(filename)) {
+            return new File(filename);
+        }
+        filename = getAppName();
         if (StringUtils.isBlank(filename)) {
-            File dir = getCsvDir(mainClass);
+            String mainClass = getMainClass();
+            File dir = new File(getCsvDir(), mainClass);
             return new File(dir, "statistics.csv");
         } else {
-            return new File(filename);
+            return new File(getCsvDir(), filename + ".csv");
         }
     }
 
-    private static File getCsvDir(String mainClass) {
-        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
+    private static File getCsvDir() {
+        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish");
         String dirname = getEnvironment("clazzfish.statistics.dir");
         if (StringUtils.isNotBlank(dirname)) {
             dir = new File(dirname);
@@ -212,6 +220,19 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
             value = System.getenv(key.replace('.', '_').toUpperCase());
         }
         return value;
+    }
+
+    private static String getAppName() {
+        String[] keys = { "appname", "app.name", "progname", "prog.name", "application.name", "spring.application.name" };
+        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+            for (String k : keys) {
+                if (k.equals(entry.getKey().toString().toLowerCase())) {
+                    log.debug("Using {} for name of CSV file.", entry);
+                    return entry.getValue().toString();
+                }
+            }
+        }
+        return null;
     }
 
     // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
