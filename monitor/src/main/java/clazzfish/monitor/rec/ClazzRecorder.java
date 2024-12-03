@@ -42,6 +42,13 @@ import java.util.stream.Collectors;
  *     <li>clazzfish.statistics.file</li>
  * </ol>
  * Please use only one of this environment options.
+ * <p>
+ * As alternative you can set one of the two environment variables:
+ * <ol>
+ *     <li>CLAZZFISH_STATISTICS_DIR</li>
+ *     <li>CLAZZFISH_STATISTICS_FILE</li>
+ * </ol>
+ * </p>
  *
  * @author oboehm
  * @since 2.3 (25.11.24)
@@ -181,7 +188,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private static File getCsvFile() {
         String mainClass = getMainClass();
-        String filename = System.getProperty("clazzfish.statistics.file");
+        String filename = getEnvironment("clazzfish.statistics.file");
         if (StringUtils.isBlank(filename)) {
             File dir = getCsvDir(mainClass);
             return new File(dir, "statistics.csv");
@@ -192,11 +199,19 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private static File getCsvDir(String mainClass) {
         File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish/" + mainClass);
-        String dirname = System.getProperty("clazzfish.statistics.dir");
+        String dirname = getEnvironment("clazzfish.statistics.dir");
         if (StringUtils.isNotBlank(dirname)) {
             dir = new File(dirname);
         }
         return dir;
+    }
+
+    private static String getEnvironment(String key) {
+        String value = System.getProperty(key);
+        if (StringUtils.isBlank(value)) {
+            value = System.getenv(key.replace('.', '_').toUpperCase());
+        }
+        return value;
     }
 
     // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
