@@ -134,6 +134,12 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         return statistics;
     }
 
+    @Override
+    public File getExportFile() {
+        return csvFile;
+    }
+
+    @Override
     public File exportCSV() throws FileNotFoundException {
         File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {

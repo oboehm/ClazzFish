@@ -31,6 +31,14 @@ import java.io.IOException;
 public interface ClazzRecorderMBean extends Shutdownable {
 
     /**
+     * Exports the statistics of the collected classes to the default file..
+     *
+     * @return export file
+     * @throws IOException in case of I/O problems
+     */
+    File exportCSV() throws IOException;
+
+    /**
      * Exports the statistics of the collected classes to the file with the
      * given filename.
      *
@@ -39,5 +47,12 @@ public interface ClazzRecorderMBean extends Shutdownable {
      * @throws IOException in case of I/O problems
      */
     File exportCSV(String filename) throws IOException;
+
+    /**
+     * Returns the name of the default export file.
+     *
+     * @return export file
+     */
+    File getExportFile();
 
 }
