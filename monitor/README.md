@@ -46,7 +46,7 @@ The first 2 classes/interfaces in this example are loaded 2 times whereas DeadCl
 
 If you want the statistics file in another file or directory you can use the 2 system properties to set it:
 
-* clazzfish.statistics.dir
+* clazzfish.dump.dir
 * clazzfish.statistics.file
 
 For more info see the [ClazzRecorder](src/main/java/clazzfish/monitor/rec/ClazzRecorder.java) class.

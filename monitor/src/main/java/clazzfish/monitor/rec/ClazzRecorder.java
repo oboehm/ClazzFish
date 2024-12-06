@@ -18,11 +18,11 @@
 package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
+import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * If you want another directory or filename where this statistics should be
  * stored you can use one of the system properties
  * <ol>
- *     <li>clazzfish.statistics.dir</li>
+ *     <li>clazzfish.dump.dir</li>
  *     <li>clazzfish.statistics.file</li>
  * </ol>
  * Please use only one of this environment options.
@@ -197,96 +197,12 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     private static File getCsvFile() {
-        String filename = getEnvironment("clazzfish.statistics.file");
+        String filename = Config.getEnvironment("clazzfish.statistics.file");
         if (StringUtils.isNotBlank(filename)) {
             return new File(filename);
-        }
-        filename = getAppName();
-        if (StringUtils.isBlank(filename)) {
-            String mainClass = getMainClass();
-            File dir = new File(getCsvDir(), mainClass);
-            return new File(dir, "statistics.csv");
         } else {
-            return new File(getCsvDir(), filename + ".csv");
+            return new File(Config.getDumpDir(), "statistics.csv");
         }
-    }
-
-    private static File getCsvDir() {
-        File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish");
-        String dirname = getEnvironment("clazzfish.statistics.dir");
-        if (StringUtils.isNotBlank(dirname)) {
-            dir = new File(dirname);
-        }
-        return dir;
-    }
-
-    private static String getEnvironment(String key) {
-        String value = System.getProperty(key);
-        if (StringUtils.isBlank(value)) {
-            value = System.getenv(key.replace('.', '_').toUpperCase());
-        }
-        return value;
-    }
-
-    private static String getAppName() {
-        String[] keys = { "appname", "app.name", "progname", "prog.name", "application.name", "spring.application.name" };
-        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-            for (String k : keys) {
-                if (k.equals(entry.getKey().toString().toLowerCase())) {
-                    log.debug("Using {} for name of CSV file.", entry);
-                    return entry.getValue().toString();
-                }
-            }
-        }
-        return null;
-    }
-
-    // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
-    private static String getMainClass() {
-        // find the class that called us, and use their "target/classes"
-        final Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();
-        for (Map.Entry<Thread, StackTraceElement[]> trace : traces.entrySet()) {
-            if ("main".equals(trace.getKey().getName())) {
-                // Using a thread named main is best...
-                final StackTraceElement[] els = trace.getValue();
-                int i = els.length - 1;
-                StackTraceElement best = els[--i];
-                String cls = best.getClassName();
-                while (i > 0 && isSystemClass(cls)) {
-                    // if the main class is likely an ide,
-                    // then we should look higher...
-                    while (i-- > 0) {
-                        if ("main".equals(els[i].getMethodName())) {
-                            best = els[i];
-                            cls = best.getClassName();
-                            break;
-                        }
-                    }
-                }
-                if (isSystemClass(cls)) {
-                    i = els.length - 1;
-                    best = els[i];
-                    while (isSystemClass(cls) && i --> 0) {
-                        best = els[i];
-                        cls = best.getClassName();
-                    }
-                }
-                return best.getClassName();
-            }
-        }
-        return "unknown";
-    }
-
-    private static boolean isSystemClass(String cls) {
-        return cls.startsWith("java.") ||
-                cls.startsWith("jdk.") ||
-                cls.startsWith("sun.") ||
-                cls.startsWith("org.apache.maven.") ||
-                cls.contains(".intellij.") ||
-                cls.startsWith("org.junit") ||
-                cls.startsWith("junit.") ||
-                cls.contains(".eclipse") ||
-                cls.contains("netbeans");
     }
 
 }
