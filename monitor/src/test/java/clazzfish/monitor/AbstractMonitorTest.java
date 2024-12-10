@@ -31,8 +31,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link AbstractMonitor} class.
@@ -92,6 +91,15 @@ public abstract class AbstractMonitorTest {
         assertTrue(monitor.isMBean(), "not registered: " + getMonitor());
         monitor.unregisterMeAsMBean();
         assertFalse(monitor.isMBean(), "registered: " + monitor);
+    }
+
+    @Test
+    public void testGetDumpDir() {
+        File dumpDir = getMonitor().getDumpDir();
+        assertNotNull(dumpDir);
+        if (dumpDir.exists()) {
+            assertTrue(dumpDir.isDirectory());
+        }
     }
 
     /**

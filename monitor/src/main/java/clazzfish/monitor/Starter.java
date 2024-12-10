@@ -36,10 +36,10 @@ public final class Starter implements Serializable {
 
     static {
         ServiceLoader.load(Serializable.class).forEach(r -> log.debug("Loading {}...", r));
-        main();
+        start();
     }
 
-    public static void main(String... args) {
+    public static void start() {
         ClasspathMonitor.getInstance().registerMeAsMBean();
         ResourcepathMonitor.getInstance().registerMeAsMBean();
         ClazzRecorder.getInstance().registerMeAsMBean();

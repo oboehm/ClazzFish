@@ -377,6 +377,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	 */
 	@Override
 	public void dumpMe(final File dumpDir) throws IOException {
+		super.dumpMe(dumpDir);
         this.dump(dumpDir, "DoubletResourcepath", "DoubletResourcepathURIs", "Doublets", "IncompatibleResources",
                 "IncompatibleResourcepath", "IncompatibleResourcepathURIs", "Resources");
         copyResource("RscMonREADME.txt", new File(dumpDir, "README.txt"));

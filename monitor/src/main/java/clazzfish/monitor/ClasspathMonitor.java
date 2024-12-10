@@ -582,7 +582,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @return true if it is a known classloader
 	 */
-	@Override
 	public boolean isClassloaderSupported() {
 		return this.classpathDigger.isClassloaderSupported();
 	}
@@ -1317,6 +1316,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	@Override
 	public void dumpMe(final File dumpDir) throws IOException {
+		super.dumpMe(dumpDir);
 	    this.dump(dumpDir, DUMP_GETTERS);
 		dumpClassloaderInfo(dumpDir);
 		copyResource("CpMonREADME.txt", new File(dumpDir, "README.txt"));
@@ -1398,10 +1398,9 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * system property "multiThreadingEnabled=true" to activate it.
 	 *
 	 * @return true if multi threading is enabled for this class.
-	 * @see ClasspathMonitorMBean#isMultiThreadingEnabled()
+	 * @see ClasspathMonitor#isMultiThreadingEnabled()
 	 * @since 0.9.7
 	 */
-	@Override
 	public boolean isMultiThreadingEnabled() {
 		return this.doubletDigger.isMultiThreadingEnabled();
 	}
@@ -1410,12 +1409,10 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * Here you can enable or disable the (experimental) multi threading mode to
 	 * see if it is really faster on a mult-core machine.
 	 *
-	 * @param enabled
-	 *            the enabled
-	 * @see ClasspathMonitorMBean#setMultiThreadingEnabled(boolean)
+	 * @param enabled true if multithreading is enabled
+	 * @see ClasspathMonitor#setMultiThreadingEnabled(boolean)
 	 * @since 0.9.7
 	 */
-	@Override
 	public void setMultiThreadingEnabled(final boolean enabled) {
 		this.doubletDigger.setMultiThreadingEnabled(enabled);
 	}

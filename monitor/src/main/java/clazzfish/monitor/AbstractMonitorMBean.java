@@ -50,7 +50,7 @@ public interface AbstractMonitorMBean extends Shutdownable {
 	 * @return the temporary file
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	@Description("dumps all attributs to a temporary file")
+	@Description("dumps all attributes to a temporary file")
 	File dumpMe() throws IOException;
 
 	/**
@@ -62,5 +62,15 @@ public interface AbstractMonitorMBean extends Shutdownable {
 	 */
 	@Description("dumps all attributs to the given directory")
 	void dumpMe(final String dirname) throws IOException;
+
+	/**
+	 * This operations gives you the directory where the different MBeans
+	 * attributes are dumped to.
+	 *
+	 * @return the dump directory
+	 * @since 2.3
+	 */
+	@Description("gets the directory where the attributes are dumped to")
+	File getDumpDir();
 
 }

@@ -18,7 +18,7 @@
 
 package clazzfish.monitor;
 
-import clazzfish.monitor.io.ExtendedFile;
+import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
@@ -130,6 +130,19 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     public abstract void logMe();
 
     /**
+     * The base directory where all is dumped can be configured (see
+     * {@link Config#getDumpDir()}. Each monitor class has its own dump
+     * dir below the base directory.
+     *
+     * @return the dump directory
+     * @since 2.3
+     */
+    @Override
+    public File getDumpDir() {
+        return new File(Config.getDumpDir(), this.getClass().getSimpleName());
+    }
+
+    /**
      * This operation dumps the different MBean attributes to a temporary
      * directory with classname as prefix. The name of the created directory is
      * returned so that you can see it in the 'jconsole' (if you have triggered
@@ -141,7 +154,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      */
     @Override
     public File dumpMe() throws IOException {
-        File dumpDir = ExtendedFile.createTmpdir(this.getClass().getSimpleName(), "");
+        File dumpDir = getDumpDir();
         this.dumpMe(dumpDir);
         return dumpDir;
     }

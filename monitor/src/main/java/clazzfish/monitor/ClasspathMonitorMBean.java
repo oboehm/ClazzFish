@@ -230,13 +230,6 @@ public interface ClasspathMonitorMBean extends AbstractMonitorMBean {
 	@Description("returns the classpath where incompatible classes were found")
 	String[] getIncompatibleClasspath();
 
-	/**
-	 * Checks if is classloader supported.
-	 *
-	 * @return true if it is a known classloader
-	 */
-	@Description("returns true for classloader which are known and tested")
-	boolean isClassloaderSupported();
 
 	/**
 	 * Returns some information about the classloader. At least the user should
@@ -247,20 +240,5 @@ public interface ClasspathMonitorMBean extends AbstractMonitorMBean {
 	 */
 	@Description("returns some infos about the found classloader")
 	String getClassloaderInfo();
-
-	/**
-	 * Is multi threading enabled?.
-	 *
-	 * @return true if multi threading is enabled for this class.
-	 */
-	boolean isMultiThreadingEnabled();
-
-	/**
-	 * Here you can enable or disable the multi threading mode.
-	 *
-	 * @param enabled true, if multithreading should be enabled
-	 */
-	@Description("experimental, don't change it!")
-	void setMultiThreadingEnabled(boolean enabled);
 
 }

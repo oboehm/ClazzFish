@@ -32,7 +32,7 @@ class StarterTest {
 
     @Test
     void testRegistration() {
-        Starter.main();
+        Starter.start();
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ClasspathMonitor"));
         assertTrue(MBeanHelper.isRegistered("clazzfish:type=monitor,name=ResourcepathMonitor"));
         assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec"));
