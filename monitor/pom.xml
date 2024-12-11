@@ -95,6 +95,7 @@
             <groupId>de.aosd.clazzfish</groupId>
             <artifactId>clazzfish-agent</artifactId>
             <version>2.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
