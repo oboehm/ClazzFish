@@ -12,8 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update to Java 17
 
 ### Added
+- ClazzRecorder collects class statistic over several runs of a program
 - Starter class to automatically register the monitor classes to JMX
   (https://github.com/oboehm/ClazzFish/issues/15[issue #15])
+- dump directory can now be set via system property `clazzfish.dump.dir` or environment variable `CLAZZFISH_DUMP_DIR`
+
 
 ## [2.2] (02-Feb-2024)
 

@@ -28,9 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -134,7 +133,9 @@ public abstract class AbstractMonitorTest {
             assertTrue(dumpDir.isDirectory(), "not a directory: " + dumpDir);
             File[] dumpFiles = dumpDir.listFiles();
             assert dumpFiles != null;
-            assertThat(dumpDir + ": ", expected, equalTo(dumpFiles.length));
+            if (dumpFiles.length != expected) {
+                fail(String.format("%d files expected, got: %s", dumpFiles.length, Arrays.toString(dumpFiles)));
+            }
         } finally {
             FileUtils.deleteDirectory(dumpDir);
             LOG.info("Directory '{}' is deleted.", dumpDir);
