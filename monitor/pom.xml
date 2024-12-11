@@ -24,6 +24,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar</argLine>
+                    <systemPropertyVariables>
+                        <clazzfish.dump.dir>target/statistics</clazzfish.dump.dir>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -31,6 +34,9 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <argLine>-javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar</argLine>
+                    <systemPropertyVariables>
+                        <clazzfish.dump.dir>target/statistics</clazzfish.dump.dir>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

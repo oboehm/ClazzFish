@@ -134,7 +134,7 @@ public abstract class AbstractMonitorTest {
             File[] dumpFiles = dumpDir.listFiles();
             assert dumpFiles != null;
             if (dumpFiles.length != expected) {
-                fail(String.format("%d files expected, got: %s", dumpFiles.length, Arrays.toString(dumpFiles)));
+                fail(String.format("%d files expected, got: %s", expected, Arrays.toString(dumpFiles)));
             }
         } finally {
             FileUtils.deleteDirectory(dumpDir);
