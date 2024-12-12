@@ -66,40 +66,24 @@ public final class Config {
             }
         }
         log.trace("Using main class as application name.");
-        return getMainClass();
+        return getStartClassname();
     }
 
     // from https://stackoverflow.com/questions/939932/how-to-determine-main-class-at-runtime-in-threaded-java-application
-    private static String getMainClass() {
+    private static String getStartClassname() {
         // find the class that called us, and use their "target/classes"
         final Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();
         for (Map.Entry<Thread, StackTraceElement[]> trace : traces.entrySet()) {
             if ("main".equals(trace.getKey().getName())) {
                 // Using a thread named main is best...
                 final StackTraceElement[] els = trace.getValue();
-                int i = els.length - 1;
-                StackTraceElement best = els[--i];
-                String cls = best.getClassName();
-                while (i > 0 && isSystemClass(cls)) {
-                    // if the main class is likely an ide,
-                    // then we should look higher...
-                    while (i-- > 0) {
-                        if ("main".equals(els[i].getMethodName())) {
-                            best = els[i];
-                            cls = best.getClassName();
-                            break;
-                        }
+                for (int i = els.length - 1; i >= 0; i--) {
+                    String cls = els[i].getClassName();
+                    if (!isSystemClass(cls)) {
+                        return cls;
                     }
                 }
-                if (isSystemClass(cls)) {
-                    i = els.length - 1;
-                    best = els[i];
-                    while (isSystemClass(cls) && i --> 0) {
-                        best = els[i];
-                        cls = best.getClassName();
-                    }
-                }
-                return best.getClassName();
+                return els[els.length-1].getClassName();
             }
         }
         return "unknown";
