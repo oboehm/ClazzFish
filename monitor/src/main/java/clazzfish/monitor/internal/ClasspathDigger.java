@@ -58,10 +58,12 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	protected static final ObjectName AGENT_MBEAN;
 
-	protected static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
 	private final String[] bootClassPath = getClasspath("sun.boot.class.path");
+
+	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
 
 	static {
 		try {
@@ -493,7 +495,7 @@ public class ClasspathDigger extends AbstractDigger {
 	}
 
 	/**
-	 * Gets the loaded class list from patterntesting-agent. For this method you
+	 * Gets the loaded class list from clazzfish-agent. For this method you
 	 * must start the Java VM with PatternTesting Agent as Java agent
 	 * (<i>java -javaagent:clazzfish-agent-1.1.jar ...</i>) because
 	 * this MBean is needed for the loaded classes.

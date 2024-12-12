@@ -99,7 +99,7 @@ public class ResourcepathDigger extends ClasspathDigger {
     		if (parent == null) {
     			return null;
     		} else {
-    			ClasspathDigger.LOG.trace("{} not found with {}, will ask {}...", name, cloader, parent);
+    			LOG.trace("{} not found with {}, will ask {}...", name, cloader, parent);
     			return whichResource(name, parent);
     		}
     	}

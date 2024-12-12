@@ -96,7 +96,7 @@ public class BoringClassLoader extends ClassLoader {
     /**
      * Gets the laoded classes which normally is stored in the classes field
      * of the parent classloader. But since Java 11 it is no longer possible
-     * to access this field by reflection. So now the loaded packages are now
+     * to access this field by reflection. So now the loaded packages are
      * scanned for the classes which might be loaded.
      * <p>
      * NOTE: This approach probably finds more classes as are really loaded by
@@ -106,8 +106,14 @@ public class BoringClassLoader extends ClassLoader {
      * @return all loaded classes (and probably a little bit more)
      */
     public Set<Class<?>> getLoadedClasses() {
+        String classname = getClass().getName();
+        if (findLoadedClass(classname) == null) {
+            log.trace("Using fallback to find loaded classes because parent does not find not {} as loaded class.", classname);
+            return new HashSet<>(ClasspathDigger.DEFAULT.getLoadedClasses());
+        }
         Set<Class<?>> loadedClassSet = new HashSet<>();
         String[] packageNames = getPackageNames();
+        log.debug("{} packages found.", packageNames.length);
         try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .acceptPackages(packageNames)
@@ -115,13 +121,15 @@ public class BoringClassLoader extends ClassLoader {
                 .scan()) {
             ClassInfoList list = scanResult.getAllClasses();
             for (ClassInfo info : list) {
-                String classname = info.getName();
+                classname = info.getName();
                 try {
                     Class<?> loaded = super.findLoadedClass(classname);
                     if (loaded == null) {
                         loaded = findClass(classname);
                     }
-                    loadedClassSet.add(loaded);
+                    if (loaded != null) {
+                        loadedClassSet.add(loaded);
+                    }
                 } catch (ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError | ExceptionInInitializerError ex) {
                     log.debug("'{}' is not found as class ({}).", classname, ex.getMessage());
                     log.trace("Details:", ex);
@@ -169,13 +177,10 @@ public class BoringClassLoader extends ClassLoader {
         }
         try {
             found = super.findClass(name);
+            loadedClasses.put(name, found);
         } catch (ClassNotFoundException ex) {
             log.debug("Class '{}' was not found by superclass.", name);
             log.trace("Details:", ex);
-            found = Class.forName(name);
-        }
-        if (found != null) {
-            loadedClasses.put(name, found);
         }
         return found;
     }
