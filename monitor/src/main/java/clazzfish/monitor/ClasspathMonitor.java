@@ -107,7 +107,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * </p>
 	 */
 	protected ClasspathMonitor() {
-		this.classpathDigger = new ClasspathDigger();
+		this.classpathDigger = ClasspathDigger.DEFAULT;
 		this.cloader = BoringClassLoader.of(this.classpathDigger.getClassLoader());
 		this.classpath = this.classpathDigger.getClasspath();
 		this.allClasspathClasses = getFutureCasspathClasses();

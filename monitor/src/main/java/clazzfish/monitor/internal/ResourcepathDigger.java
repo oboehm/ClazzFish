@@ -43,6 +43,8 @@ public class ResourcepathDigger extends ClasspathDigger {
     
     private static final Logger LOG = LoggerFactory.getLogger(ResourcepathDigger.class);
 
+    public static final ResourcepathDigger DEFAULT = new ResourcepathDigger();
+
     /**
      * Instantiates a new digger for resources.
      */

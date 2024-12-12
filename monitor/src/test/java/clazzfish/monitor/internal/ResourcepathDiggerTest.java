@@ -47,7 +47,7 @@ public class ResourcepathDiggerTest extends AbstractDiggerTest {
      */
     @Override
     protected AbstractDigger getDigger() {
-        return new ResourcepathDigger();
+        return ResourcepathDigger.DEFAULT;
     }
 
     /**
@@ -134,7 +134,7 @@ public class ResourcepathDiggerTest extends AbstractDiggerTest {
     @Override
     @Test
     public void testGetResources() {
-        ResourcepathDigger digger = new ResourcepathDigger();
+        ResourcepathDigger digger = ResourcepathDigger.DEFAULT;
         String rsc = Converter.toResource(String.class);
         Enumeration<URL> resources = digger.getResources(rsc);
         URL r1 = resources.nextElement();

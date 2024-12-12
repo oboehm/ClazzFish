@@ -58,18 +58,13 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	 * outside.
 	 */
 	protected ResourcepathMonitor() {
-		this.resourcepathDigger = new ResourcepathDigger();
+		this.resourcepathDigger = ResourcepathDigger.DEFAULT;
 		this.doubletDigger = new DoubletDigger(this.resourcepathDigger);
 		this.resources = getFutureResources();
 	}
 
 	private FutureTask<String[]> getFutureResources() {
-		Callable<String[]> callable = new Callable<String[]>() {
-			@Override
-			public String[] call() {
-				return getResourcesArray();
-			}
-		};
+		Callable<String[]> callable = this::getResourcesArray;
 		FutureTask<String[]> resources = new FutureTask<>(callable);
 		EXECUTOR.execute(resources);
 		return resources;
@@ -136,7 +131,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 
 	private String[] getResourcesArray() {
 		Set<String> resourceSet = this.resourcepathDigger.getResources();
-		return resourceSet.toArray(new String[resourceSet.size()]);
+		return resourceSet.toArray(new String[0]);
 	}
 
 	/**
@@ -257,7 +252,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 				LOG.trace("Details:", ex);
 			}
 		}
-		return doublets.toArray(new String[doublets.size()]);
+		return doublets.toArray(new String[0]);
 	}
 
 	/**
@@ -290,7 +285,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 			}
 		}
 		Set<URI> resourcepathSet = this.resourcepathDigger.getResourcepathSet(doubletsWithoutMetaInf);
-		return resourcepathSet.toArray(new URI[resourcepathSet.size()]);
+		return resourcepathSet.toArray(new URI[0]);
 	}
 
 	/**
@@ -318,7 +313,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 				LOG.warn("{} is not added to incompatible resource list:", rsc, nse);
 			}
 		}
-		return incompatibleResources.toArray(new String[incompatibleResources.size()]);
+		return incompatibleResources.toArray(new String[0]);
 	}
 
 	/**
@@ -342,14 +337,14 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
      * @return the resourcepath as array of URIs
      */
 	protected URI[] getIncompatibleResourcepathURIs() {
-        List<String> resourcesWithoutMetainf = new ArrayList<String>();
+        List<String> resourcesWithoutMetainf = new ArrayList<>();
         for (String resource : this.getIncompatibleResources()) {
             if (!resource.startsWith("/META-INF")) {
                 resourcesWithoutMetainf.add(resource);
             }
         }
         Set<URI> resourcepathSet = this.resourcepathDigger.getResourcepathSet(resourcesWithoutMetainf);
-        return resourcepathSet.toArray(new URI[resourcepathSet.size()]);
+        return resourcepathSet.toArray(new URI[0]);
 	}
 
 	/**

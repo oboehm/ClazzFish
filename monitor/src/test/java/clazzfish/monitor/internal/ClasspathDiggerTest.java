@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClasspathDiggerTest extends AbstractDiggerTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ClasspathDiggerTest.class);
-    private final ClasspathDigger digger = new ClasspathDigger();
+    private final ClasspathDigger digger = ClasspathDigger.DEFAULT;
 
     /**
      * Returns the {@link ClasspathDigger} for testing.
