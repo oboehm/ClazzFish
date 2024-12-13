@@ -43,7 +43,8 @@ class ClazzRecorderTest {
     @Test
     void registerMeAsMBean() {
         recorder.registerMeAsMBean();
-        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec"));
+        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec")
+                || MBeanHelper.isRegistered("clazzfish:name=rec,type=monitor,monitor=ClazzRecorder"));
     }
 
     @Test

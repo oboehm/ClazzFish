@@ -117,7 +117,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     public void registerMeAsMBean() {
-        MBeanHelper.registerMBean(MBeanHelper.getAsObjectName(this.getClass()), this);
+        MBeanHelper.registerMBean("clazzfish:name=rec,type=monitor,monitor=ClazzRecorder", this);
     }
 
     public SortedSet<ClazzRecord> getStatistics() {
