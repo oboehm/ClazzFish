@@ -26,6 +26,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit-Test fuer {@link BoringClassLoader} ...
@@ -35,12 +36,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 class BoringClassLoaderTest {
 
-    private final BoringClassLoader classLoader = new BoringClassLoader();
+    private final BoringClassLoader classLoader = BoringClassLoader.DEFAULT_CLOADER;
 
     @Test
     void getLoadedClasses() {
         Collection<Class<?>> loadedClasses = classLoader.getLoadedClasses();
         assertFalse(loadedClasses.isEmpty());
+        assertThat(loadedClasses, hasItem(getClass()));
+        for (Class<?> cl : loadedClasses) {
+            if ("clazzfish.monitor.internal.DeadClass".equals(cl.getName())) {
+                fail(cl + " is a dead class and never loaded");
+            }
+        }
     }
 
     @Test

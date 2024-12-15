@@ -21,6 +21,9 @@ import io.github.classgraph.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.JMException;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.*;
 
@@ -39,6 +42,9 @@ public class BoringClassLoader extends ClassLoader {
     private String[] packageNames = new String[0];
     private final SortedSet<URI> usedClasspath = new TreeSet<>();
 
+    public static BoringClassLoader DEFAULT_CLOADER = new BoringClassLoader();
+    public static BoringClassLoader SYSTEM_CLOADER = new BoringClassLoader(getSystemClassLoader());
+
     /**
      * Creates a {@link BoringClassLoader} from the given classLoder.
      * If the given classLoader itself is a {@link BoringClassLoader} it will
@@ -55,7 +61,7 @@ public class BoringClassLoader extends ClassLoader {
         }
     }
 
-    BoringClassLoader() {
+    private BoringClassLoader() {
         this(Thread.currentThread().getContextClassLoader());
     }
 
@@ -99,17 +105,20 @@ public class BoringClassLoader extends ClassLoader {
      * to access this field by reflection. So now the loaded packages are
      * scanned for the classes which might be loaded.
      * <p>
-     * NOTE: This approach probably finds more classes as are really loaded by
-     * the real classloader.
+     * The actual implementation uses the DiagnosticCommand MBean as described
+     * in <a href=
+     * "https://stackoverflow.com/questions/75008706/how-can-i-get-the-name-and-package-of-all-the-classes-loaded-in-the-java-jvm">
+     * Stackoverflow</a>. Other tries with e.g. with the ClassPath class from
+     * Googles Guava were not successful.
      * </p>
      *
-     * @return all loaded classes (and probably a little bit more)
+     * @return all loaded classes
      */
     public Set<Class<?>> getLoadedClasses() {
         String classname = getClass().getName();
         if (findLoadedClass(classname) == null) {
             log.trace("Using fallback to find loaded classes because parent does not find not {} as loaded class.", classname);
-            return new HashSet<>(ClasspathDigger.DEFAULT.getLoadedClasses());
+            return getLoadedClassesFromGC();
         }
         Set<Class<?>> loadedClassSet = new HashSet<>();
         String[] packageNames = getPackageNames();
@@ -123,7 +132,7 @@ public class BoringClassLoader extends ClassLoader {
             for (ClassInfo info : list) {
                 classname = info.getName();
                 try {
-                    Class<?> loaded = super.findLoadedClass(classname);
+                    Class<?> loaded = getLoadedClass(classname);
                     if (loaded == null) {
                         loaded = findClass(classname);
                     }
@@ -137,6 +146,46 @@ public class BoringClassLoader extends ClassLoader {
             }
         }
         return loadedClassSet;
+    }
+
+    private static Class<?> getLoadedClass(String classname) {
+        Class<?> loaded = SYSTEM_CLOADER.findLoadedClass(classname);
+        if (loaded == null) {
+            loaded = DEFAULT_CLOADER.findLoadedClass(classname);
+        }
+        return loaded;
+    }
+
+    private Set<Class<?>> getLoadedClassesFromGC() {
+        try {
+            Object classHistogram = ManagementFactory.getPlatformMBeanServer().invoke(
+                    new ObjectName("com.sun.management:type=DiagnosticCommand"),
+                    "gcClassHistogram",
+                    new Object[]{new String[]{"-all"}},
+                    new String[]{"[Ljava.lang.String;"});
+            return parseClassHistogramm(classHistogram.toString());
+        } catch (JMException ex) {
+            throw new UnsupportedOperationException("cannot get loaded classes via JMX:", ex);
+        }
+    }
+
+    private Set<Class<?>> parseClassHistogramm(String histogram) {
+        Set<Class<?>> classes = new HashSet<>();
+        String[] lines = histogram.split("\n");
+        for (int i = 2; i < lines.length-1; i++) {
+            String[] parts = lines[i].trim().split("\\s+");
+            String className = parts[3];
+            try {
+                Class<?> cl = loadClass(className);
+                if (cl != null) {
+                    classes.add(cl);
+                }
+            } catch (ClassNotFoundException ex) {
+                log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
+                log.trace("Details:", ex);
+            }
+        }
+        return classes;
     }
 
     /**
