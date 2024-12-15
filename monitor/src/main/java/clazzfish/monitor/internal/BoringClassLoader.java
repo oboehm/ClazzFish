@@ -21,9 +21,6 @@ import io.github.classgraph.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.JMException;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.*;
 
@@ -118,7 +115,7 @@ public class BoringClassLoader extends ClassLoader {
         String classname = getClass().getName();
         if (findLoadedClass(classname) == null) {
             log.trace("Using fallback to find loaded classes because parent does not find not {} as loaded class.", classname);
-            return getLoadedClassesFromGC();
+            return new HashSet<>(ClassDiagnostic.getLoadedClassesFromGC());
         }
         Set<Class<?>> loadedClassSet = new HashSet<>();
         String[] packageNames = getPackageNames();
@@ -154,38 +151,6 @@ public class BoringClassLoader extends ClassLoader {
             loaded = DEFAULT_CLOADER.findLoadedClass(classname);
         }
         return loaded;
-    }
-
-    private Set<Class<?>> getLoadedClassesFromGC() {
-        try {
-            Object classHistogram = ManagementFactory.getPlatformMBeanServer().invoke(
-                    new ObjectName("com.sun.management:type=DiagnosticCommand"),
-                    "gcClassHistogram",
-                    new Object[]{new String[]{"-all"}},
-                    new String[]{"[Ljava.lang.String;"});
-            return parseClassHistogramm(classHistogram.toString());
-        } catch (JMException ex) {
-            throw new UnsupportedOperationException("cannot get loaded classes via JMX:", ex);
-        }
-    }
-
-    private Set<Class<?>> parseClassHistogramm(String histogram) {
-        Set<Class<?>> classes = new HashSet<>();
-        String[] lines = histogram.split("\n");
-        for (int i = 2; i < lines.length-1; i++) {
-            String[] parts = lines[i].trim().split("\\s+");
-            String className = parts[3];
-            try {
-                Class<?> cl = loadClass(className);
-                if (cl != null) {
-                    classes.add(cl);
-                }
-            } catch (ClassNotFoundException ex) {
-                log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
-                log.trace("Details:", ex);
-            }
-        }
-        return classes;
     }
 
     /**
