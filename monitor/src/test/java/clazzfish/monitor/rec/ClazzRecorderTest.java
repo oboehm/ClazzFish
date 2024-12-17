@@ -19,16 +19,14 @@ package clazzfish.monitor.rec;
 
 import clazzfish.monitor.jmx.MBeanHelper;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ClazzRecorder}.
@@ -38,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ClazzRecorderTest {
 
+    private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
     private final ClazzRecorder recorder = ClazzRecorder.getInstance();
 
     @Test
@@ -61,23 +60,28 @@ class ClazzRecorderTest {
     }
 
     @Test
-    void exportCSV() throws FileNotFoundException {
+    void exportCSV() throws IOException {
         File csvFile = recorder.exportCSV();
         assertTrue(csvFile.exists());
     }
 
     @Test
     void importCSV() throws IOException {
-        File csvFile = new File("target", "clazzes.csv");
-        recorder.exportCSV(csvFile);
-        recorder.importCSV(csvFile);
-        checkClasses(recorder.getStatistics(), this.getClass().getName(), 2);
+        File csvFile = new File("target/statistics", "import.csv");
+        if (csvFile.delete()) {
+            log.info("{} is deleted.", csvFile);
+        }
+        ClazzRecorder rec = new ClazzRecorder(csvFile);
+        rec.exportCSV(csvFile);
+        rec.importCSV(csvFile);
+        checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
+        checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
     }
 
     private static void checkClasses(Set<ClazzRecord> classes, String classname, int n) {
         for (ClazzRecord record : classes) {
             if (classname.equals(record.classname())) {
-                assertThat(record.count(), greaterThanOrEqualTo(n));
+                assertEquals(n, record.count());
                 return;
             }
         }

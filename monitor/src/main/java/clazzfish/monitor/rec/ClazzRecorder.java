@@ -75,22 +75,26 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     private ClazzRecorder() {
-        this(ClasspathMonitor.getInstance());
+        this(getCsvFile());
     }
 
-    private ClazzRecorder(ClasspathMonitor classpathMonitor) {
+    ClazzRecorder(File csvFile) {
+        this(csvFile, ClasspathMonitor.getInstance());
+    }
+
+    private ClazzRecorder(File csvFile, ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
         this.classes = collectClasses(classpathMonitor);
-        csvFile = getCsvFile();
+        this.csvFile = csvFile;
         log.debug("Statistics will be imported from / exported to '{}'.", csvFile);
-        if (csvFile.exists()) {
-            try {
-                importCSV(csvFile);
-            } catch (IOException ex) {
-                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
-                log.debug("Details:", ex);
-            }
-        }
+//        if (csvFile.exists()) {
+//            try {
+//                importCSV(csvFile);
+//            } catch (IOException ex) {
+//                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
+//                log.debug("Details:", ex);
+//            }
+//        }
     }
 
     private static SortedSet<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
@@ -140,7 +144,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     @Override
-    public File exportCSV() throws FileNotFoundException {
+    public File exportCSV() throws IOException {
         File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {
             log.info("Export dir {} was created.", dir);
@@ -149,11 +153,19 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     @Override
-    public File exportCSV(String filename) throws FileNotFoundException {
+    public File exportCSV(String filename) throws IOException {
         return exportCSV(new File(filename)).getAbsoluteFile();
     }
 
-    public File exportCSV(File csvFile) throws FileNotFoundException {
+    public File exportCSV(File csvFile) throws IOException {
+        if (csvFile.exists()) {
+            try {
+                importCSV(csvFile);
+            } catch (IOException ex) {
+                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
+                log.debug("Details:", ex);
+            }
+        }
         SortedSet<ClazzRecord> statistics = getStatistics();
         try (PrintWriter writer = new PrintWriter(csvFile)) {
             for (ClazzRecord rec : statistics) {
@@ -185,7 +197,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     public void run() {
         try {
             exportCSV();
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             log.info("The class statistics could not be exported ({}).", ex.getMessage());
             log.debug("Details:", ex);
         }
