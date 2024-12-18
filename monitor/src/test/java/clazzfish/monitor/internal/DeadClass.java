@@ -17,6 +17,9 @@
  */
 package clazzfish.monitor.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is an example of a class which is never loaeded. It is used
  * for testing.
@@ -25,4 +28,11 @@ package clazzfish.monitor.internal;
  * @since 2.3 (15.12.24)
  */
 public class DeadClass {
+
+    private static final Logger log = LoggerFactory.getLogger(DeadClass.class);
+
+    static {
+        log.error("This class should be never loaded!");
+    }
+
 }

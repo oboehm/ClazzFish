@@ -19,6 +19,7 @@ package clazzfish.monitor.rec;
 
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
+import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
@@ -165,6 +166,8 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
                 log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
                 log.debug("Details:", ex);
             }
+        } else {
+            ExtendedFile.createDir(csvFile.getParentFile());
         }
         SortedSet<ClazzRecord> statistics = getStatistics();
         try (PrintWriter writer = new PrintWriter(csvFile)) {

@@ -69,6 +69,12 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         List<Class<?>> classes = digger.getLoadedClasses();
         assertFalse(classes.isEmpty());
         LOG.info("{} classes loaded.", classes.size());
+        assertThat(classes, hasItem(this.getClass()));
+        for (Class<?> clazz : classes) {
+            if ("clazzfish.monitor.internal.DeadClass".equals(clazz.getName())) {
+                fail(clazz + " should be not loaded!");
+            }
+        }
     }
 
     /**

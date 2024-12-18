@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,6 +208,12 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
         LOG.info(classes.size() + " classes loaded");
         assertFalse(classes.isEmpty());
         LOG.trace("loaded classes:\n" + cpMon.getLoadedClassesAsString());
+        assertThat(classes, hasItem(this.getClass()));
+        for (Class<?> clazz : classes) {
+            if ("clazzfish.monitor.internal.DeadClass".equals(clazz.getName())) {
+                fail(clazz + " should be not loaded!");
+            }
+        }
     }
 
     /**
@@ -578,6 +585,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     @Test
+    @Disabled("function is now deprecated")
     public void testGetConcreteClassList() {
         Collection<Class<?>> javaClasses = cpMon.getConcreteClassList("java");
         LOG.info("{} concrete Java classes found.", javaClasses.size());
@@ -587,6 +595,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     @Test
+    @Disabled("function is now deprecated")
     public void testGetConcreteClassListDot() {
         String packageName = "clazzfish.monitor";
         Collection<Class<?>> c1 = cpMon.getConcreteClassList(packageName);

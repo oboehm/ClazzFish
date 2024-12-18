@@ -170,7 +170,22 @@ public final class ExtendedFile extends File {
         return filename;
     }
 
-    /**
+	/**
+	 * Creates the given directory if it does not exist.
+	 *
+	 * @param dir directory to be created
+	 */
+	public static void createDir(File dir) {
+		if (!dir.exists()) {
+			if (dir.mkdirs()) {
+				LOG.debug("Directory '{}' successful created.", dir);
+			} else {
+				LOG.error("Cannot create dir '{}' and will give up.", dir);
+			}
+		}
+	}
+
+	/**
      * Creates a directory in the temp directory.
      *
      * @param prefix the prefix
@@ -222,7 +237,7 @@ public final class ExtendedFile extends File {
         return array;
     }
 
-	/**
+    /**
 	 * Gets the parent as {@link ExtendedFile}. This method was introduced
 	 * because {@link #getParent()} and {@link #getParentFile()} also exists.
 	 *

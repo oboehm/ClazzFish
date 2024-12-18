@@ -19,6 +19,7 @@
 package clazzfish.monitor;
 
 import clazzfish.monitor.internal.Config;
+import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
@@ -155,6 +156,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     @Override
     public File dumpMe() throws IOException {
         File dumpDir = getDumpDir();
+        ExtendedFile.createDir(dumpDir);
         this.dumpMe(dumpDir);
         return dumpDir;
     }
@@ -254,13 +256,6 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      */
     public void dumpMe(final File dumpDir) throws IOException {
         LOG.info("Attributes will be dumped to dir '{}'.", dumpDir);
-        if (!dumpDir.exists()) {
-            if (dumpDir.mkdir()) {
-                LOG.debug("Directory '{}' successful created.", dumpDir);
-            } else {
-                LOG.error("Cannot create dir '{}' and will give up.", dumpDir);
-            }
-        }
     }
     
     /**

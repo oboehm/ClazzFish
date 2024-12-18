@@ -21,6 +21,7 @@ package clazzfish.monitor;
 import clazzfish.monitor.internal.BoringClassLoader;
 import clazzfish.monitor.internal.ClasspathDigger;
 import clazzfish.monitor.internal.DoubletDigger;
+import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.*;
 import org.slf4j.Logger;
@@ -809,12 +810,17 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	/**
 	 * Gets a list of concrete classes. These are classes which can be
 	 * instantiated, i.e. they are not abstract and have a default constructor.
+	 * <p>
+	 * TODO: Will be removed in 2.5
+	 * </p>
 	 *
 	 * @param packageName
 	 *            the package name
 	 * @return the concrete class list
+	 * @deprecated dead classes may be loaded
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated(since = "2.3", forRemoval = true)
 	public Collection<Class<?>> getConcreteClassList(final String packageName) {
 		assert packageName != null;
 		Collection<String> classList = this.getClasspathClassList(packageName);
@@ -1316,6 +1322,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	@Override
 	public void dumpMe(final File dumpDir) throws IOException {
+		ExtendedFile.createDir(dumpDir);
 		super.dumpMe(dumpDir);
 	    this.dump(dumpDir, DUMP_GETTERS);
 		dumpClassloaderInfo(dumpDir);
