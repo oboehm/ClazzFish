@@ -37,7 +37,7 @@ import java.lang.management.ManagementFactory;
 public class MBeanHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MBeanHelper.class);
-	private static MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+	private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 	/** Utility class - no need to instantiate it */
 	private MBeanHelper() {
@@ -242,8 +242,8 @@ public class MBeanHelper {
 			server.registerMBean(mbean, name);
 			LOG.debug("'{}' successful registered as MBean", name);
 		} catch (InstanceAlreadyExistsException ex) {
-			LOG.info("'{}' is already registered.", name);
-			LOG.debug("Details:", ex);
+			LOG.debug("'{}' is already registered.", name);
+			LOG.trace("Details:", ex);
 		} catch (MBeanRegistrationException ex) {
 			LOG.info("Cannot register <{}> as MBean:", mbean, ex);
 		} catch (NotCompliantMBeanException ex) {

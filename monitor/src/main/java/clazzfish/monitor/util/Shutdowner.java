@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The class Shutdowner has the necessary methods for registration a class
  * as shutdown hook. For this you must overwrite the {@link #run()} method
- * which is called during shutown.
+ * which is called during shutdown.
  *
  * @author oboehm
  * @since 2.3 (29.11.24)
@@ -62,7 +62,7 @@ public abstract class Shutdowner extends Thread implements Shutdownable {
         ClassloaderType type = ClassloaderType.getCurrentClassloaderType();
         if (type.isWeb()) {
             log.info("Registration as shutdown hook is ignored inside {}.", type);
-        } else {
+        } else if (!this.shutdownHook) {
             Runtime.getRuntime().addShutdownHook(this);
             this.shutdownHook = true;
             log.debug("{} is registered as shutdown hook", this);

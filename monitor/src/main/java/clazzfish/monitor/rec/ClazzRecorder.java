@@ -30,6 +30,10 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 /**
@@ -61,9 +65,10 @@ import java.util.stream.Collectors;
 public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
+    private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private static final ClazzRecorder INSTANCE = new ClazzRecorder();
     private final ClasspathMonitor classpathMonitor;
-    private final SortedSet<ClazzRecord> classes;
+    private final FutureTask<SortedSet<ClazzRecord>> allClasses;
     private final File csvFile;
 
     static {
@@ -85,17 +90,16 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
 
     private ClazzRecorder(File csvFile, ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
-        this.classes = collectClasses(classpathMonitor);
+        this.allClasses = collectFutureClasses(classpathMonitor);
         this.csvFile = csvFile;
         log.debug("Statistics will be imported from / exported to '{}'.", csvFile);
-//        if (csvFile.exists()) {
-//            try {
-//                importCSV(csvFile);
-//            } catch (IOException ex) {
-//                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
-//                log.debug("Details:", ex);
-//            }
-//        }
+    }
+
+
+    private static FutureTask<SortedSet<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
+        FutureTask<SortedSet<ClazzRecord>> classes = new FutureTask<>(() -> collectClasses(cpmon));
+        EXECUTOR.execute(classes);
+        return classes;
     }
 
     private static SortedSet<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
@@ -125,11 +129,21 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         MBeanHelper.registerMBean("clazzfish:name=rec,type=monitor,monitor=ClazzRecorder", this);
     }
 
+    public SortedSet<ClazzRecord> getAllClasses() {
+        try {
+            return allClasses.get();
+        } catch (ExecutionException | InterruptedException ex) {
+            log.info("Trying again to get all classes ({}).", ex.getMessage());
+            log.debug("Details:", ex);
+            return getAllClasses();
+        }
+    }
+
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
         Set<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).collect(
                 Collectors.toSet());
-        for (ClazzRecord record : classes) {
+        for (ClazzRecord record : getAllClasses()) {
             if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
             } else {
@@ -175,7 +189,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
                 writer.println(rec.toCSV());
             }
         }
-        log.debug("{} class records to {} exported.", statistics.size(), csvFile);
+        log.info("{} class records are exported to {}.", statistics.size(), csvFile);
         return csvFile;
     }
 
@@ -185,11 +199,11 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
                 String line = reader.readLine();
                 ClazzRecord r = ClazzRecord.fromCSV(line);
                 String classname = r.classname();
-                Optional<ClazzRecord> any = classes.stream().filter(cr -> classname.equals(cr.classname())).findAny();
+                Optional<ClazzRecord> any = getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
                 if (any.isPresent()) {
-                    classes.remove(any.get());
+                    getAllClasses().remove(any.get());
                     r = new ClazzRecord(r.classpath(), r.classname(), r.count()+any.get().count());
-                    classes.add(r);
+                    getAllClasses().add(r);
                 }
             }
         }

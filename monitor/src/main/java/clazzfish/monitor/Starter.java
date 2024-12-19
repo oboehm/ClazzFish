@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.ServiceLoader;
 
 /**
- * The starter class loads automatical the Monitor classes.
+ * The starter class loads automatically the Monitor classes.
  *
  * @author oboehm
  * @since 2.3 (22.11.24)
