@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ServiceLoader;
 
 /**
  * The starter class loads automatically the Monitor classes.
@@ -33,11 +32,6 @@ import java.util.ServiceLoader;
 public final class Starter implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(Starter.class);
-
-    static {
-        ServiceLoader.load(Serializable.class).forEach(r -> log.debug("Loading {}...", r));
-        start();
-    }
 
     public static void start() {
         ClasspathMonitor.getInstance().registerMeAsMBean();

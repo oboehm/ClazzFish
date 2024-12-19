@@ -173,6 +173,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     public File exportCSV(File csvFile) throws IOException {
+        log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
             try {
                 importCSV(csvFile);
@@ -189,7 +190,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
                 writer.println(rec.toCSV());
             }
         }
-        log.info("{} class records are exported to {}.", statistics.size(), csvFile);
+        log.info("Exporting statistics to '{}' was successful ({} lines).", csvFile, statistics.size());
         return csvFile;
     }
 
@@ -198,6 +199,9 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
             while (reader.ready()) {
                 String line = reader.readLine();
                 ClazzRecord r = ClazzRecord.fromCSV(line);
+                if (r.count() == 0) {
+                    continue;
+                }
                 String classname = r.classname();
                 Optional<ClazzRecord> any = getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
                 if (any.isPresent()) {

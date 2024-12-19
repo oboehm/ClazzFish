@@ -74,9 +74,11 @@ public abstract class Shutdowner extends Thread implements Shutdownable {
      * (not static) method.
      */
     public void removeMeAsShutdownHook() {
-        Runtime.getRuntime().removeShutdownHook(this);
-        this.shutdownHook = false;
-        log.debug("{} is de-registered as shutdown hook", this);
+        if (this.shutdownHook) {
+            Runtime.getRuntime().removeShutdownHook(this);
+            this.shutdownHook = false;
+            log.debug("{} is de-registered as shutdown hook", this);
+        }
     }
 
 }

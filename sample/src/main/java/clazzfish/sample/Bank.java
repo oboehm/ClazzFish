@@ -41,25 +41,21 @@ public class Bank {
 
     public static void main(String[] args) {
         while (true) {
-            try {
-                System.out.println("\nWhat do you want to do?\n");
-                System.out.println("1. Create bank");
-                System.out.println("2. Create account");
-                System.out.println("3. Delete account");
-                System.out.println("4. List accounts");
-                System.out.println("9. Quit");
-                Thread.sleep(500L);
-                System.out.print("\nEnter your choice: ");
-                System.out.flush();
-                Scanner console = new Scanner(System.in);
-                String choice = console.nextLine().trim();
-                if (choice.equals("9")) {
-                    break;
-                }
-            } catch (InterruptedException ex) {
-                log.warn("Ups, interrupted: ", ex);
+            System.out.println("\nWhat do you want to do?\n");
+            System.out.println("1. Create bank");
+            System.out.println("2. Create account");
+            System.out.println("3. Delete account");
+            System.out.println("4. List accounts");
+            System.out.println("9. Quit");
+            System.out.print("\nEnter your choice: ");
+            System.out.flush();
+            Scanner console = new Scanner(System.in);
+            String choice = console.nextLine().trim();
+            if (choice.equals("9")) {
+                break;
             }
         }
+        log.info("Good bye - shutting down...");
     }
 
 }
