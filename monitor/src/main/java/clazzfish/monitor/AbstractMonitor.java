@@ -189,10 +189,10 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @throws IOException Signals that an I/O exception has occurred.
      */
     protected void dump(final File dumpDir, final String... getterMethodNames) throws IOException {
-        LOG.info("Attributes will be dumped to dir '{}'.", dumpDir);
+        LOG.debug("Attributes of {} will be dumped to dir '{}'.", getClass(), dumpDir);
         if (!dumpDir.exists()) {
             if (dumpDir.mkdir()) {
-                LOG.debug("Directory '{}' successful created.", dumpDir);
+                LOG.trace("Directory '{}' successful created.", dumpDir);
             } else {
                 LOG.error("Cannot create dir '{}' and will give up.", dumpDir);
                 return;

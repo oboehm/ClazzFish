@@ -33,11 +33,28 @@ public final class Starter implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(Starter.class);
 
+    /**
+     * Registers all MBeans for monitoring the classpath and resources.
+     * Also the {@link ClazzRecorder} is registered for importing and
+     * exporting the statistics of loaded classes.
+     */
     public static void start() {
         ClasspathMonitor.getInstance().registerMeAsMBean();
         ResourcepathMonitor.getInstance().registerMeAsMBean();
         ClazzRecorder.getInstance().registerMeAsMBean();
         log.debug("ClazzFish library is started and ready.");
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported.
+     */
+    public static void record() {
+        start();
+        ClasspathMonitor.getInstance().addMeAsShutdownHook();
+        ResourcepathMonitor.getInstance().addMeAsShutdownHook();
+        ClazzRecorder.getInstance().addMeAsShutdownHook();
+        log.trace("All MBeans are registered as shutdown hook.");
     }
 
 }

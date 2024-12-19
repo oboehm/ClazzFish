@@ -36,7 +36,7 @@ public class Bank {
     private static final Logger log = LoggerFactory.getLogger(Bank.class);
 
     static {
-        Starter.start();
+        Starter.record();
     }
 
     public static void main(String[] args) {
