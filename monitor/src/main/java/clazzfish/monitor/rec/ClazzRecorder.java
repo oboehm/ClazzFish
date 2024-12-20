@@ -162,7 +162,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     public File exportCSV() throws IOException {
         File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {
-            log.info("Export dir {} was created.", dir);
+            log.debug("Export dir {} was created.", dir);
         }
         return exportCSV(csvFile);
     }
@@ -190,7 +190,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
                 writer.println(rec.toCSV());
             }
         }
-        log.info("Exporting statistics to '{}' was successful ({} lines).", csvFile, statistics.size());
+        log.debug("Exporting statistics to '{}' was successful ({} lines).", csvFile, statistics.size());
         return csvFile;
     }
 
@@ -234,7 +234,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         if (StringUtils.isNotBlank(filename)) {
             return new File(filename);
         } else {
-            return new File(Config.getDumpDir(), "statistics.csv");
+            return new File(Config.DEFAULT.getDumpDir(), "statistics.csv");
         }
     }
 

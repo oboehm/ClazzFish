@@ -58,7 +58,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
     public void run() {
         try {
             File file = dumpMe();
-            LOG.info("{} was dumped to '{}'.", this, file);
+            LOG.debug("{} was dumped to '{}'.", this, file);
         } catch (IOException ioe) {
             LOG.error("Cannot dump {}:", this, ioe);
             logMe();
@@ -140,7 +140,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      */
     @Override
     public File getDumpDir() {
-        return new File(Config.getDumpDir(), this.getClass().getSimpleName());
+        return new File(Config.DEFAULT.getDumpDir(), this.getClass().getSimpleName());
     }
 
     /**
@@ -255,7 +255,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void dumpMe(final File dumpDir) throws IOException {
-        LOG.info("Attributes will be dumped to dir '{}'.", dumpDir);
+        LOG.debug("Attributes of {} will be dumped to dir '{}'.", getClass(), dumpDir);
     }
     
     /**

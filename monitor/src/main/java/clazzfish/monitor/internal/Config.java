@@ -34,6 +34,16 @@ import java.util.Map;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
+    private final File dumpDir;
+
+    public static Config DEFAULT = new Config();
+
+    private Config() {
+        this(findDumpDir());
+    }
+    private Config(final File dumpDir) {
+        this.dumpDir = dumpDir;
+    }
 
     public static String getEnvironment(String key) {
         String value = System.getProperty(key);
@@ -45,7 +55,11 @@ public final class Config {
         return value;
     }
 
-    public static File getDumpDir() {
+    public File getDumpDir() {
+        return dumpDir;
+    }
+
+    private static File findDumpDir() {
         String dirname = Config.getEnvironment("clazzfish.dump.dir");
         if (StringUtils.isNotBlank(dirname)) {
             return new File(dirname);

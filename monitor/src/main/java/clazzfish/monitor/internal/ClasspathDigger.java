@@ -512,7 +512,7 @@ public class ClasspathDigger extends AbstractDigger {
 					new Object[] { this.getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
 			return Arrays.asList(classes);
 		} catch (InstanceNotFoundException e) {
-			LOG.info("MBean \"{}\" not found ({}) - be sure to call ClazzFish as agent"
+			LOG.debug("MBean \"{}\" not found ({}) - be sure to call ClazzFish as agent"
 					+ " ('java -javaagent:clazzfish-agent-1.1.jar...')", AGENT_MBEAN, e);
 		} catch (JMException e) {
 			LOG.warn("Cannot call 'getLoadedClasses(..)' from MBean \"{}\"", AGENT_MBEAN, e);
