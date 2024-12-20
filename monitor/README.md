@@ -17,8 +17,12 @@ But before you start your application add clazzfish-agent as Java agent to your 
 
      java -javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar ...
 
-This is needed for Java 9 and later because the internals of the classloader are no longer accessible.
+This is the recommend way because it uses the official API to get the internals of class loading.
 If the agent is started and the library loaded you can use the `jconsole` to examine the loaded classes and resources.
+
+If you use an VM based on the OpenJDK (which are the most VMs) you can try it without this agent.
+In this case the monitor classes uses an alternative MBean of the JDK to receive the needed infos.
+
 
 
 ## How to find dead classes

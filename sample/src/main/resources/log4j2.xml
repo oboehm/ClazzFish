@@ -10,6 +10,7 @@
   <Loggers>
     <Logger name="clazzfish" level="INFO" />
     <Logger name="clazzfish.monitor" level="DEBUG" />
+    <Logger name="clazzfish.monitor.internal" level="INFO" />
     <!--
       If you want to see the executed SQL statements in the log set the
       logger of SqlStatistic to

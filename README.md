@@ -11,7 +11,7 @@ Part of ClassFish are several modules:
 * agent
 * [monitor](monitor/README.md)
 * jdbc
-* sample
+* [sample](monitor/README.md)
 
 
 
@@ -20,7 +20,7 @@ Part of ClassFish are several modules:
 With v0.5 and v0.8 the first steps were done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
 V1.x is mainly for Java 8.
 V2.x supports Java 17 and beyond.
-The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath was discarded (no speedup).
+The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath was discarded (no speedup was measured).
 
 
 

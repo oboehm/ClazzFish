@@ -1227,7 +1227,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	@Override
 	public String[] getIncompatibleClasses() {
-		LOG.debug("Calculating incompatible classes...");
+		LOG.trace("Calculating incompatible classes...");
 		List<Class<?>> classList = this.getIncompatibleClassList();
 		String[] classes = new String[classList.size()];
 		for (int i = 0; i < classes.length; i++) {
