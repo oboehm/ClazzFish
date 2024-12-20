@@ -373,7 +373,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @param name the name of the resource
 	 * @return all resources with the given name
 	 */
-	public Enumeration<URL> getResources(final String name) {
+	public Enumeration<URI> getResources(final String name) {
 		try {
 			Enumeration<URL> resources = this.classLoader.getResources(name);
 			if (!resources.hasMoreElements()) {
@@ -382,17 +382,17 @@ public class ClasspathDigger extends AbstractDigger {
 					return getResources(name.substring(1));
 				}
 			}
-			Set<URL> resourceSet = asSet(resources);
+			Set<URI> resourceSet = asURIs(resources);
 			return new Vector<>(resourceSet).elements();
 		} catch (IOException ioe) {
 			throw new NotFoundException("resource '" + name + "' not found in classpath", ioe);
 		}
 	}
 	
-	private static Set<URL> asSet(Enumeration<URL> enums) {
-		Set<URL> set = new HashSet<>();
+	private static Set<URI> asURIs(Enumeration<URL> enums) {
+		Set<URI> set = new HashSet<>();
 		while (enums.hasMoreElements()) {
-			set.add(enums.nextElement());
+			set.add(Converter.toURI(enums.nextElement()));
 		}
 		return set;
 	}
@@ -408,10 +408,9 @@ public class ClasspathDigger extends AbstractDigger {
 	public SortedSet<URI> getResourcepathSet(Collection<String> resources) {
 		SortedSet<URI> rscPath = new TreeSet<>();
 		for (String rsc : resources) {
-			Enumeration<URL> urls = this.getResources(rsc);
+			Enumeration<URI> urls = this.getResources(rsc);
 			while (urls.hasMoreElements()) {
-				URL url = urls.nextElement();
-				URI path = Converter.toURI(url);
+				URI path = urls.nextElement();
 				rscPath.add(ClasspathHelper.getParent(path, rsc));
 			}
 		}

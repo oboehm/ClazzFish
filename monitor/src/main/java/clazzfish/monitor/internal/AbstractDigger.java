@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -59,7 +59,7 @@ public abstract class AbstractDigger {
      * @param name the name of the resource
      * @return all resources with the given name
      */
-    public abstract Enumeration<URL> getResources(final String name);
+    public abstract Enumeration<URI> getResources(final String name);
 
     /**
      * Read elements from nested archive.

@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -155,7 +154,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	 *            the name
 	 * @return the resources as URL enumeration
 	 */
-	public Enumeration<URL> getResourcesFor(final String name) {
+	public Enumeration<URI> getResourcesFor(final String name) {
 		return this.resourcepathDigger.getResources(name);
 	}
 
@@ -168,7 +167,7 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	 */
 	@Override
 	public int getNoResources(final String name) {
-		Enumeration<URL> urls = getResourcesFor(name);
+		Enumeration<URI> urls = getResourcesFor(name);
 		if (urls == null) {
 			return 0;
 		}
@@ -297,9 +296,9 @@ public class ResourcepathMonitor extends AbstractMonitor implements Resourcepath
 	public String[] getIncompatibleResources() {
 		List<String> incompatibleResources = new ArrayList<>();
 		for (String rsc : this.getDoublets()) {
-			Enumeration<URL> doubletURLs = this.getResourcesFor(rsc);
+			Enumeration<URI> doubletURLs = this.getResourcesFor(rsc);
 			try {
-				URL url = doubletURLs.nextElement();
+				URI url = doubletURLs.nextElement();
 				ArchivEntry archivEntry = new ArchivEntry(url);
 				while (doubletURLs.hasMoreElements()) {
 					url = doubletURLs.nextElement();

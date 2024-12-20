@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -105,8 +103,8 @@ public final class DoubletDigger {
 			try {
 				doublet = isDoublet(resource);
 			} catch (NoSuchElementException ex) {
-				LOG.trace("{} is not found:", clazz, ex);
 				LOG.debug("{} is a proxy or similar class because classloader does not find it:", clazz);
+				LOG.trace("Details:", ex);
 				doublet = false;
 			}
 			this.doubletClasses.put(clazz, doublet);
@@ -124,7 +122,7 @@ public final class DoubletDigger {
 	 * @return true, if checks if is doublet
 	 */
 	public boolean isDoublet(final String name) {
-		Enumeration<URL> resources = this.classpathDigger.getResources(name);
+		Enumeration<URI> resources = this.classpathDigger.getResources(name);
 		if (!resources.hasMoreElements()) {
 			throw new NoSuchElementException("resource '" + name + "' not found");
 		}
@@ -147,17 +145,12 @@ public final class DoubletDigger {
 	 * @return the doublet
 	 */
 	public URI getDoublet(final String name, final int nr) {
-		Enumeration<URL> resources = this.classpathDigger.getResources(name);
+		Enumeration<URI> resources = this.classpathDigger.getResources(name);
 		int i = 0;
 		while (resources.hasMoreElements()) {
-			URL url = resources.nextElement();
+			URI url = resources.nextElement();
 			if (i == nr) {
-				try {
-					return url.toURI();
-				} catch (URISyntaxException ex) {
-					LOG.debug("Cannot convert {} to URI:", url, ex);
-					return URI.create(url.toString());
-				}
+				return url;
 			}
 			i++;
 		}
@@ -180,10 +173,10 @@ public final class DoubletDigger {
 
 	private void logDoublets(final String name) {
 		if (LOG.isTraceEnabled()) {
-			List<URL> doublets = new ArrayList<>();
-			Enumeration<URL> resources = this.classpathDigger.getResources(name);
+			List<URI> doublets = new ArrayList<>();
+			Enumeration<URI> resources = this.classpathDigger.getResources(name);
 			while (resources.hasMoreElements()) {
-				URL url = resources.nextElement();
+				URI url = resources.nextElement();
 				doublets.add(url);
 			}
 			LOG.trace("{} doublets found: {}", name, doublets);

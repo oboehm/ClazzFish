@@ -395,7 +395,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @param name the resource name
 	 * @return the resources
 	 */
-	public Enumeration<URL> getResources(final String name) {
+	public Enumeration<URI> getResources(final String name) {
 		return this.classpathDigger.getResources(name);
 	}
 
@@ -1201,9 +1201,9 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 				continue;
 			}
 			String resource = Converter.classToResource(clazz.getName());
-			Enumeration<URL> resources = getResources(resource);
+			Enumeration<URI> resources = getResources(resource);
 			try {
-				URL url = resources.nextElement();
+				URI url = resources.nextElement();
 				ArchivEntry archivEntry = new ArchivEntry(url);
 				while (resources.hasMoreElements()) {
 					url = resources.nextElement();

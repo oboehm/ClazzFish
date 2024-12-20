@@ -24,15 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -136,10 +133,10 @@ public class ResourcepathDiggerTest extends AbstractDiggerTest {
     public void testGetResources() {
         ResourcepathDigger digger = ResourcepathDigger.DEFAULT;
         String rsc = Converter.toResource(String.class);
-        Enumeration<URL> resources = digger.getResources(rsc);
-        URL r1 = resources.nextElement();
+        Enumeration<URI> resources = digger.getResources(rsc);
+        URI r1 = resources.nextElement();
         if (resources.hasMoreElements()) {
-            URL r2 = resources.nextElement();
+            URI r2 = resources.nextElement();
             assertThat(r1, not(r2));
         }
     }
