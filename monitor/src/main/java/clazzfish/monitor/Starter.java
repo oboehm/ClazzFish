@@ -21,15 +21,13 @@ import clazzfish.monitor.rec.ClazzRecorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-
 /**
- * The starter class loads automatically the Monitor classes.
+ * The Starter class loads automatically the Monitor classes.
  *
  * @author oboehm
  * @since 2.3 (22.11.24)
  */
-public final class Starter implements Serializable {
+public final class Starter {
 
     private static final Logger log = LoggerFactory.getLogger(Starter.class);
 

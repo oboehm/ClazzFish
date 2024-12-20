@@ -17,7 +17,7 @@
  */
 package clazzfish.sample;
 
-import clazzfish.monitor.Starter;
+import clazzfish.jdbc.JdbcStarter;
 import clazzfish.sample.jdbc.BankRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class Bank {
     private static final Logger log = LoggerFactory.getLogger(Bank.class);
 
     static {
-        Starter.record();
+        JdbcStarter.recordAll();
     }
 
     public static void main(String[] args) {

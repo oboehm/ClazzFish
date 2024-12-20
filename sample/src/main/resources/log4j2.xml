@@ -9,6 +9,7 @@
 
   <Loggers>
     <Logger name="clazzfish" level="INFO" />
+    <Logger name="clazzfish.jdbc" level="DEBUG" />
     <Logger name="clazzfish.monitor" level="DEBUG" />
     <Logger name="clazzfish.monitor.internal" level="INFO" />
     <!--

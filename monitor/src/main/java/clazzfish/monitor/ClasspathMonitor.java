@@ -920,7 +920,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
      * @return the used classpath as array of URIs
      */
 	public URI[] getUsedClasspathURIs() {
-		LOG.debug("calculating used classpath...");
+		LOG.trace("calculating used classpath...");
 		SortedSet<URI> classpathSet = this.getUsedClasspathSet();
 		return classpathSet.toArray(new URI[0]);
 	}
