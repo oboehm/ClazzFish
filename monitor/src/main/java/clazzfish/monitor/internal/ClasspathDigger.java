@@ -258,7 +258,7 @@ public class ClasspathDigger extends AbstractDigger {
 	protected static String[] getClasspath(final String key) {
 		String classpath = System.getProperty(key);
 		if (classpath == null) {
-			LOG.debug(key + " is not set (not a SunVM or JDK 9+)");
+			LOG.trace("{} is not set (not a SunVM or JDK 9+)", key);
 			return new String[0];
 		}
 		String[] cp = splitClasspath(classpath);
@@ -377,7 +377,7 @@ public class ClasspathDigger extends AbstractDigger {
 		try {
 			Enumeration<URL> resources = this.classLoader.getResources(name);
 			if (!resources.hasMoreElements()) {
-				LOG.debug("Resource '{}' not found in classpath", name);
+				LOG.trace("Resource '{}' not found in classpath", name);
 				if (name.startsWith("/")) {
 					return getResources(name.substring(1));
 				}
@@ -476,10 +476,9 @@ public class ClasspathDigger extends AbstractDigger {
 			Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
 			List<Class<?>> classList = (List<Class<?>>) field.get(classLoader);
 			return new ArrayList<>(classList);
-		} catch (NoSuchFieldException ex) {
-			LOG.debug("Classloader {} has no field 'classes':", classLoader, ex);
-		} catch (IllegalAccessException ex) {
-			LOG.debug("Cannot access field 'classes' of {}:", classLoader, ex);
+		} catch (NoSuchFieldException | IllegalAccessException ex) {
+			LOG.debug("Cannot access field 'classes' of {}.", classLoader);
+			LOG.trace("Details:", ex);
 		}
 		LOG.debug("Will use agent to get loaded classed because classloader {} is not supported.", classLoader);
 		List<Class<?>> loadedClasses = getLoadedClassListFromAgent();

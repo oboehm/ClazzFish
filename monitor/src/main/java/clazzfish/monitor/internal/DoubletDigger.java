@@ -335,7 +335,7 @@ public final class DoubletDigger {
 		}
 		int n = Runtime.getRuntime().availableProcessors();
 		enabled = (n > 1);
-		LOG.debug("{} processors found, multi threading is {}enabled.", n, enabled ? "" : "not ");
+		LOG.trace("{} processors found, multi threading is {}enabled.", n, enabled ? "" : "not ");
 		return enabled;
 	}
 

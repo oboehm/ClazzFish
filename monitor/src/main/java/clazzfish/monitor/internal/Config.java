@@ -49,7 +49,7 @@ public final class Config {
         String value = System.getProperty(key);
         if (StringUtils.isBlank(value)) {
             String envKey = key.replace('.', '_').toUpperCase();
-            log.debug("System property '{}' is not set, trying environment variablee '{}'.", key, envKey);
+            log.debug("System property '{}' is not set, trying environment variable '{}'.", key, envKey);
             value = System.getenv(envKey);
         }
         return value;

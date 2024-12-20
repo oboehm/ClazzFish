@@ -59,6 +59,10 @@ public final class ClassDiagnostic {
         for (int i = 2; i < lines.length-1; i++) {
             String[] parts = lines[i].trim().split("\\s+");
             String className = parts[3];
+            if (isNotRealClass(className)) {
+                log.trace("'{}' is ignored because it is not a real class name.", classes);
+                continue;
+            }
             try {
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
@@ -68,6 +72,10 @@ public final class ClassDiagnostic {
             }
         }
         return classes;
+    }
+
+    private static boolean isNotRealClass(String className) {
+        return className.contains("$$Lambda$") || className.startsWith("jdk.internal.reflect.Generated");
     }
 
 }

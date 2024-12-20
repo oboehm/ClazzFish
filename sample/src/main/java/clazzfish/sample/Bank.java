@@ -18,9 +18,11 @@
 package clazzfish.sample;
 
 import clazzfish.monitor.Starter;
+import clazzfish.sample.jdbc.BankRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 /**
@@ -51,11 +53,23 @@ public class Bank {
             System.out.flush();
             Scanner console = new Scanner(System.in);
             String choice = console.nextLine().trim();
+            switch (choice) {
+                case "1" -> createBank();
+            }
             if (choice.equals("9")) {
                 break;
             }
         }
         log.info("Good bye - shutting down...");
+    }
+
+    private static void createBank() {
+        try {
+            BankRepository.setUpDB();
+            log.info("Bank created.");
+        } catch (SQLException ex) {
+            log.error("Bank cannot be created:", ex);
+        }
     }
 
 }
