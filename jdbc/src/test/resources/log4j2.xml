@@ -10,6 +10,8 @@
   </Appenders>
   <Loggers>
     <Logger name="clazzfish.monitor" level="INFO" />
+    <Logger name="clazzfish.monitor.AbstractMonitor" level="DEBUG" />
+    <Logger name="clazzfish.jdbc" level="DEBUG" />
     <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG">
       <AppenderRef ref="LOGFILE" />
     </Logger>

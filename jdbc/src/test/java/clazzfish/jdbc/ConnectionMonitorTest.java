@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularData;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -144,6 +145,11 @@ class ConnectionMonitorTest extends AbstractDbTest {
     @Test
     public void testRun() {
         monitor.run();
+    }
+
+    @Test
+    public void testDumpMe() throws IOException {
+        monitor.dumpMe();
     }
 
 }

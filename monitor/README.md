@@ -11,7 +11,7 @@ The main goal of the monitor module is
 
 To start the monitor classes just call the main method in the Starter class:
 
-     clazzfish.monitor.Starter.main()
+     clazzfish.monitor.Starter.start()
 
 But before you start your application add clazzfish-agent as Java agent to your VM args, e.g.
 
