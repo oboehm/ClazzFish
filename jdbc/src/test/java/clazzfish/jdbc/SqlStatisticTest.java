@@ -168,7 +168,7 @@ public class SqlStatisticTest {
 
     /**
      * Test method for {@link SqlStatistic#dumpMe(File)}. For the SQL
-     * statistic it is imporant that the label is quoted because a semicolon
+     * statistic it is important that the label is quoted because a semicolon
      * (";") could be part of a SQL statement. This is tested here.
      *
      * @throws IOException Signals that an I/O exception has occurred.
@@ -182,6 +182,12 @@ public class SqlStatisticTest {
             String line = lines.get(i);
             assertThat(line, startsWith("\""));
         }
+    }
+
+    @Test
+    public void testDumpMe() throws IOException {
+        File file = instance.dumpMe();
+        assertTrue(file.isFile());
     }
 
     /**

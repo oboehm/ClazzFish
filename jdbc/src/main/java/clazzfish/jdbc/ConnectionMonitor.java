@@ -162,6 +162,9 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	 */
 	@Override
 	public StackTraceElement[] getLastCallerStacktrace() {
+		if (openConnections.isEmpty()) {
+			return new StackTraceElement[0];
+		}
 		ProxyConnection lastConnection = openConnections.get(openConnections.size() - 1);
 		return lastConnection.getCaller();
 	}

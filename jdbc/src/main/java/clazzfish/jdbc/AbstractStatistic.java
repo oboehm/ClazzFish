@@ -22,6 +22,8 @@ package clazzfish.jdbc;
 import clazzfish.jdbc.monitor.*;
 import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
+import clazzfish.monitor.internal.Config;
+import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.util.ClasspathHelper;
 import org.slf4j.Logger;
@@ -399,6 +401,24 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 		for (ProfileMonitor profMon : monitors) {
 			LOG.info("{}", profMon);
 		}
+	}
+
+	/**
+	 * This operation dumps statistic into a (temporary) file with the
+	 * classname as preifx. The name of the created file is returned
+	 * so that you can see it in the 'jconsole' (if you have triggered
+	 * it from there).
+	 *
+	 * @return the file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	@Override
+	public File dumpMe() throws IOException {
+		File dumpDir = Config.DEFAULT.getDumpDir();
+		ExtendedFile.createDir(dumpDir);
+		File dumpFile = new File(dumpDir, getClass().getSimpleName() + ".csv");
+		this.dumpMe(dumpFile);
+		return dumpFile;
 	}
 
 	/**
