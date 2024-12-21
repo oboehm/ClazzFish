@@ -15,7 +15,7 @@
  *
  * (c)reated 29.11.24 by oboehm
  */
-package clazzfish.monitor.rec;
+package clazzfish.monitor.stat;
 
 import clazzfish.monitor.util.Shutdownable;
 
@@ -23,12 +23,12 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * JMX-Interface for the {@link ClazzRecorder}.
+ * JMX-Interface for the {@link ClazzStatistic}.
  *
  * @author oboehm
  * @since 2.3 (29.11.24)
  */
-public interface ClazzRecorderMBean extends Shutdownable {
+public interface ClazzStatisticMBean extends Shutdownable {
 
     /**
      * Exports the statistics of the collected classes to the default file..

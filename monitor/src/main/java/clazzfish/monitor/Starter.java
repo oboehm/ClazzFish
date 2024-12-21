@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor;
 
-import clazzfish.monitor.rec.ClazzRecorder;
+import clazzfish.monitor.stat.ClazzStatistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +33,13 @@ public final class Starter {
 
     /**
      * Registers all MBeans for monitoring the classpath and resources.
-     * Also the {@link ClazzRecorder} is registered for importing and
+     * Also the {@link ClazzStatistic} is registered for importing and
      * exporting the statistics of loaded classes.
      */
     public static void start() {
         ClasspathMonitor.getInstance().registerMeAsMBean();
         ResourcepathMonitor.getInstance().registerMeAsMBean();
-        ClazzRecorder.getInstance().registerMeAsMBean();
+        ClazzStatistic.getInstance().registerMeAsMBean();
         log.debug("ClazzFish library is started and ready.");
     }
 
@@ -51,7 +51,7 @@ public final class Starter {
         start();
         ClasspathMonitor.getInstance().addMeAsShutdownHook();
         ResourcepathMonitor.getInstance().addMeAsShutdownHook();
-        ClazzRecorder.getInstance().addMeAsShutdownHook();
+        ClazzStatistic.getInstance().addMeAsShutdownHook();
         log.trace("All MBeans are registered as shutdown hook.");
     }
 

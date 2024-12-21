@@ -15,7 +15,7 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.rec;
+package clazzfish.monitor.stat;
 
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
@@ -37,9 +37,9 @@ import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 /**
- * The ClazzRecorder collects classes and resources to find classes which are
+ * The ClazzStatistic collects classes and resources to find classes which are
  * likely to be dead. At the end a little statistics is reported to a file
- * 'clazzfish/a.b.MyMain/statistics.csv' in the temp direktory.
+ * 'clazzfish/a.b.MyMain/ClazzStatistic.csv' in the temp direktory.
  * If you want another directory or filename where this statistics should be
  * stored you can use one of the system properties
  * <ol>
@@ -62,11 +62,11 @@ import java.util.stream.Collectors;
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
+public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
 
-    private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
+    private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
-    private static final ClazzRecorder INSTANCE = new ClazzRecorder();
+    private static final ClazzStatistic INSTANCE = new ClazzStatistic();
     private final ClasspathMonitor classpathMonitor;
     private final FutureTask<SortedSet<ClazzRecord>> allClasses;
     private final File csvFile;
@@ -76,19 +76,19 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         INSTANCE.addMeAsShutdownHook();
     }
 
-    public static ClazzRecorder getInstance() {
+    public static ClazzStatistic getInstance() {
         return INSTANCE;
     }
 
-    private ClazzRecorder() {
+    private ClazzStatistic() {
         this(getCsvFile());
     }
 
-    ClazzRecorder(File csvFile) {
+    ClazzStatistic(File csvFile) {
         this(csvFile, ClasspathMonitor.getInstance());
     }
 
-    private ClazzRecorder(File csvFile, ClasspathMonitor classpathMonitor) {
+    private ClazzStatistic(File csvFile, ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
         this.allClasses = collectFutureClasses(classpathMonitor);
         this.csvFile = csvFile;
@@ -126,7 +126,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
     }
 
     public void registerMeAsMBean() {
-        MBeanHelper.registerMBean("clazzfish:name=rec,type=monitor,monitor=ClazzRecorder", this);
+        MBeanHelper.registerMBean("clazzfish:name=stat,type=monitor,monitor=ClazzStatistic", this);
     }
 
     public SortedSet<ClazzRecord> getAllClasses() {
@@ -234,7 +234,7 @@ public class ClazzRecorder extends Shutdowner implements ClazzRecorderMBean {
         if (StringUtils.isNotBlank(filename)) {
             return new File(filename);
         } else {
-            return new File(Config.DEFAULT.getDumpDir(), "statistics.csv");
+            return new File(Config.DEFAULT.getDumpDir(), "ClazzStatistic.csv");
         }
     }
 

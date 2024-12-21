@@ -15,7 +15,7 @@
  *
  * (c)reated 26.11.24 by oliver
  */
-package clazzfish.monitor.rec;
+package clazzfish.monitor.stat;
 
 import org.junit.jupiter.api.Test;
 

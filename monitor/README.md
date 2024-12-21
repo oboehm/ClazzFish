@@ -35,10 +35,10 @@ Can they be deleted?
 Perhaps.
 It may be that one of the classes are loaded if you start other workflows in your application or use other pathes.
 You must collect all this "snaphshots" over a long time of period to be sure that a class is never loaded.
-This is where the [ClazzRecorder](src/main/java/clazzfish/monitor/rec/ClazzRecorder.java) came into.
+This is where the [ClazzStatistic](src/main/java/clazzfish/monitor/stat/ClazzStatistic.java) came into.
 Since 2.3 it imports the statistics from the last run, enriches it with the actual run and exports it at the end of the program run into the same statistics file as CSV.
 
-Usually this statistics is stored in the temp directory (${java.io.tmpdir}) in the file `ClazzFish/statistics.csv` as CSV. It looks like
+Usually this statistics is stored in the temp directory (${java.io.tmpdir}) in the file `ClazzFish/.../ClazzStatistic.csv` as CSV. It looks like
 
 | URI                                    | class                                   | count |
 |----------------------------------------|-----------------------------------------|-------|
@@ -53,7 +53,7 @@ If you want the statistics file in another file or directory you can use the 2 s
 * clazzfish.dump.dir
 * clazzfish.statistics.file
 
-For more info see the [ClazzRecorder](src/main/java/clazzfish/monitor/rec/ClazzRecorder.java) class.
+For more info see the [ClazzStatistic](src/main/java/clazzfish/monitor/stat/ClazzStatistic.java) class.
 
 
 ## Troublehooting

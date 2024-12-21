@@ -15,7 +15,7 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.rec;
+package clazzfish.monitor.stat;
 
 import java.net.URI;
 

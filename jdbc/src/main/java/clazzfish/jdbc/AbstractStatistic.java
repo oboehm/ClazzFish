@@ -405,7 +405,7 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 
 	/**
 	 * This operation dumps statistic into a (temporary) file with the
-	 * classname as preifx. The name of the created file is returned
+	 * classname as prefix. The name of the created file is returned
 	 * so that you can see it in the 'jconsole' (if you have triggered
 	 * it from there).
 	 *

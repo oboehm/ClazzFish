@@ -15,7 +15,7 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.rec;
+package clazzfish.monitor.stat;
 
 import clazzfish.monitor.jmx.MBeanHelper;
 import org.junit.jupiter.api.Test;
@@ -29,21 +29,21 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link ClazzRecorder}.
+ * Unit tests for {@link ClazzStatistic}.
  *
  * @author oboehm
  * @since 25.11.24
  */
-class ClazzRecorderTest {
+class ClazzStatisticTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ClazzRecorder.class);
-    private final ClazzRecorder recorder = ClazzRecorder.getInstance();
+    private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
+    private final ClazzStatistic recorder = ClazzStatistic.getInstance();
 
     @Test
     void registerMeAsMBean() {
         recorder.registerMeAsMBean();
-        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzRecorder,type=rec")
-                || MBeanHelper.isRegistered("clazzfish:name=rec,type=monitor,monitor=ClazzRecorder"));
+        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzStatistic,type=stat")
+                || MBeanHelper.isRegistered("clazzfish:name=stat,type=monitor,monitor=ClazzStatistic"));
     }
 
     @Test
@@ -71,7 +71,7 @@ class ClazzRecorderTest {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
-        ClazzRecorder rec = new ClazzRecorder(csvFile);
+        ClazzStatistic rec = new ClazzStatistic(csvFile);
         rec.exportCSV(csvFile);
         rec.importCSV(csvFile);
         checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
