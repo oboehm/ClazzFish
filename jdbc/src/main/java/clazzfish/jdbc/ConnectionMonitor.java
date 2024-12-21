@@ -297,6 +297,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 		dumpArray(this.getLastCallerStacktrace(), dumpDir, "lastCallerStracktrace");
 		dumpArray(openConnections.toArray(), dumpDir, "openConnections");
 		dumpArray(getCallerStacktraceDumps().toArray(), dumpDir, "callerStacktraces");
+		copyResource("ConnectionMonitor.txt", new File(dumpDir, "README.txt"));
 	}
 
 	/**

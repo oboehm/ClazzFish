@@ -1,0 +1,17 @@
+This is the dump directory created by ConnecionMonitor with the following
+files:
+
+callers.txt:
+    for each open connection which was not closed at the end of the program
+    you find the location of the method which opened this connection
+
+callerStacktraces.txt:
+    the same as 'callers.txt' but with the whole stacktrace of the different
+    methods
+
+lastCallerStracktrace.txt:
+    the stacktrace of the method which opened the last connection which was
+    not closed
+
+openConnections.txt
+    a list of all connections which were not closed at the end of the program

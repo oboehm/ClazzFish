@@ -51,7 +51,7 @@ public abstract class Shutdowner extends Thread implements Shutdownable {
      * If this class is registered as shutdown hook from a web
      * application a dump to a directory may not be possible because the
      * application server (e.g. Tomcat) has been stopped already the web
-     * application instance. This was the problem as decribed in
+     * application instance. This was the problem as described in
      * <a href="https://sourceforge.net/p/patterntesting/bugs/37/">bugs/37</a>.
      * </p>
      * <p>

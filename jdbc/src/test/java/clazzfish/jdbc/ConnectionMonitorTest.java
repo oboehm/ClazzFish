@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularData;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,8 +29,7 @@ import java.sql.SQLException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ConnectionMonitor}.
@@ -102,7 +102,7 @@ class ConnectionMonitorTest extends AbstractDbTest {
     @Test
     public void testGetCallerOf() {
         StackTraceElement caller = ConnectionMonitor.getCallerOf(connection);
-        assertEquals(caller.getMethodName(), "setUpConnection", "wrong caller: " + caller);
+        assertEquals("setUpConnection", caller.getMethodName(), "wrong caller: " + caller);
     }
 
     /**
@@ -149,7 +149,10 @@ class ConnectionMonitorTest extends AbstractDbTest {
 
     @Test
     public void testDumpMe() throws IOException {
-        monitor.dumpMe();
+        File dumpDir = monitor.dumpMe();
+        assertTrue(dumpDir.isDirectory());
+        File readme = new File(dumpDir, "README.txt");
+        assertTrue(readme.exists(), "is missing: " + readme);
     }
 
 }

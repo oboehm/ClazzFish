@@ -266,7 +266,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @throws IOException Signals that an I/O exception has occurred.
      */
     protected void copyResource(final String name, final File file) throws IOException {
-        URL readmeURL = ClasspathMonitor.class.getResource(name);
+        URL readmeURL = getClass().getResource(name);
         if (readmeURL == null) {
             throw new IOException("'" + name + "' not found in classpath");
         }
