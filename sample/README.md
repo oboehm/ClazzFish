@@ -31,7 +31,7 @@ If you start a JMX console like `jconsole` from your JDK you can access the diff
 
 * ClasspathMonitor
 * ResourcepathMonitor
-* ClazzRecorder
+* ClazzStatistic
 * ConnectionMonitor
 * SqlStatistic
 
