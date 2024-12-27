@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * All config stuff is encapsulated in this class.
@@ -34,7 +35,7 @@ import java.util.Map;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
-    private final File dumpDir;
+    private File dumpDir;
 
     public static Config DEFAULT = new Config();
 
@@ -55,8 +56,27 @@ public final class Config {
         return value;
     }
 
+    /**
+     * Get the directory where the collected dates and statistics are dumped
+     * to.
+     *
+     * @return directory for export
+     */
     public File getDumpDir() {
         return dumpDir;
+    }
+
+    /**
+     * Here you can set the directory where the collected dates and statistics
+     * should be dumped to.
+     *
+     * @param dir directory for export
+     */
+    public void setDumpDir(File dir) {
+        if (!Objects.equals(dir, this.dumpDir)) {
+            this.dumpDir = dir;
+            log.info("Dump directory is set to '{}'.", dir);
+        }
     }
 
     private static File findDumpDir() {

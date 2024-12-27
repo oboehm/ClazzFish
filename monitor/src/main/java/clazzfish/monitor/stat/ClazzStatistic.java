@@ -190,7 +190,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                 writer.println(rec.toCSV());
             }
         }
-        log.debug("Exporting statistics to '{}' was successful ({} lines).", csvFile, statistics.size());
+        log.info("Statistics exported to '{}' ({} lines).", csvFile, statistics.size());
         return csvFile;
     }
 

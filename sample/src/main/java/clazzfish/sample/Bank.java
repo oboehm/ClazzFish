@@ -22,6 +22,7 @@ import clazzfish.sample.jdbc.BankRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -38,7 +39,7 @@ public class Bank {
     private static final Logger log = LoggerFactory.getLogger(Bank.class);
 
     static {
-        JdbcStarter.recordAll();
+        JdbcStarter.recordAll(new File("target", "statistic"));
     }
 
     public static void main(String[] args) {

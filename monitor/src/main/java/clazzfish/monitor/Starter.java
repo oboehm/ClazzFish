@@ -17,9 +17,12 @@
  */
 package clazzfish.monitor;
 
+import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.stat.ClazzStatistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * The Starter class loads automatically the Monitor classes.
@@ -53,6 +56,18 @@ public final class Starter {
         ResourcepathMonitor.getInstance().addMeAsShutdownHook();
         ClazzStatistic.getInstance().addMeAsShutdownHook();
         log.trace("All MBeans are registered as shutdown hook.");
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the given directory
+     *
+     * @param dir directory where the dates are stored
+     */
+    public static void record(File dir) {
+        Config.DEFAULT.setDumpDir(dir);
+        record();
     }
 
 }

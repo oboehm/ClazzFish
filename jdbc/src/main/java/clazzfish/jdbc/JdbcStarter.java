@@ -18,8 +18,11 @@
 package clazzfish.jdbc;
 
 import clazzfish.monitor.Starter;
+import clazzfish.monitor.internal.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * The JdbcStarter class loads automatically the Monitor and Statistic
@@ -62,6 +65,18 @@ public final class JdbcStarter {
     }
 
     /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the given directory
+     *
+     * @param dir directory where the dates are stored
+     */
+    public static void record(File dir) {
+        Config.DEFAULT.setDumpDir(dir);
+        record();
+    }
+
+    /**
      * Registers all MBeans of jdbc module but also all MBeans of monitor
      * module as shutdown hook. This means at the end of the program all
      * collected dates of the different modules are exported
@@ -69,6 +84,18 @@ public final class JdbcStarter {
     public static void recordAll() {
         Starter.record();
         record();
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the given directory
+     *
+     * @param dir directory where the dates are stored
+     */
+    public static void recordAll(File dir) {
+        Config.DEFAULT.setDumpDir(dir);
+        recordAll();
     }
 
 }
