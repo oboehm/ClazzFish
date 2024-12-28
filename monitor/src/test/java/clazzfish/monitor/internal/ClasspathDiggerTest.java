@@ -17,7 +17,6 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.monitor.jmx.MBeanHelper;
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,9 +25,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -84,14 +85,26 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
      */
     @Test
     public void testGetLoadedClassListFromAgent() {
-        try {
-            MBeanHelper.getObjectInstance(ClasspathDigger.AGENT_MBEAN);
+        if (isAgentRegisteredAsMBean()) {
             List<Class<?>> classes = digger.getLoadedClassListFromAgent();
             assertFalse(classes.isEmpty());
             LOG.info("{} classes loaded.", classes.size());
-        } catch (InstanceNotFoundException e) {
+        } else {
             LOG.warn("You must use clazzfish-agent as Java agent for this test!");
         }
+    }
+
+    private static boolean isAgentRegisteredAsMBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectName> mBeans = mBeanServer.queryNames(null, null);
+        for (ObjectName objectName : mBeans) {
+            if (objectName.getDomain().startsWith("clazzfish") && ("ClasspathAgent".equals(objectName.getKeyPropertyList().get("type")))) {
+                LOG.info("ClasspathAgent found as MBean {}.", objectName);
+                return true;
+            }
+            LOG.debug("MBean: {}", objectName);
+        }
+        return false;
     }
 
     /**

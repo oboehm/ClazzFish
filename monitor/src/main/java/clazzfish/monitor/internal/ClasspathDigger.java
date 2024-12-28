@@ -53,12 +53,8 @@ import java.util.*;
  */
 public class ClasspathDigger extends AbstractDigger {
 
-	/**
-	 * The ClasspathAgent as MBean.
-	 */
-	protected static final ObjectName AGENT_MBEAN;
-
 	private static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
+	private static final ObjectName AGENT_MBEAN;
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
 	private final String[] bootClassPath = getClasspath("sun.boot.class.path");
