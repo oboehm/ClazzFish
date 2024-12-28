@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- MBean name of ClasspathAgent changed to "clazzfish:type=agent,agent=ClasspathAgent"
 - update to Java 17
 
 ### Added

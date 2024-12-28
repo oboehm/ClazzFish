@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 public class ClasspathAgent implements ClasspathAgentMBean {
 
     /** The Constant MBEAN_NAME for the registered name in JMX. */
-    public static final String MBEAN_NAME = "clazzfish.agent:type=ClasspathAgent";
+    public static final String MBEAN_NAME = "clazzfish:type=agent,agent=ClasspathAgent";
 
     private static final long serialVersionUID = 20180517L;
     private static final Logger LOG = Logger.getLogger(ClasspathAgent.class.getName());
@@ -183,10 +183,8 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         if (istream == null) {
             LOG.warning("Using default logging because resource '" + resourceName + "' not found.");
         } else {
-            try {
+            try (istream) {
                 LogManager.getLogManager().readConfiguration(istream);
-            } finally {
-                istream.close();
             }
         }
     }
@@ -220,10 +218,10 @@ public class ClasspathAgent implements ClasspathAgentMBean {
     /**
      * This operation dumps the loaded classes to a temporary file with the
      * prefix "dumpLoadedClasses" and the extension ".txt".
-     *
+     * <p>
      * To be able to see the name of the temporary file in the 'jconsole' it
      * is returned as value.
-     *
+     * </p>
      * @return the temporary file
      * @throws IOException Signals that an I/O exception has occurred.
      * @see ClasspathAgentMBean#dumpLoadedClasses()
