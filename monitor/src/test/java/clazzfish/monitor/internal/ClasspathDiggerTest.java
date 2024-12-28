@@ -25,11 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -76,35 +73,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
                 fail(clazz + " should be not loaded!");
             }
         }
-    }
-
-    /**
-     * Test get loaded class list from patterntesting-agent. For this test you
-     * must start the Java VM with PatternTesting Agent as Java agent:
-     * <tt>java -javaagent:clazzfish-agent-1.1.jar ...</tt>
-     */
-    @Test
-    public void testGetLoadedClassListFromAgent() {
-        if (isAgentRegisteredAsMBean()) {
-            List<Class<?>> classes = digger.getLoadedClassListFromAgent();
-            assertFalse(classes.isEmpty());
-            LOG.info("{} classes loaded.", classes.size());
-        } else {
-            LOG.warn("You must use clazzfish-agent as Java agent for this test!");
-        }
-    }
-
-    private static boolean isAgentRegisteredAsMBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> mBeans = mBeanServer.queryNames(null, null);
-        for (ObjectName objectName : mBeans) {
-            if (objectName.getDomain().startsWith("clazzfish") && ("ClasspathAgent".equals(objectName.getKeyPropertyList().get("type")))) {
-                LOG.info("ClasspathAgent found as MBean {}.", objectName);
-                return true;
-            }
-            LOG.debug("MBean: {}", objectName);
-        }
-        return false;
     }
 
     /**

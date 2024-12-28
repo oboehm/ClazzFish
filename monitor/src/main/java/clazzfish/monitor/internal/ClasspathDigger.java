@@ -54,20 +54,16 @@ import java.util.*;
 public class ClasspathDigger extends AbstractDigger {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
-	private static final ObjectName AGENT_MBEAN;
+	private static final String[] AGENT_MBEAN_NAMES = new String[]{
+			"clazzfish:type=agent,agent=ClasspathAgent",
+			"clazzfish.agent:type=ClasspathAgent"
+	};
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
 	private final String[] bootClassPath = getClasspath("sun.boot.class.path");
+	private final ObjectInstance agentMBean;
 
 	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
-
-	static {
-		try {
-			AGENT_MBEAN = new ObjectName("clazzfish.agent:type=ClasspathAgent");
-		} catch (MalformedObjectNameException e) {
-			throw new ExceptionInInitializerError(e);
-		}
-	}
 
 	/**
 	 * Instantiates a new classpath digger.
@@ -94,6 +90,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public ClasspathDigger(final ClassLoader cloader) {
 		this.classLoader = cloader;
+		this.agentMBean = findMBean(AGENT_MBEAN_NAMES);
 	}
 
 	/**
@@ -103,6 +100,22 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public ClassLoader getClassLoader() {
 		return classLoader;
+	}
+
+	// TODO: move to MBeanFinder class (28-Dec-2024, Oli B.)
+	private static ObjectInstance findMBean(String... mbeanNames) {
+		for (String name : mbeanNames) {
+            try {
+				ObjectName objectName = new ObjectName(name);
+                return MBEAN_SERVER.getObjectInstance(objectName);
+            } catch (InstanceNotFoundException | MalformedObjectNameException ex) {
+                LOG.debug("'{}' is not registered as MBean ({}).", name, ex.getMessage());
+				LOG.trace("Details:", ex);
+            }
+        }
+		LOG.debug("No MBean \"{}\" found - be sure to call ClazzFish as agent"
+				+ " ('java -javaagent:clazzfish-agent-2.2.jar...')", Arrays.toString(mbeanNames));
+		return null;
 	}
 
 	/**
@@ -122,13 +135,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @return true, if is agent available
 	 */
 	public static boolean isAgentAvailable() {
-		try {
-			return MBEAN_SERVER.getObjectInstance(AGENT_MBEAN) != null;
-		} catch (InstanceNotFoundException e) {
-			LOG.debug("MBean '{}' is not available.", AGENT_MBEAN);
-			LOG.trace("ClasspathAgent is not registered at {}:", MBEAN_SERVER, e);
-			return false;
-		}
+		return findMBean(AGENT_MBEAN_NAMES) != null;
 	}
 
 	/**
@@ -467,18 +474,25 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @return list of classes
 	 */
 	public List<Class<?>> getLoadedClasses() {
-		try {
-			Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
-			List<Class<?>> classList = (List<Class<?>>) field.get(classLoader);
-			return new ArrayList<>(classList);
-		} catch (NoSuchFieldException | IllegalAccessException ex) {
-			LOG.debug("Cannot access field 'classes' of {}.", classLoader);
-			LOG.trace("Details:", ex);
-		}
-		LOG.debug("Will use agent to get loaded classed because classloader {} is not supported.", classLoader);
-		List<Class<?>> loadedClasses = getLoadedClassListFromAgent();
+		List<Class<?>> loadedClasses = new ArrayList<>();
+		if (agentMBean != null) {
+            try {
+				loadedClasses = getLoadedClassListFrom(agentMBean);
+            } catch (JMException ex) {
+				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
+				LOG.trace("Details:", ex);
+				loadedClasses = ClassDiagnostic.getLoadedClassesFromGC();
+            }
+        }
 		if (loadedClasses.isEmpty()) {
-			loadedClasses = getLoadedClassesFrom(Thread.currentThread().getContextClassLoader());
+			try {
+				Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
+				loadedClasses = (List<Class<?>>) field.get(classLoader);
+			} catch (NoSuchFieldException | IllegalAccessException ex) {
+				LOG.debug("Cannot access field 'classes' of {}.", classLoader);
+				LOG.trace("Details:", ex);
+				loadedClasses = getLoadedClassesFrom(Thread.currentThread().getContextClassLoader());
+			}
 		}
 		return loadedClasses;
 	}
@@ -488,30 +502,10 @@ public class ClasspathDigger extends AbstractDigger {
 		return new ArrayList<>(bcl.getLoadedClasses());
 	}
 
-	/**
-	 * Gets the loaded class list from clazzfish-agent. For this method you
-	 * must start the Java VM with PatternTesting Agent as Java agent
-	 * (<i>java -javaagent:clazzfish-agent-1.1.jar ...</i>) because
-	 * this MBean is needed for the loaded classes.
-	 * <p>
-	 * This class is protected for test reason.
-	 * </p>
-	 *
-	 * @return the loaded class list from agent
-	 */
-	protected List<Class<?>> getLoadedClassListFromAgent() {
-		try {
-			LOG.trace("Using \"{}\" as fallback for unsupported classloader {}.", AGENT_MBEAN, this.classLoader);
-			Class<?>[] classes = (Class<?>[]) MBEAN_SERVER.invoke(AGENT_MBEAN, "getLoadedClasses",
-					new Object[] { this.getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
-			return Arrays.asList(classes);
-		} catch (InstanceNotFoundException e) {
-			LOG.debug("MBean \"{}\" not found ({}) - be sure to call ClazzFish as agent"
-					+ " ('java -javaagent:clazzfish-agent-1.1.jar...')", AGENT_MBEAN, e);
-		} catch (JMException e) {
-			LOG.warn("Cannot call 'getLoadedClasses(..)' from MBean \"{}\"", AGENT_MBEAN, e);
-		}
-		return ClassDiagnostic.getLoadedClassesFromGC();
+	private List<Class<?>> getLoadedClassListFrom(ObjectInstance agent) throws ReflectionException, InstanceNotFoundException, MBeanException {
+		Class<?>[] classes = (Class<?>[]) MBEAN_SERVER.invoke(agent.getObjectName(), "getLoadedClasses",
+				new Object[] { this.getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
+		return Arrays.asList(classes);
 	}
 
 	/**
