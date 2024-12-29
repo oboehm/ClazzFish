@@ -27,6 +27,7 @@ import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 
 /**
  * This class simplifies the use of JMX and MBeans a little bit.
@@ -37,10 +38,10 @@ import java.lang.management.ManagementFactory;
  */
 public class MBeanFinder {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MBeanFinder.class);
-	private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+	private static final Logger log = LoggerFactory.getLogger(MBeanFinder.class);
+	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 
-	/** Utility class - no need to instantiate it */
+    /** Utility class - no need to instantiate it */
 	private MBeanFinder() {
 	}
 
@@ -202,7 +203,7 @@ public class MBeanFinder {
 			ObjectName name = new ObjectName(mbeanName);
 			registerMBean(name, mbean);
 		} catch (MalformedObjectNameException ex) {
-			LOG.info("Cannot register '{}' as MBean:", mbean, ex);
+			log.info("Cannot register '{}' as MBean:", mbean, ex);
 		}
 	}
 
@@ -216,16 +217,16 @@ public class MBeanFinder {
 	 */
 	public static synchronized void registerMBean(final ObjectName name, final Object mbean) {
 		try {
-			LOG.trace("Registering '{}'...", name);
-			server.registerMBean(mbean, name);
-			LOG.debug("'{}' successful registered as MBean", name);
+			log.trace("Registering '{}'...", name);
+			MBEAN_SERVER.registerMBean(mbean, name);
+			log.debug("'{}' successful registered as MBean", name);
 		} catch (InstanceAlreadyExistsException ex) {
-			LOG.debug("'{}' is already registered.", name);
-			LOG.trace("Details:", ex);
+			log.debug("'{}' is already registered.", name);
+			log.trace("Details:", ex);
 		} catch (MBeanRegistrationException ex) {
-			LOG.info("Cannot register <{}> as MBean:", mbean, ex);
+			log.info("Cannot register <{}> as MBean:", mbean, ex);
 		} catch (NotCompliantMBeanException ex) {
-			LOG.info("<{}> is not a compliant MBean:", mbean, ex);
+			log.info("<{}> is not a compliant MBean:", mbean, ex);
 		}
 	}
 
@@ -237,12 +238,12 @@ public class MBeanFinder {
 	 */
 	public static synchronized void unregisterMBean(final ObjectName name) {
 		try {
-			server.unregisterMBean(name);
-			LOG.debug("MBean " + name + " successful unregistered");
+			MBEAN_SERVER.unregisterMBean(name);
+			log.debug("MBean " + name + " successful unregistered");
 		} catch (MBeanRegistrationException ex) {
-			LOG.info("Cannot unregister '" + name + "':", ex);
+			log.info("Cannot unregister '" + name + "':", ex);
 		} catch (InstanceNotFoundException ex) {
-			LOG.info("'" + name + "' not found:", ex);
+			log.info("'" + name + "' not found:", ex);
 		}
 	}
 
@@ -268,10 +269,10 @@ public class MBeanFinder {
 	 */
 	public static boolean isRegistered(final ObjectName name) {
 		try {
-			ObjectInstance mbean = server.getObjectInstance(name);
+			ObjectInstance mbean = MBEAN_SERVER.getObjectInstance(name);
 			return (mbean != null);
 		} catch (InstanceNotFoundException ex) {
-			LOG.trace("'" + name + "' not found:", ex);
+			log.trace("'" + name + "' not found:", ex);
 			return false;
 		}
 	}
@@ -279,18 +280,37 @@ public class MBeanFinder {
 	/**
 	 * Creates a {@link TabularDataSupport} object.
 	 *
-	 * @param rowType
-	 *            the row type
-	 * @param itemNames
-	 *            the item names
+	 * @param rowType   the row type
+	 * @param itemNames the item names
 	 * @return the tabular data support
-	 * @throws OpenDataException
-	 *             the open data exception
+	 * @throws OpenDataException if an element's value of itemNames is not an
+	 * 							 item name defined in rowType.
 	 */
 	public static TabularDataSupport createTabularDataSupport(final CompositeType rowType, final String[] itemNames)
 			throws OpenDataException {
-		TabularType tabularType = new TabularType("propertyTabularType", "properties tabular", rowType, itemNames);
+		TabularType tabularType = new TabularType("propertyTabularType", "properties tabular",
+				rowType, itemNames);
 		return new TabularDataSupport(tabularType);
+	}
+
+	/**
+	 * Finds an MBean with the given names.
+	 *
+	 * @param mbeanNames names of the MBeans to be looked for
+	 * @return an instance of the MBean or null if no one is found
+	 */
+	public static ObjectInstance findMBean(String... mbeanNames) {
+		for (String name : mbeanNames) {
+			try {
+				ObjectName objectName = new ObjectName(name);
+				return MBEAN_SERVER.getObjectInstance(objectName);
+			} catch (InstanceNotFoundException | MalformedObjectNameException ex) {
+				log.debug("'{}' is not registered as MBean ({}).", name, ex.getMessage());
+				log.trace("Details:", ex);
+			}
+		}
+		log.debug("No MBean \"{}\" found.", Arrays.toString(mbeanNames));
+		return null;
 	}
 
 }

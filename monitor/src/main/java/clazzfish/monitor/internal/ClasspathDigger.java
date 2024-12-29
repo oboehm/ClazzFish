@@ -20,6 +20,7 @@ package clazzfish.monitor.internal;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;
@@ -90,7 +91,11 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public ClasspathDigger(final ClassLoader cloader) {
 		this.classLoader = cloader;
-		this.agentMBean = findMBean(AGENT_MBEAN_NAMES);
+		this.agentMBean = MBeanFinder.findMBean(AGENT_MBEAN_NAMES);
+		if ((this.agentMBean == null) && LOG.isDebugEnabled()) {
+			LOG.debug("No MBean \"{}\" found - be sure to call ClazzFish as agent"
+					+ " (e.g. 'java -javaagent:clazzfish-agent-2.2.jar...')", Arrays.toString(AGENT_MBEAN_NAMES));
+		}
 	}
 
 	/**
@@ -100,22 +105,6 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public ClassLoader getClassLoader() {
 		return classLoader;
-	}
-
-	// TODO: move to MBeanFinder class (28-Dec-2024, Oli B.)
-	private static ObjectInstance findMBean(String... mbeanNames) {
-		for (String name : mbeanNames) {
-            try {
-				ObjectName objectName = new ObjectName(name);
-                return MBEAN_SERVER.getObjectInstance(objectName);
-            } catch (InstanceNotFoundException | MalformedObjectNameException ex) {
-                LOG.debug("'{}' is not registered as MBean ({}).", name, ex.getMessage());
-				LOG.trace("Details:", ex);
-            }
-        }
-		LOG.debug("No MBean \"{}\" found - be sure to call ClazzFish as agent"
-				+ " ('java -javaagent:clazzfish-agent-2.2.jar...')", Arrays.toString(mbeanNames));
-		return null;
 	}
 
 	/**
@@ -135,7 +124,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @return true, if is agent available
 	 */
 	public static boolean isAgentAvailable() {
-		return findMBean(AGENT_MBEAN_NAMES) != null;
+		return MBeanFinder.findMBean(AGENT_MBEAN_NAMES) != null;
 	}
 
 	/**
