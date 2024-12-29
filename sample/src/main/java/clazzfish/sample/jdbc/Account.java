@@ -145,7 +145,7 @@ public final class Account {
      */
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "-" + this.id;
+        return this.getClass().getSimpleName() + "-" + this.id + ": " + this.balance + "$ (" + this.holder + ")";
     }
 
 }

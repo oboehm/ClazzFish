@@ -18,6 +18,7 @@
 package clazzfish.sample;
 
 import clazzfish.jdbc.JdbcStarter;
+import clazzfish.sample.jdbc.Account;
 import clazzfish.sample.jdbc.BankRepository;
 import clazzfish.sample.jdbc.User;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Scanner;
 
 /**
@@ -48,8 +50,7 @@ public class Bank {
             System.out.println("\nWhat do you want to do?\n");
             System.out.println("1. Create bank");
             System.out.println("2. Create account");
-            System.out.println("3. Delete account");
-            System.out.println("4. List accounts");
+            System.out.println("3. List accounts");
             System.out.println("9. Quit");
             System.out.print("\nEnter your choice: ");
             System.out.flush();
@@ -58,6 +59,7 @@ public class Bank {
             switch (choice) {
                 case "1" -> createBank();
                 case "2" -> createAccount();
+                case "3" -> listAccounts();
             }
             if (choice.equals("9")) {
                 break;
@@ -76,8 +78,7 @@ public class Bank {
     }
 
     private static void createAccount() {
-        System.out.println("\n2. Create account");
-        System.out.print("\nEnter user: ");
+        System.out.print("\n2. Create account - enter user: ");
         System.out.flush();
         Scanner console = new Scanner(System.in);
         String name = console.nextLine().trim();
@@ -87,6 +88,18 @@ public class Bank {
             log.info("User '{}' created.", user);
         } catch (SQLException ex) {
             log.error("User '{}' cannot be created:", user, ex);
+        }
+    }
+
+    private static void listAccounts() {
+        System.out.println("\n3. List accounts\n");
+        try {
+            Collection<Account> accounts = BankRepository.getAccounts();
+            for (Account a : accounts) {
+                System.out.println(a);
+            }
+        } catch (SQLException ex) {
+            log.error("Cannot get accounts:", ex);
         }
     }
 

@@ -116,6 +116,29 @@ public final class BankRepository {
     }
 
     /**
+     * Gets a list of all accounts.
+     *
+     * @return a list of accounts
+     * @throws SQLException in case of DB problems
+     */
+    public static Collection<Account> getAccounts() throws SQLException {
+        Collection<Account> userAccounts = new ArrayList<>();
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM accounts")
+        ) {
+            while (rs.next()) {
+                User user = new User(rs.getString("name"));
+                Account account = new Account(rs.getInt("number"), user);
+                account.setBalance(rs.getBigDecimal("balance"));
+                userAccounts.add(account);
+            }
+        }
+        log.info("{} account(s) found.", userAccounts.size());
+        return userAccounts;
+    }
+
+    /**
      * Gets the accounts for.
      *
      * @param user the user
