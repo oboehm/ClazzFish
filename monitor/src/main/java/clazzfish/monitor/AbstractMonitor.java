@@ -20,7 +20,7 @@ package clazzfish.monitor;
 
 import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,7 @@ import java.util.Arrays;
 public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner implements AbstractMonitorMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitor.class);
-    private ObjectName mbeanName = MBeanHelper.getAsObjectName(this.getClass());
+    private ObjectName mbeanName = MBeanFinder.getAsObjectName(this.getClass());
 
     /**
      * This method is called when the ClasspathMonitor is registered as shutdown
@@ -75,7 +75,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * </p>
      */
     public void registerMeAsMBean() {
-        this.registerMeAsMBean(MBeanHelper.getAsObjectName(this.getClass()));
+        this.registerMeAsMBean(MBeanFinder.getAsObjectName(this.getClass()));
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @param name the MBean name (e.g. "my.class.Monitor")
      */
     public void registerMeAsMBean(final String name) {
-        this.registerMeAsMBean(MBeanHelper.getAsObjectName(name));
+        this.registerMeAsMBean(MBeanFinder.getAsObjectName(name));
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @param name the name
      */
     public void registerMeAsMBean(ObjectName name) {
-        MBeanHelper.registerMBean(name, this);
+        MBeanFinder.registerMBean(name, this);
         this.mbeanName = name;
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * Unregister monitor as MBean.
      */
     public void unregisterMeAsMBean() {
-        MBeanHelper.unregisterMBean(this.mbeanName);
+        MBeanFinder.unregisterMBean(this.mbeanName);
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
      * @return true if MBean is already registered.
      */
     public boolean isMBean() {
-        return MBeanHelper.isRegistered(this.mbeanName);
+        return MBeanFinder.isRegistered(this.mbeanName);
     }
 
     /**

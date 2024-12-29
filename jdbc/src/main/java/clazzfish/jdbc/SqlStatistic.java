@@ -24,7 +24,7 @@ import clazzfish.jdbc.internal.PasswordFilter;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import clazzfish.jdbc.monitor.ProfileMonitor;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	 * @param name the MBean name (e.g. "my.class.Monitor")
 	 */
 	public static void registerAsMBean(final String name) {
-		getInstance().registerMeAsMBean(MBeanHelper.getAsObjectName(name));
+		getInstance().registerMeAsMBean(MBeanFinder.getAsObjectName(name));
 	}
 
 }

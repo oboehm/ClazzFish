@@ -24,7 +24,7 @@ import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -370,7 +370,7 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 					SimpleType.DOUBLE, SimpleType.DOUBLE, SimpleType.DOUBLE };
 			CompositeType rowType = new CompositeType("propertyType", "property entry", itemNames, itemDescriptions,
 					itemTypes);
-			TabularDataSupport data = MBeanHelper.createTabularDataSupport(rowType, itemNames);
+			TabularDataSupport data = MBeanFinder.createTabularDataSupport(rowType, itemNames);
 			ProfileMonitor[] monitors = getSortedMonitors();
 			for (ProfileMonitor monitor : monitors) {
 				Map<String, Object> map = new HashMap<>();

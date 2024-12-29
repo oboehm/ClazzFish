@@ -22,7 +22,7 @@ import clazzfish.monitor.internal.BoringClassLoader;
 import clazzfish.monitor.internal.ClasspathDigger;
 import clazzfish.monitor.internal.DoubletDigger;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +166,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @see ClasspathMonitor#unregisterAsMBean()
 	 */
 	public static void registerAsMBean(final String name) {
-		registerAsMBean(MBeanHelper.getAsObjectName(name));
+		registerAsMBean(MBeanFinder.getAsObjectName(name));
 	}
 
 	/**

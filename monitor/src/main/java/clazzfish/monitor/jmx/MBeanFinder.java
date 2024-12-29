@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * (c)reated 19.02.2009 by oliver (ob@oasd.de)
+ * (c)reated 28.12.24 by oboehm
  */
 package clazzfish.monitor.jmx;
 
@@ -30,19 +30,18 @@ import java.lang.management.ManagementFactory;
 
 /**
  * This class simplifies the use of JMX and MBeans a little bit.
- * Originally it was part of the PatternTesting project.
+ * It replaces the old MBeanHelper class from PatternTesting.
  *
  * @author <a href="boehm@javatux.de">oliver</a>
- * @deprecated replaced by {@link MBeanFinder}
+ * @since 2.3
  */
-@Deprecated(forRemoval = true)
-public class MBeanHelper {
+public class MBeanFinder {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MBeanHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MBeanFinder.class);
 	private static final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
 	/** Utility class - no need to instantiate it */
-	private MBeanHelper() {
+	private MBeanFinder() {
 	}
 
 	/**
@@ -58,38 +57,22 @@ public class MBeanHelper {
 	}
 
 	/**
-	 * Gets an MBean name for the given object.
-	 *
-	 * @param mbean
-	 *            the mbean
-	 * @param level
-	 *            the level
-	 * @return the name of the MBean
-	 * @since 1.4.3
-	 */
-	public static String getMBeanName(final Object mbean, final int level) {
-		return getMBeanName(mbean.getClass(), level);
-	}
-
-	/**
 	 * Converts the class name into a MBean name. For a hierachical structure of
 	 * the registered MBeans take a look at <a href=
 	 * "http://www.oracle.com/technetwork/java/javase/tech/best-practices-jsp-136021.html"
 	 * >Java Management Extensions (JMX) - Best Practices</a>.
 	 * <p>
-	 * The default level for an MBean is since 1.4.3 now set to "2" (see
-	 * {@link #getMBeanName(Object, int)}. This means you will find all MBeans
-	 * from PatternTesting Runtime under the node "clazzfish.monitor" if
-	 * you open your JMX console (e.g. the 'jconsole' from the JDK).
+	 * The default level for an MBean is since 1.4.3 now set to "1". This means
+	 * you will find all MBeans ClazzFish under the node "clazzfish" if you
+	 * open your JMX console (e.g. the 'jconsole' from the JDK).
 	 * </p>
 	 *
-	 * @param cl
-	 *            e.g. my.good.bye.World
-	 * @return a valid MBean name e.g. "my:type=good,good=bye,name=World"
+	 * @param cl a class, e.g. my.good.bye.World
+	 * @return a valid MBean name, e.g. "my:type=good,good=bye,name=World"
 	 * @see #getMBeanName(Class, int)
 	 */
 	public static String getMBeanName(final Class<?> cl) {
-		return getMBeanName(cl, 2);
+		return getMBeanName(cl, 1);
 	}
 
 	/**
@@ -100,7 +83,6 @@ public class MBeanHelper {
 	 * <p>
 	 * With the 2nd parameter (level) you can control the root element. If you
 	 * set it i.e. to 2 the result in the jconsole would look like:
-	 *
 	 * <pre>
 	 * my.good
 	 *     bye
@@ -110,12 +92,9 @@ public class MBeanHelper {
 	 * if the given class is "my.good.by.World".
 	 * </p>
 	 *
-	 * @param cl
-	 *            e.g. my.good.bye.World
-	 * @param level
-	 *            the level, e.g.
+	 * @param cl	e.g. my.good.bye.World
+	 * @param level the level, e.g. 2
 	 * @return a valid MBean name e.g. "my.good:type=bye,name=World"
-	 * @since 1.4.3
 	 */
 	public static String getMBeanName(final Class<?> cl, final int level) {
 		assert level > 0 : "level must be 1 or greater";
@@ -177,7 +156,7 @@ public class MBeanHelper {
 	 */
 	public static ObjectName getAsObjectName(final String name) {
 		try {
-			return new ObjectName(MBeanHelper.getMBeanName(name));
+			return new ObjectName(MBeanFinder.getMBeanName(name));
 		} catch (MalformedObjectNameException ex) {
 			throw new IllegalArgumentException("illegal name: " + name, ex);
 		}
@@ -192,7 +171,7 @@ public class MBeanHelper {
 	 * @since 1.6
 	 */
 	public static ObjectName getAsObjectName(final Class<?> mbeanClass) {
-		String name = MBeanHelper.getMBeanName(mbeanClass);
+		String name = MBeanFinder.getMBeanName(mbeanClass);
 		try {
 			return new ObjectName(name);
 		} catch (MalformedObjectNameException ex) {
@@ -203,12 +182,9 @@ public class MBeanHelper {
 	/**
 	 * Register the given object as MBean.
 	 *
-	 * @param mbean
-	 *            the mbean
-	 * @throws JMException
-	 *             if registration fails
+	 * @param mbean the MBean for registration
 	 */
-	public static void registerMBean(final Object mbean) throws JMException {
+	public static void registerMBean(final Object mbean) {
 		String mbeanName = getMBeanName(mbean);
 		registerMBean(mbeanName, mbean);
 	}
@@ -256,21 +232,6 @@ public class MBeanHelper {
 	/**
 	 * Unregister an MBean.
 	 *
-	 * @param mbeanName
-	 *            the mbean name
-	 */
-	public static synchronized void unregisterMBean(final String mbeanName) {
-		try {
-			ObjectName name = new ObjectName(mbeanName);
-			unregisterMBean(name);
-		} catch (MalformedObjectNameException ex) {
-			throw new IllegalArgumentException("'" + mbeanName + "' is not a valid name", ex);
-		}
-	}
-
-	/**
-	 * Unregister an MBean.
-	 *
 	 * @param name
 	 *            the name
 	 */
@@ -293,7 +254,7 @@ public class MBeanHelper {
 	 * @return true, if is registered
 	 */
 	public static boolean isRegistered(final String mbeanName) {
-		ObjectName name = MBeanHelper.getAsObjectName(mbeanName);
+		ObjectName name = MBeanFinder.getAsObjectName(mbeanName);
 		return isRegistered(name);
 	}
 
@@ -312,93 +273,6 @@ public class MBeanHelper {
 		} catch (InstanceNotFoundException ex) {
 			LOG.trace("'" + name + "' not found:", ex);
 			return false;
-		}
-	}
-
-	/**
-	 * Checks if is registered.
-	 *
-	 * @param obj
-	 *            the obj
-	 *
-	 * @return true, if is registered
-	 */
-	public static boolean isRegistered(final Object obj) {
-		String mbeanName = getMBeanName(obj.getClass());
-		return isRegistered(mbeanName);
-	}
-
-	/**
-	 * Gets the object instance.
-	 *
-	 * @param name
-	 *            the name
-	 * @return the object instance
-	 * @throws InstanceNotFoundException
-	 *             the instance not found exception
-	 */
-	public static ObjectInstance getObjectInstance(final String name) throws InstanceNotFoundException {
-		try {
-			ObjectName mbeanName = new ObjectName(name);
-			return getObjectInstance(mbeanName);
-		} catch (MalformedObjectNameException e) {
-			throw new IllegalArgumentException(name, e);
-		}
-	}
-
-	/**
-	 * Gets the object instance.
-	 *
-	 * @param mbeanName
-	 *            the mbean name
-	 * @return the object instance
-	 * @throws InstanceNotFoundException
-	 *             the instance not found exception
-	 */
-	public static ObjectInstance getObjectInstance(final ObjectName mbeanName) throws InstanceNotFoundException {
-		return server.getObjectInstance(mbeanName);
-	}
-
-	/**
-	 * Gets the attribute.
-	 *
-	 * @param mbeanName
-	 *            the mbean name
-	 * @param attributeName
-	 *            the attribute name
-	 * @return the attribute
-	 * @throws InstanceNotFoundException
-	 *             the instance not found exception
-	 * @throws JMException
-	 *             the jM exception
-	 */
-	public static Object getAttribute(final String mbeanName, final String attributeName) throws JMException {
-		try {
-			ObjectName mbean = new ObjectName(mbeanName);
-			return getAttribute(mbean, attributeName);
-		} catch (MalformedObjectNameException e) {
-			throw new IllegalArgumentException(mbeanName, e);
-		}
-	}
-
-	/**
-	 * Gets the attribute.
-	 *
-	 * @param mbean
-	 *            the mbean
-	 * @param attributeName
-	 *            the attribute name
-	 * @return the attribute
-	 * @throws InstanceNotFoundException
-	 *             the instance not found exception
-	 * @throws JMException
-	 *             the jM exception
-	 */
-	public static Object getAttribute(final ObjectName mbean, final String attributeName) throws JMException {
-		try {
-			return server.getAttribute(mbean, attributeName);
-		} catch (AttributeNotFoundException e) {
-			throw new IllegalArgumentException(attributeName, e);
 		}
 	}
 

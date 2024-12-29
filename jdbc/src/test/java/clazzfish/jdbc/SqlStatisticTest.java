@@ -21,7 +21,7 @@
 package clazzfish.jdbc;
 
 import clazzfish.jdbc.monitor.ProfileMonitor;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,7 +197,7 @@ public class SqlStatisticTest {
     public void testRegisterAsMBean() {
         String mbeanName = "test.mon.SqlStat";
         SqlStatistic.registerAsMBean(mbeanName);
-        assertTrue(MBeanHelper.isRegistered(mbeanName), "not registered: " + mbeanName);
+        assertTrue(MBeanFinder.isRegistered(mbeanName), "not registered: " + mbeanName);
     }
 
     /**

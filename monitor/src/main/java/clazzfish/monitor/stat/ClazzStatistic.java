@@ -20,7 +20,7 @@ package clazzfish.monitor.stat;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
@@ -126,7 +126,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     public void registerMeAsMBean() {
-        MBeanHelper.registerMBean("clazzfish:name=stat,type=monitor,monitor=ClazzStatistic", this);
+        MBeanFinder.registerMBean(this);
     }
 
     public SortedSet<ClazzRecord> getAllClasses() {

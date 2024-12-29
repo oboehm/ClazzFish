@@ -20,11 +20,10 @@
 
 package clazzfish.jdbc;
 
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.JMException;
 import javax.management.openmbean.*;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,12 +62,8 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 
 	static {
 		INSTANCE = new ConnectionMonitor();
-		try {
-			MBeanHelper.registerMBean(INSTANCE);
-			LOG.debug("{} created and registered as MBean.", INSTANCE);
-		} catch (JMException e) {
-			LOG.info("{} can't be registered as MBean ({})", INSTANCE, e);
-		}
+		MBeanFinder.registerMBean(INSTANCE);
+		LOG.debug("{} created and registered as MBean.", INSTANCE);
 	}
 
 	/**
@@ -184,7 +179,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 			OpenType<?>[] itemTypes = { SimpleType.STRING, new ArrayType<String>(1, SimpleType.STRING) };
 			CompositeType rowType = new CompositeType("propertyType", "property entry", itemNames, itemDescriptions,
 					itemTypes);
-			TabularDataSupport data = MBeanHelper.createTabularDataSupport(rowType, itemNames);
+			TabularDataSupport data = MBeanFinder.createTabularDataSupport(rowType, itemNames);
 			for (ProxyConnection proxy : openConnections) {
 				StackTraceElement[] stacktrace = proxy.getCaller();
 				Map<String, Object> map = new HashMap<>();

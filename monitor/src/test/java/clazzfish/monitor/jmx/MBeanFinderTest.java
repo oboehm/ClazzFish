@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * (c)reated 22.11.24 by oboehm
+ * (c)reated 28.12.24 by oboehm
  */
-package clazzfish.monitor;
+package clazzfish.monitor.jmx;
 
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.monitor.ClasspathMonitor;
+import clazzfish.monitor.stat.ClazzStatistic;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for @link Starter}.
+ * Unit tests for {@link MBeanFinder} ...
  *
  * @author oboehm
- * @since 22.11.24
+ * @since 28.12.24
  */
-class StarterTest {
+class MBeanFinderTest {
 
     @Test
-    void testRegistration() {
-        Starter.start();
-        assertTrue(MBeanFinder.isRegistered("clazzfish:type=monitor,name=ClasspathMonitor"));
-        assertTrue(MBeanFinder.isRegistered("clazzfish:type=monitor,name=ResourcepathMonitor"));
+    void getMBeanName() {
+        String mbeanName = MBeanFinder.getMBeanName(ClasspathMonitor.class);
+        assertEquals("clazzfish:type=monitor,name=ClasspathMonitor", mbeanName);
+    }
+
+    @Test
+    void getMBeanNameLevel1() {
+        String mbeanName = MBeanFinder.getMBeanName(ClazzStatistic.class);
+        assertEquals("clazzfish:type=monitor,monitor=stat,name=ClazzStatistic", mbeanName);
     }
 
 }

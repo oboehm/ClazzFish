@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
-import clazzfish.monitor.jmx.MBeanHelper;
+import clazzfish.monitor.jmx.MBeanFinder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +42,8 @@ class ClazzStatisticTest {
     @Test
     void registerMeAsMBean() {
         recorder.registerMeAsMBean();
-        assertTrue(MBeanHelper.isRegistered("clazzfish.monitor:name=ClazzStatistic,type=stat")
-                || MBeanHelper.isRegistered("clazzfish:name=stat,type=monitor,monitor=ClazzStatistic"));
+        assertTrue(MBeanFinder.isRegistered("clazzfish.monitor:name=ClazzStatistic,type=stat")
+                || MBeanFinder.isRegistered("clazzfish:type=monitor,monitor=stat,name=ClazzStatistic"));
     }
 
     @Test
