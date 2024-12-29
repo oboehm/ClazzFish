@@ -37,6 +37,10 @@ public record ClazzRecord(URI classpath, String classname, int count) implements
         return new ClazzRecord(URI.create(parts[0]), parts[1], Integer.parseInt(parts[2]));
     }
 
+    public static String toCsvHeadline() {
+        return "Classpath; Classname; Count";
+    }
+
     public String toCSV() {
         return classpath + ";" + classname + ";" + count;
     }

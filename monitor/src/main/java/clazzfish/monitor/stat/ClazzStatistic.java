@@ -186,6 +186,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         }
         SortedSet<ClazzRecord> statistics = getStatistics();
         try (PrintWriter writer = new PrintWriter(csvFile)) {
+            writer.println(ClazzRecord.toCsvHeadline());
             for (ClazzRecord rec : statistics) {
                 writer.println(rec.toCSV());
             }
@@ -198,6 +199,9 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
             while (reader.ready()) {
                 String line = reader.readLine();
+                if (line.startsWith(ClazzRecord.toCsvHeadline())) {
+                    continue;
+                }
                 ClazzRecord r = ClazzRecord.fromCSV(line);
                 if (r.count() == 0) {
                     continue;
