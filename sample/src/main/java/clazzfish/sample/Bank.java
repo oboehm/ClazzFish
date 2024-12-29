@@ -19,6 +19,7 @@ package clazzfish.sample;
 
 import clazzfish.jdbc.JdbcStarter;
 import clazzfish.sample.jdbc.BankRepository;
+import clazzfish.sample.jdbc.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,7 @@ public class Bank {
             String choice = console.nextLine().trim();
             switch (choice) {
                 case "1" -> createBank();
+                case "2" -> createAccount();
             }
             if (choice.equals("9")) {
                 break;
@@ -70,6 +72,21 @@ public class Bank {
             log.info("Bank created.");
         } catch (SQLException ex) {
             log.error("Bank cannot be created:", ex);
+        }
+    }
+
+    private static void createAccount() {
+        System.out.println("\n2. Create account");
+        System.out.print("\nEnter user: ");
+        System.out.flush();
+        Scanner console = new Scanner(System.in);
+        String name = console.nextLine().trim();
+        User user = new User(name);
+        try {
+            BankRepository.createAccountFor(user);
+            log.info("User '{}' created.", user);
+        } catch (SQLException ex) {
+            log.error("User '{}' cannot be created:", user, ex);
         }
     }
 

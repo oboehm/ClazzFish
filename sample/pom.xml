@@ -50,15 +50,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- optional: JAMon (Java and Performance Monitor) -->
-        <dependency>
-            <groupId>com.jamonapi</groupId>
-            <artifactId>jamon</artifactId>
-            <version>2.81</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
