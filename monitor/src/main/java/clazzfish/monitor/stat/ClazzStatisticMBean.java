@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.monitor.jmx.Description;
 import clazzfish.monitor.util.Shutdownable;
 
 import java.io.File;
@@ -29,6 +30,12 @@ import java.io.IOException;
  * @since 2.3 (29.11.24)
  */
 public interface ClazzStatisticMBean extends Shutdownable {
+
+    /**
+     * Prints the statistic to the log output.
+     */
+    @Description("logs the statistic")
+    void logMe();
 
     /**
      * Exports the statistics of the collected classes to the default file..

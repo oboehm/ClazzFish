@@ -153,6 +153,23 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         return statistics;
     }
 
+    /**
+     * Prints the statistic as CSV to the log output.
+     */
+    @Override
+    public void logMe() {
+        importCSV();
+        try (StringWriter sw = new StringWriter();
+             PrintWriter writer = new PrintWriter(sw)) {
+            writeCSV(writer);
+            writer.flush();
+            sw.flush();
+            log.info("=== ClazzStatistic ===\n{}", sw);
+        } catch (IOException ex) {
+            log.error("Cannot log statistic:", ex);
+        }
+    }
+
     @Override
     public File getExportFile() {
         return csvFile;
@@ -175,6 +192,28 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     public File exportCSV(File csvFile) throws IOException {
         log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
+            importCSV();
+        } else {
+            ExtendedFile.createDir(csvFile.getParentFile());
+        }
+        try (PrintWriter writer = new PrintWriter(csvFile)) {
+            writeCSV(writer);
+        }
+        log.info("Statistics exported to '{}'.", csvFile);
+        return csvFile;
+    }
+
+    private void writeCSV(PrintWriter writer) {
+        SortedSet<ClazzRecord> statistics = getStatistics();
+        writer.println(ClazzRecord.toCsvHeadline());
+        for (ClazzRecord rec : statistics) {
+            writer.println(rec.toCSV());
+        }
+        log.debug("Statistics exported with {} lines.", statistics.size());
+    }
+
+    private void importCSV() {
+        if (csvFile.exists()) {
             try {
                 importCSV(csvFile);
             } catch (IOException ex) {
@@ -182,17 +221,8 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                 log.debug("Details:", ex);
             }
         } else {
-            ExtendedFile.createDir(csvFile.getParentFile());
+            log.debug("No CSV file '{}' for import available.", csvFile);
         }
-        SortedSet<ClazzRecord> statistics = getStatistics();
-        try (PrintWriter writer = new PrintWriter(csvFile)) {
-            writer.println(ClazzRecord.toCsvHeadline());
-            for (ClazzRecord rec : statistics) {
-                writer.println(rec.toCSV());
-            }
-        }
-        log.info("Statistics exported to '{}' ({} lines).", csvFile, statistics.size());
-        return csvFile;
     }
 
     public void importCSV(File csvFile) throws IOException {
