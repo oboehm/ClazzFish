@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * The ClazzStatistic collects classes and resources to find classes which are
  * likely to be dead. At the end a little statistics is reported to a file
- * 'clazzfish/a.b.MyMain/ClazzStatistic.csv' in the temp direktory.
+ * 'clazzfish/a.b.MyMain/ClazzStatistic.csv' in the temp directory.
  * If you want another directory or filename where this statistics should be
  * stored you can use one of the system properties
  * <ol>
@@ -49,11 +49,11 @@ import java.util.stream.Collectors;
  * Please use only one of this environment options.
  * <p>
  * As alternative you can set one of the two environment variables:
+ * </p>
  * <ol>
  *     <li>CLAZZFISH_STATISTICS_DIR</li>
  *     <li>CLAZZFISH_STATISTICS_FILE</li>
  * </ol>
- * </p>
  * <p>
  * NOTE: If a system property like 'appname' is set which looks like a program
  * name this property is used instead of the Main classname.

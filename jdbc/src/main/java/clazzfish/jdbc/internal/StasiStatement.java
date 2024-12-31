@@ -855,7 +855,7 @@ public class StasiStatement implements Statement {
 	 * <p>
 	 * This method should be used when the returned row count may exceed
 	 * {@link Integer#MAX_VALUE}.
-	 * <p>
+	 * </p>
 	 *
 	 * @return the current result as an update count; -1 if the current result
 	 * is a <code>ResultSet</code> object or there are no more results

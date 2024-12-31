@@ -83,11 +83,11 @@ public final class JdbcStarter {
      * <p>
      * If you want to export ALL dates including the dates of the monitor
      * MBeans you have to call
+     * </p>
      * <ul>
      *     <li>Starter.recordAll()</li>
      *     <li>JdbcStarter.record()</li>
      * </ul>
-     * </p>
      */
     public static void recordAll() {
         Starter.record();

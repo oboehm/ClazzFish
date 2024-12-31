@@ -23,6 +23,9 @@ import java.net.URI;
  * The ClazzRecord stores the relation of a class to its classpath and some
  * collected data.
  *
+ * @param classpath the URI of the classpath
+ * @param classname the class name
+ * @param count     the count how often a class was loaded
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
