@@ -77,9 +77,17 @@ public final class JdbcStarter {
     }
 
     /**
-     * Registers all MBeans of jdbc module but also all MBeans of monitor
-     * module as shutdown hook. This means at the end of the program all
-     * collected dates of the different modules are exported
+     * Registers all MBeans of jdbc module but also the statistic MBean of
+     * monitor module as shutdown hook. This means at the end of the program all
+     * alll statistic dates of the different modules are exported.
+     * <p>
+     * If you want to export ALL dates including the dates of the monitor
+     * MBeans you have to call
+     * <ul>
+     *     <li>Starter.recordAll()</li>
+     *     <li>JdbcStarter.record()</li>
+     * </ul>
+     * </p>
      */
     public static void recordAll() {
         Starter.record();

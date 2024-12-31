@@ -47,15 +47,35 @@ public final class Starter {
     }
 
     /**
-     * Does not register all MBeans but add them also as shutdown hook.
-     * So at the end of the program all collected dates are exported.
+     * Does not register all MBeans but add also the ClazzStatistic as shutdown
+     * hook.
      */
     public static void record() {
         start();
+        ClazzStatistic.getInstance().addMeAsShutdownHook();
+        log.trace("ClazzStatistic MBeans is registered as shutdown hook.");
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported.
+     */
+    public static void recordAll() {
+        record();
         ClasspathMonitor.getInstance().addMeAsShutdownHook();
         ResourcepathMonitor.getInstance().addMeAsShutdownHook();
-        ClazzStatistic.getInstance().addMeAsShutdownHook();
         log.trace("All MBeans are registered as shutdown hook.");
+    }
+
+    /**
+     * Does not register all MBeans but add also the ClazzStatistic as shutdown
+     * hook.
+     *
+     * @param dir directory where the statistic is stored
+     */
+    public static void record(File dir) {
+        Config.DEFAULT.setDumpDir(dir);
+        record();
     }
 
     /**
@@ -65,9 +85,9 @@ public final class Starter {
      *
      * @param dir directory where the dates are stored
      */
-    public static void record(File dir) {
+    public static void recordAll(File dir) {
         Config.DEFAULT.setDumpDir(dir);
-        record();
+        recordAll();
     }
 
 }
