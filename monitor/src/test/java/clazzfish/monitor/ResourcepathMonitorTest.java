@@ -89,14 +89,11 @@ public class ResourcepathMonitorTest extends AbstractMonitorTest {
 
     /**
      * Test method for {@link ResourcepathMonitor#getResources()}. Here we test
-     * if we can scan resources like '/Log4j-config.xsd' from the JAR files.
-     *
-     * @throws IOException the io exception
+     * if we can scan resources like '/META-INF/MANIFEST.MF' from the JAR files.
      */
     @Test
-    public void testGetResourcesFromJar() throws IOException {
+    public void testGetResourcesFromJar() {
         List<String> resourceList = getResourcesAsList();
-        assertThat(resourceList, hasItem("/Log4j-config.xsd"));
         assertThat(resourceList, hasItem("/META-INF/MANIFEST.MF"));
         assertThat(resourceList, not(hasItem("/META-INF/")));
         assertThat(resourceList, not(hasItem("/META-INF")));
@@ -164,9 +161,7 @@ public class ResourcepathMonitorTest extends AbstractMonitorTest {
     @Test
     public void testIsDoubletNirwana() {
         LOG.info("testIsDoubletNirwana() is started.");
-        assertThrows(NoSuchElementException.class, () -> {
-            monitor.isDoublet("Nirwana");
-        });
+        assertThrows(NoSuchElementException.class, () -> monitor.isDoublet("Nirwana"));
     }
 
     /**

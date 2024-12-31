@@ -59,22 +59,22 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j2-impl</artifactId>
-                <version>2.22.1</version>
+                <version>2.24.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>2.22.1</version>
+                <version>2.24.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>2.22.1</version>
+                <version>2.24.3</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>2.0.11</version>
+                <version>2.0.16</version>
             </dependency>
 
         </dependencies>
@@ -178,6 +178,18 @@
                 <version>3.11.1</version>
                 <configuration>
                     <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
+            </plugin>
+            <!-- call 'mvn versions:display-dependency-updates' to see upates -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.18.0</version>
+                <configuration>
+                    <ignoredVersions>
+                        <ignoredVersion>.*-alpha.*</ignoredVersion>
+                        <ignoredVersion>.*-beta.*</ignoredVersion>
+                    </ignoredVersions>
                 </configuration>
             </plugin>
 
