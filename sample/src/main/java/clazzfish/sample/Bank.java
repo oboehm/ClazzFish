@@ -57,9 +57,15 @@ public class Bank {
             Scanner console = new Scanner(System.in);
             String choice = console.nextLine().trim();
             switch (choice) {
-                case "1" -> createBank();
-                case "2" -> createAccount();
-                case "3" -> listAccounts();
+                case "1":
+                    createBank();
+                    break;
+                case "2":
+                    createAccount();
+                    break;
+                case "3":
+                    listAccounts();
+                    break;
             }
             if (choice.equals("9")) {
                 break;

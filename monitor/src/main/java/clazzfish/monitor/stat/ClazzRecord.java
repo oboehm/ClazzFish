@@ -22,17 +22,46 @@ import java.net.URI;
 /**
  * The ClazzRecord stores the relation of a class to its classpath and some
  * collected data.
+ * <p>
+ * NOTE: This was orginally a record class and was backported to Java 11.
+ * </p>
  *
- * @param classpath the URI of the classpath
- * @param classname the class name
- * @param count     the count how often a class was loaded
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public record ClazzRecord(URI classpath, String classname, int count) implements Comparable<ClazzRecord> {
+public final class ClazzRecord implements Comparable<ClazzRecord> {
+
+    private final URI classpath;
+    private final String classname;
+    private final int count;
 
     public ClazzRecord(URI classpath, String classname) {
         this(classpath, classname, 0);
+    }
+
+    /**
+     * Creates a ClazzRecord object.
+     *
+     * @param classpath the URI of the classpath
+     * @param classname the class name
+     * @param count     the count how often a class was loaded
+     */
+    public ClazzRecord(URI classpath, String classname, int count) {
+        this.classpath = classpath;
+        this.classname = classname;
+        this.count = count;
+    }
+
+    public String classname() {
+        return classname;
+    }
+
+    public URI classpath() {
+        return classpath;
+    }
+
+    public int count() {
+        return count;
     }
 
     public static ClazzRecord fromCSV(String line) {
