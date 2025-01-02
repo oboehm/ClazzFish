@@ -59,3 +59,12 @@ For more info see the [ClazzStatistic](src/main/java/clazzfish/monitor/stat/Claz
 ## Troublehooting
 
 To see what happens (e.g. where the statistics or monitor files are stored) set the log level to DEBUG or TRACE.
+The log is based on SLF4J.
+If you do not see any log output be sure the correct binded is added to your classpath.
+In case of Log4J2 the binding is (POM):
+
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>2.24.3</version>
+    </dependency>

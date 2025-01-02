@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - backport to Java 11
+- documentation updated
 
 
 ## [2.3] (01-Jan-2025)
