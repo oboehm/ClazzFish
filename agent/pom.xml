@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.aosd.clazzfish</groupId>
     <artifactId>clazzfish</artifactId>
-    <version>2.3.11</version>
+    <version>2.4-SNAPSHOT</version>
   </parent>
   <artifactId>clazzfish-agent</artifactId>
   <packaging>jar</packaging>
