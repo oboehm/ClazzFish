@@ -6,7 +6,7 @@
 
     <groupId>de.aosd.clazzfish</groupId>
     <artifactId>clazzfish</artifactId>
-    <version>2.3.11-SNAPSHOT</version>
+    <version>2.3.11</version>
     <packaging>pom</packaging>
 
     <name>ClazzFish</name>
