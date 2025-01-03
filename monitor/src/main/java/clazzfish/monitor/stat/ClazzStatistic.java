@@ -133,9 +133,9 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         try {
             return allClasses.get();
         } catch (ExecutionException | InterruptedException ex) {
-            log.info("Trying again to get all classes ({}).", ex.getMessage());
+            log.info("Cannot get all classes ({}).", ex.getMessage());
             log.debug("Details:", ex);
-            return getAllClasses();
+            return collectClasses(classpathMonitor);
         }
     }
 
