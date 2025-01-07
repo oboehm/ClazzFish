@@ -22,8 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,14 +67,44 @@ class ClazzStatisticTest {
     @Test
     void importCSV() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
+        ClazzStatistic rec = exportStatistic(csvFile);
+        rec.importCSV(csvFile);
+        checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
+        checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
+    }
+
+    /**
+     * Unit test for #21.
+     *
+     * @throws IOException in case of problems
+     */
+    @Test
+    void importCSVwithUpdatedClasspath() throws IOException {
+        File csvFile = new File("target/statistics", "import.csv");
+        ClazzStatistic rec = exportStatistic(csvFile);
+        File updated = updatedDependenciesIn(csvFile);
+        rec.importCSV(updated);
+        checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
+    }
+
+    private static ClazzStatistic exportStatistic(File csvFile) throws IOException {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
         ClazzStatistic rec = new ClazzStatistic(csvFile);
         rec.exportCSV(csvFile);
-        rec.importCSV(csvFile);
-        checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
-        checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
+        return rec;
+    }
+
+    private File updatedDependenciesIn(File csvFile) throws IOException {
+        File updated = new File(csvFile + "-updated");
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+             PrintWriter writer = new PrintWriter(updated)) {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                writer.println(line.replace("classes", "x"));
+            }
+        }
+        return updated;
     }
 
     private static void checkClasses(Set<ClazzRecord> classes, String classname, int n) {
