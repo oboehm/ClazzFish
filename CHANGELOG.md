@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-[Unreleased]
+## [2.4] (08-Jan-2025)
 
 ### Fixed
 * no double entries for updated entries
@@ -14,16 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * tested with Java 21 and PatternTesting
 
 
-## [2.3.11] (02-Jan-2025)
+## [2.3] (02-Jan-2025)
 
 ### Changed
-- backport to Java 11
-- documentation updated
-
-
-## [2.3] (01-Jan-2025)
-
-### Changed
+- **v2.3.11**: backport to Java 11
+- **v2.3.11**: documentation updated
 - MBean name of ClasspathAgent changed to "clazzfish:type=agent,agent=ClasspathAgent"
 - MBeanHelper class replaced by MBeanFinder class
 - update to Java 17
