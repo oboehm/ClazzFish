@@ -153,6 +153,14 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         return statistics;
     }
 
+    public Set<URI> getClasspathes() {
+        Set<URI> classpathes = new TreeSet<>();
+        for (ClazzRecord record : getAllClasses()) {
+            classpathes.add(record.classpath());
+        }
+        return classpathes;
+    }
+
     /**
      * Prints the statistic as CSV to the log output.
      */
@@ -239,8 +247,9 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                 String classname = r.classname();
                 Optional<ClazzRecord> any = getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
                 if (any.isPresent()) {
-                    getAllClasses().remove(any.get());
-                    r = new ClazzRecord(r.classpath(), r.classname(), r.count()+any.get().count());
+                    ClazzRecord clazzRecord = any.get();
+                    getAllClasses().remove(clazzRecord);
+                    r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(), r.count()+ clazzRecord.count());
                     getAllClasses().add(r);
                 }
             }

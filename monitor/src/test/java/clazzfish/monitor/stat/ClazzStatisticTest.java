@@ -21,8 +21,10 @@ import clazzfish.monitor.jmx.MBeanFinder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import patterntesting.runtime.junit.CollectionTester;
 
 import java.io.*;
+import java.net.URI;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,9 +84,10 @@ class ClazzStatisticTest {
     void importCSVwithUpdatedClasspath() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
         ClazzStatistic rec = exportStatistic(csvFile);
+        Set<URI> classpathes = rec.getClasspathes();
         File updated = updatedDependenciesIn(csvFile);
         rec.importCSV(updated);
-        checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
+        CollectionTester.assertEquals(classpathes, rec.getClasspathes());
     }
 
     private static ClazzStatistic exportStatistic(File csvFile) throws IOException {
