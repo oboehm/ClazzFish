@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * no double entries for updated entries
   (https://github.com/oboehm/ClazzFish/issues/21[issue #21])
+* tested with Java 21 and PatternTesting
 
 
 ## [2.3.11] (02-Jan-2025)
