@@ -66,6 +66,9 @@ public final class ClazzRecord implements Comparable<ClazzRecord> {
 
     public static ClazzRecord fromCSV(String line) {
         String[] parts = line.split(";");
+        if (parts.length < 3) {
+            throw new IllegalArgumentException(String.format("to less columns (%d) in '%s'", parts.length, line));
+        }
         return new ClazzRecord(URI.create(parts[0]), parts[1], Integer.parseInt(parts[2]));
     }
 

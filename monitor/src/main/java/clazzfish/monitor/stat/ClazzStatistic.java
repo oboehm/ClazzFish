@@ -240,17 +240,24 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                 if (line.startsWith(ClazzRecord.toCsvHeadline())) {
                     continue;
                 }
-                ClazzRecord r = ClazzRecord.fromCSV(line);
-                if (r.count() == 0) {
-                    continue;
-                }
-                String classname = r.classname();
-                Optional<ClazzRecord> any = getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
-                if (any.isPresent()) {
-                    ClazzRecord clazzRecord = any.get();
-                    getAllClasses().remove(clazzRecord);
-                    r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(), r.count()+ clazzRecord.count());
-                    getAllClasses().add(r);
+                try {
+                    ClazzRecord r = ClazzRecord.fromCSV(line);
+                    if (r.count() == 0) {
+                        continue;
+                    }
+                    String classname = r.classname();
+                    Optional<ClazzRecord> any =
+                            getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
+                    if (any.isPresent()) {
+                        ClazzRecord clazzRecord = any.get();
+                        getAllClasses().remove(clazzRecord);
+                        r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(),
+                                r.count() + clazzRecord.count());
+                        getAllClasses().add(r);
+                    }
+                } catch (IllegalArgumentException ex) {
+                    log.debug("Line '{}' is ignored ({}).", line, ex.getMessage());
+                    log.trace("Details:", ex);
                 }
             }
         }

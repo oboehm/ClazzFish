@@ -90,6 +90,13 @@ class ClazzStatisticTest {
         CollectionTester.assertEquals(classpathes, rec.getClasspathes());
     }
 
+    @Test
+    void importCorruptCSV() throws IOException {
+        File corrupt = new File("src/test/resources/clazzfish/monitor/stat/corrupt.csv");
+        recorder.importCSV(corrupt);
+        assertFalse(recorder.getStatistics().isEmpty());
+    }
+
     private static ClazzStatistic exportStatistic(File csvFile) throws IOException {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
