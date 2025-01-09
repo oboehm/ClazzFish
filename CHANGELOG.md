@@ -9,15 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1] (09-Jan-2025)
 
 ### Fixed
-* corrupt lines in exported CSV files were ignored
+- corrupt lines in exported CSV files were ignored
 
 
 ## [2.4] (08-Jan-2025)
 
 ### Fixed
-* no double entries for updated entries
+- no double entries for updated entries
   (https://github.com/oboehm/ClazzFish/issues/21[issue #21])
-* tested with Java 21 and PatternTesting
+-tested with Java 21 and PatternTesting
 
 
 ## [2.3] (02-Jan-2025)
