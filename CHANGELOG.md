@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - exception loop at shutdown is avoided
-  (https://github.com/oboehm/ClazzFish/issues/22[issue #22])
+  ([issue #22](https://github.com/oboehm/ClazzFish/issues/22))
 
 
 ## [2.4.1] (09-Jan-2025)
@@ -23,8 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - no double entries for updated entries
-  (https://github.com/oboehm/ClazzFish/issues/21[issue #21])
--tested with Java 21 and PatternTesting
+  ([issue #21](https://github.com/oboehm/ClazzFish/issues/21))
+- tested with Java 21 and PatternTesting
 
 
 ## [2.3] (02-Jan-2025)
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - ClazzStatistic collects class statistic over several runs of a program
 - Starter class to automatically register the monitor classes to JMX
-  (https://github.com/oboehm/ClazzFish/issues/15[issue #15])
+  ([issue #15](https://github.com/oboehm/ClazzFish/issues/15))
 - dump directory can now be set via system property `clazzfish.dump.dir` or environment variable `CLAZZFISH_DUMP_DIR`
 - Bank class to sample module
 
@@ -58,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - clazzfish-jdbc: passwords are suppressed during SQL logging
-  (https://github.com/oboehm/ClazzFish/issues/14[issue #14])
+  ([issue #14](https://github.com/oboehm/ClazzFish/issues/14))
 - documentation of [SQL-Logging](src/doc/SQL-Logging.adoc) continued
 
 
@@ -84,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * _fixed_: too many classes found by ClasspathMonitor.getConcreteClassList()
-  (https://github.com/oboehm/ClazzFish/issues/1[issue #1])
+  ([issue #1](https://github.com/oboehm/ClazzFish/issues/1))
 
 
 ## [0.9] (01-Jan-2019)
