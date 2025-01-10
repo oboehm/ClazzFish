@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Fixed
+- exception loop at shutdown is avoided
+  (https://github.com/oboehm/ClazzFish/issues/22[issue #22])
+
+
 ## [2.4.1] (09-Jan-2025)
 
 ### Fixed

@@ -170,7 +170,6 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         try (StringWriter sw = new StringWriter();
              PrintWriter writer = new PrintWriter(sw)) {
             writeCSV(writer);
-            writer.flush();
             sw.flush();
             log.info("=== ClazzStatistic ===\n{}", sw);
         } catch (IOException ex) {
@@ -217,6 +216,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         for (ClazzRecord rec : statistics) {
             writer.println(rec.toCSV());
         }
+        writer.flush();
         log.debug("Statistics exported with {} lines.", statistics.size());
     }
 

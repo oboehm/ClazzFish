@@ -92,9 +92,12 @@ public abstract class AbstractDigger {
                     elements.add(name.substring(relPath.length()));
                 }
             }
-            LOG.trace("{} element(s) read from {}.", elements.size(), archive);
-            return elements;
+        } catch (RuntimeException ex) {
+            LOG.warn("Could not read all entries in {} ({}).", archive, ex.getMessage());
+            LOG.debug("Details:", ex);
         }
+        LOG.trace("{} element(s) read from {}.", elements.size(), archive);
+        return elements;
     }
 
 }
