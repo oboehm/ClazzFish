@@ -1,7 +1,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish)
 
-# ClazzFish
+# ClazzFish <img src="src/doc/images/clazzfish-128x64.png" width="64">
 
 ClazzFish is a collection of different modules, which help you to dive into the classpath of your application and to monitor it.
 Originally it was part of [PatternTesting](http://patterntesting.org) but is now extracted to a separate project.
