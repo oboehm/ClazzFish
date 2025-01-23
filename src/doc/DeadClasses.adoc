@@ -1,0 +1,153 @@
+= How To Find Dead Classes
+
+To find dead classes in your application there are mainly two classes in clazzfish-monitor:
+
+* ClasspathMonitor
+* ClazzStatistic
+
+
+== Snapshot
+
+While running your program the ClasspathMonitor allows you to see
+
+* all classes of the program's classpath,
+* the loaded classes,
+* the unused classes
+* and more...
+
+These informations are also accessible via JMX so you start e.g. a JMX console (like `jconsole`) to look at it.
+
+The unused classes are candiates for dead classes.
+But remember - it is only a snapshot.
+Perhaps some of these classes are needed for other branches of your program.
+
+What you can do?
+ClasspathMonitor can dump unused classes at program end during the shutdown phase.
+All you have to do is to collect the different dumps and search for the intersection of all unused classes.
+This is the point where ClazzStatistic comes into play (see next section).
+
+To activate the dump of loaded and unused classes you have to add the following lines into your source code:
+
+[source:java]
+----
+    static {
+        ClasspathMonitor.getInstance().addMeAsShutdownHook();
+    }
+----
+
+
+
+== ClazzStatistic
+
+ClazzStatistic uses the ClasspathMonitor to record for each class in the classpath
+
+* if class was loaded and
+* to which JAR or directory the class belongs.
+
+All you have to do to activate the export of ClazzStatistic.csv at the end of your application is encapsulated in the Starter class:
+
+[source:java]
+----
+    static {
+        Starter.record();
+    }
+----
+
+See the static initializer in the link:../../sample/src/main/java/clazzfish/sample/Bank.java[Bank] class to see how it is done and what is possible.
+In contradiction to the ClasspathMonitor it imports the statistic from the last run and merge it with the actual dates before it dumps it at shutdown of your application:
+
+|===
+|Classpath |Classname |Count
+
+|file:/ClazzFish/sample/target/classes
+|clazzfish.sample.Bank
+|6
+
+|file:/ClazzFish/sample/target/classes
+|clazzfish.sample.DeadClass
+|0
+
+|file:/ClazzFish/sample/target/classes
+|clazzfish.sample.jdbc.Account
+|6
+
+|file:/ClazzFish/sample/target/classes
+|clazzfish.sample.jdbc.BankRepository
+|3
+
+|file:/ClazzFish/sample/target/classes
+|clazzfish.sample.jdbc.User
+|6
+|===
+
+This is an extract of #ClazzStatistic.csv# which will be exported to the temp directory (we will later see how to change it).
+In this example the sample application of ClazzFish is started several times.
+Some classes are loaded each times, some classes only sometimes and one class (DeadClass) is never loaded (count = 0).
+This class is a probably a dead class which can be deleted.
+
+How more often you run you application how more you can be sure that a class with count = 0 is a dead class.
+When can you be really be sure that this class is really dead?
+Never. But after a year or so it is very probably that you have found a dead class but that depends on your business.
+If you have special classes to handle leap years you have to wait at least 4 years.
+In other words: it depends...
+
+
+== Evaluating ClazzStatistic.csv
+
+=== Collecting
+
+If you start your application on different computers you have the problem that each computer has its own temp directory, where the resulting ClazzStatistic.csv is stored.
+You can collect all these CSV files, filter out the loaded classes which you want to observe and merge them into a new one:
+
+    grep "clazzfish.sample" stat*.csv | grep -v ";0" > ClazzStatistic.csv
+
+What happen if you put this new ClazzStatistic.csv to the temp directory?
+It will be merged with the actual statistic.
+The missing headline and double entries in your ClazzStatistic are no problem.
+Double entries are ignored, i.e. your count statistic will be to low.
+But since you are only interested in classes with count = 0 this is irrelevant.
+
+How to find the location of ClazzStatistic.csv?
+It is placed in the a directory named after the application name or the start class:
+
+[source]
+----
+08:12:39  INFO [main|clazzfish.sample.Bank      ] Good bye - shutting down...
+08:13:35  INFO [ad-2|monitor.stat.ClazzStatistic] Statistics exported to '/tmp/ClazzFish/clazzfish.sample.Bank/ClazzStatistic.csv'.
+----
+
+In this example the starter class is clazzfish.sample.bank and the temp directory is /tmp
+(it depends on your environment and OS).
+
+
+
+=== Global Dump Dir
+
+If you have hundreds of users which uses your application it is a little be cumbersome to collect all CSV files from the different hosts.
+In this case look for a global directory which can be written from all your clients and set the system property #clazzfish.dump.dir#
+
+[source:bash]
+----
+java -Dclazzfish.dump.dir=/path/to/global/dir MyApp.jar
+----
+
+Each application will write its ClazzStatistic.csv in this directory.
+
+
+== Trouble Shooting
+
+=== Missing Log
+
+If you don't see the log message with the name of the exported file it may be that no logging bridge for SLF4J is in the classpath.
+If you use Log4J2 add log4j-slf4j-impl to your dependencies (e.g. to your pom.xml if you use maven):
+
+[source:xml]
+----
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-slf4j-impl</artifactId>
+    <version>2.24.3</version>
+</dependency>
+----
+
+To see more log messages you set the log level for clazzfish to DEBUG or TRACE.
