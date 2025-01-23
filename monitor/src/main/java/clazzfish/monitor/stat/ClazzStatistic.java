@@ -24,11 +24,14 @@ import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -94,7 +97,6 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         this.csvFile = csvFile;
         log.debug("Statistics will be imported from / exported to '{}'.", csvFile);
     }
-
 
     private static FutureTask<SortedSet<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
         FutureTask<SortedSet<ClazzRecord>> classes = new FutureTask<>(() -> collectClasses(cpmon));
@@ -200,14 +202,32 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
             importCSV();
+            exportWithTmpFile(csvFile);
         } else {
             ExtendedFile.createDir(csvFile.getParentFile());
-        }
-        try (PrintWriter writer = new PrintWriter(csvFile)) {
-            writeCSV(writer);
+            exportDirect(csvFile);
         }
         log.info("Statistics exported to '{}'.", csvFile);
         return csvFile;
+    }
+
+    private void exportWithTmpFile(File file) throws IOException {
+        File tmpFile = new File(file + "-" + SystemProperties.getUserName() + System.currentTimeMillis());
+        exportDirect(tmpFile);
+        log.trace("Statistic is temporary stored in '{}'.", tmpFile);
+        File bakFile = new File(file + ".bak");
+        Files.move(file.toPath(), bakFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        log.trace("Old {} is renamed to {}.", file, bakFile);
+        Files.move(tmpFile.toPath(), file.toPath());
+        log.trace("New {} is renamed to {}.", tmpFile, file);
+        Files.delete(bakFile.toPath());
+        log.trace("Temporary file {} is deleted.", bakFile);
+    }
+
+    private void exportDirect(File file) throws FileNotFoundException {
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writeCSV(writer);
+        }
     }
 
     private void writeCSV(PrintWriter writer) {
