@@ -27,6 +27,7 @@ The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-
 ## More Infos
 
 * Release Notes: [CHANGELOG](CHANGELOG.md)
+* [How to Find Dead Classes](src/doc/DeadClasses.adoc)
 * [SQL Logging and Montitoring](src/doc/SQL-Logging.adoc)
 
 ---
