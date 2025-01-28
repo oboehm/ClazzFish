@@ -650,7 +650,13 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return list of classes
 	 */
 	public synchronized List<Class<?>> getLoadedClassList() {
-		return classpathDigger.getLoadedClasses();
+		List<Class<?>> loadedClassList = new ArrayList<>();
+		for (Class<?> loadedClass : classpathDigger.getLoadedClasses()) {
+			if (!loadedClass.isArray()) {
+				loadedClassList.add(loadedClass);
+			}
+		}
+		return loadedClassList;
 	}
 
 	/**

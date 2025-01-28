@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -585,26 +584,6 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     @Test
-    @Disabled("function is now deprecated")
-    public void testGetConcreteClassList() {
-        Collection<Class<?>> javaClasses = cpMon.getConcreteClassList("java");
-        LOG.info("{} concrete Java classes found.", javaClasses.size());
-        for (Class<?> c : javaClasses) {
-            assertThat(c.getName(), startsWith("java."));
-        }
-    }
-
-    @Test
-    @Disabled("function is now deprecated")
-    public void testGetConcreteClassListDot() {
-        String packageName = "clazzfish.monitor";
-        Collection<Class<?>> c1 = cpMon.getConcreteClassList(packageName);
-        Collection<Class<?>> c2 = cpMon.getConcreteClassList(packageName + ".");
-        assertThat(c1, not(empty()));
-        assertEquals(c1.size(), c2.size());
-    }
-
-    @Test
     public void testGetLoadedPackageArray() {
         Package[] packages = cpMon.getLoadedPackageArray();
         assertThat(packages.length, greaterThan(0));
@@ -639,6 +618,19 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     public void testSetMultiThreadingEnabled() {
         cpMon.setMultiThreadingEnabled(true);
         assertTrue(cpMon.isMultiThreadingEnabled());
+    }
+
+    /**
+     * Unit test for issue #23.
+     */
+    @Test
+    void suppressClassArrays() {
+        cpMon.isLoaded("org.apache.logging.log4j.core.pattern.PatternFormatter");
+        for (Class<?> clazz : cpMon.getLoadedClassList()) {
+            if (clazz.isArray()) {
+                fail("should be suppressed: " + clazz);
+            }
+        }
     }
 
     @AfterAll

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- array types are filtered out
+  ([issue #23](https://github.com/oboehm/ClazzFish/issues/23))
 - ClazzStatistic writes the statistic not direct but to a tempory file to be more robust for parallel exports
 
 ## [2.4.2] (10-Jan-2025)
