@@ -21,37 +21,12 @@
         <sonar.coverage.exclusions>**/StasiResultSet.*</sonar.coverage.exclusions>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <clazzfish.dump.dir>target/statistic</clazzfish.dump.dir>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <clazzfish.dump.dir>target/statistic</clazzfish.dump.dir>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>clazzfish-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!-- optional: JAMon (Java and Performance Monitor) -->
         <dependency>
             <groupId>com.jamonapi</groupId>
@@ -60,7 +35,6 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
-
         <!-- DB drivers -->
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -80,7 +54,6 @@
             <version>1.20.4</version>
             <scope>test</scope>
         </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -99,9 +72,31 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-    
-    
+
+    <profiles>
+        <profile>
+            <!-- with clazzfish-agent started for unit tests -->
+            <id>agent</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar</argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>-javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
 </project>
