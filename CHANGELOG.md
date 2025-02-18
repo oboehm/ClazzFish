@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Config accepts "clazzfish.dump.uri" as additional system property
+
 ### Changed
 - array types are filtered out
   ([issue #23](https://github.com/oboehm/ClazzFish/issues/23))

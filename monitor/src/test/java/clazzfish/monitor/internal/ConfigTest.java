@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit-Test fuer {@link Config} ...
@@ -40,6 +42,13 @@ class ConfigTest {
         File dir = Config.DEFAULT.getDumpDir();
         assertNotEquals("unknown", dir.getName());
         log.info("dumpDir = '{}'", dir);
+    }
+
+    @Test
+    void getDumpURI() {
+        URI uri = Config.DEFAULT.getDumpURI();
+        assertNotNull(uri);
+        log.info("dumpURI = '{}'", uri);
     }
 
 }

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,15 +36,16 @@ import java.util.Objects;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
-    private File dumpDir;
+    private URI dumpURI;
 
     public static Config DEFAULT = new Config();
 
     private Config() {
-        this(findDumpDir());
+        this(findDumpURI());
     }
-    private Config(final File dumpDir) {
-        this.dumpDir = dumpDir;
+
+    private Config(final URI dumpURI) {
+        this.dumpURI = dumpURI;
     }
 
     public static String getEnvironment(String key) {
@@ -63,7 +65,7 @@ public final class Config {
      * @return directory for export
      */
     public File getDumpDir() {
-        return dumpDir;
+        return new File(dumpURI);
     }
 
     /**
@@ -73,9 +75,38 @@ public final class Config {
      * @param dir directory for export
      */
     public void setDumpDir(File dir) {
-        if (!Objects.equals(dir, this.dumpDir)) {
-            this.dumpDir = dir;
-            log.info("Dump directory is set to '{}'.", dir);
+        setDumpURI(dir.toURI());
+    }
+
+    /**
+     * Get the directory or URI where the collected dates and statistics are
+     * dumped to.
+     *
+     * @return directory or URI for export
+     */
+    public URI getDumpURI() {
+        return dumpURI;
+    }
+
+    /**
+     * Here you can set the directory or locaction where the collected dates
+     * and statistics should be dumped to.
+     *
+     * @param uri directory or URI for export
+     */
+    public void setDumpURI(URI uri) {
+        if (!Objects.equals(uri, this.dumpURI)) {
+            this.dumpURI = uri;
+            log.info("Dump-URI is set to '{}'.", uri);
+        }
+    }
+
+    private static URI findDumpURI() {
+        String dumpUri = System.getenv("clazzfish.dump.uri");
+        if (StringUtils.isBlank(dumpUri)) {
+            return findDumpDir().toURI();
+        } else {
+            return URI.create(dumpUri);
         }
     }
 
