@@ -10,6 +10,7 @@
     <Logger name="clazzfish.monitor.stat.ClazzStatistic" level="DEBUG" />
     <Logger name="clazzfish.monitor.Starter" level="DEBUG" />
     <Logger name="clazzfish.monitor.jmx" level="INFO" />
+    <Logger name="clazzfish.monitor.spi" level="DEBUG" />
     <Logger name="clazzfish.monitor.stat" level="DEBUG" />
     <Root level="INFO">
       <AppenderRef ref="CONSOLE" />
