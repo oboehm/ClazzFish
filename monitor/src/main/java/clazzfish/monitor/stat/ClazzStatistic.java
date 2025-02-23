@@ -21,6 +21,8 @@ import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.monitor.spi.CsvXPorter;
+import clazzfish.monitor.spi.FileXPorter;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
@@ -225,10 +227,14 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         log.trace("Temporary file {} is deleted.", bakFile);
     }
 
-    private void exportDirect(File file) throws FileNotFoundException {
-        try (PrintWriter writer = new PrintWriter(file)) {
-            writeCSV(writer);
+    private void exportDirect(File file) throws IOException {
+        SortedSet<ClazzRecord> statistics = getStatistics();
+        List<String> csvLines = new ArrayList<>();
+        for (ClazzRecord rec : statistics) {
+            csvLines.add(rec.toCSV());
         }
+        CsvXPorter xPorter = new FileXPorter();
+        xPorter.exportCSV(file.toURI(), ClazzRecord.toCsvHeadline(), csvLines);
     }
 
     private void writeCSV(PrintWriter writer) {
