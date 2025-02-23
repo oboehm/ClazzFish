@@ -26,14 +26,11 @@ import clazzfish.monitor.spi.FileXPorter;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -205,26 +202,12 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
             importCSV();
-            exportWithTmpFile(csvFile);
         } else {
             ExtendedFile.createDir(csvFile.getParentFile());
-            exportDirect(csvFile);
         }
+        exportDirect(csvFile);
         log.info("Statistics exported to '{}'.", csvFile);
         return csvFile;
-    }
-
-    private void exportWithTmpFile(File file) throws IOException {
-        File tmpFile = new File(file + "-" + SystemProperties.getUserName() + System.currentTimeMillis());
-        exportDirect(tmpFile);
-        log.trace("Statistic is temporary stored in '{}'.", tmpFile);
-        File bakFile = new File(file + ".bak");
-        Files.move(file.toPath(), bakFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        log.trace("Old {} is renamed to {}.", file, bakFile);
-        Files.move(tmpFile.toPath(), file.toPath());
-        log.trace("New {} is renamed to {}.", tmpFile, file);
-        Files.delete(bakFile.toPath());
-        log.trace("Temporary file {} is deleted.", bakFile);
     }
 
     private void exportDirect(File file) throws IOException {

@@ -17,14 +17,16 @@
  */
 package clazzfish.monitor.spi;
 
+import org.apache.commons.lang3.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 /**
@@ -43,14 +45,18 @@ public class FileXPorter implements CsvXPorter {
         log.debug("Statistic exported with {} lines to '{}'.", csvLines.size(), uri);
     }
 
-    private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws FileNotFoundException {
-        try (PrintWriter writer = new PrintWriter(file)) {
+    private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws IOException {
+        File tmpFile = new File(file + "-" + SystemProperties.getUserName() + System.currentTimeMillis());
+        log.trace("Statistic is temporary stored in '{}'.", tmpFile);
+        try (PrintWriter writer = new PrintWriter(tmpFile)) {
             writer.println(csvHeadLine);
             for (String line : csvLines) {
                 writer.println(line);
             }
             writer.flush();
         }
+        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        log.trace("New {} is renamed to {}.", tmpFile, file);
     }
 
 }
