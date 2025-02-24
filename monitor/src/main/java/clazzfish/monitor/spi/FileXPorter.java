@@ -17,16 +17,16 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.monitor.io.ExtendedFile;
 import org.apache.commons.lang3.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +46,7 @@ public class FileXPorter implements CsvXPorter {
     }
 
     private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws IOException {
+        ExtendedFile.createDir(file.getParentFile());
         File tmpFile = new File(file + "-" + SystemProperties.getUserName() + System.currentTimeMillis());
         log.trace("Statistic is temporary stored in '{}'.", tmpFile);
         try (PrintWriter writer = new PrintWriter(tmpFile)) {
@@ -57,6 +58,23 @@ public class FileXPorter implements CsvXPorter {
         }
         Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         log.trace("New {} is renamed to {}.", tmpFile, file);
+    }
+
+    @Override
+    public List<String> importCSV(URI uri) throws IOException {
+        return importCSV(new File(uri));
+    }
+
+    private List<String> importCSV(File file) throws IOException {
+        List<String> csvLines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            while (reader.ready()) {
+                String line = reader.readLine();
+                csvLines.add(line);
+            }
+        }
+        log.debug("{} lines imported from file '{}'.", csvLines.size(), file);
+        return csvLines;
     }
 
 }

@@ -26,8 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link FileXPorter}.
@@ -51,6 +50,13 @@ class FileXPorterTest {
         assertTrue(file.exists());
         List<String> readLines = FileUtils.readLines(file, StandardCharsets.UTF_8);
         assertEquals(5, readLines.size());
+    }
+
+    @Test
+    void importCSV() throws IOException {
+        File file = new File("src/test/resources/clazzfish/monitor/stat/corrupt.csv");
+        List<String> cvsLines = xPorter.importCSV(file.toURI());
+        assertFalse(cvsLines.isEmpty());
     }
 
 }

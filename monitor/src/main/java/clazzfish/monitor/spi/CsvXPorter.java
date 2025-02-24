@@ -32,4 +32,6 @@ public interface CsvXPorter {
 
     void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException;
 
+    List<String> importCSV(URI uri) throws IOException;
+
 }

@@ -19,7 +19,6 @@ package clazzfish.monitor.stat;
 
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
-import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
@@ -202,8 +201,6 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
             importCSV();
-        } else {
-            ExtendedFile.createDir(csvFile.getParentFile());
         }
         exportDirect(csvFile);
         log.info("Statistics exported to '{}'.", csvFile);
