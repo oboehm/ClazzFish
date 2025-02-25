@@ -21,14 +21,17 @@ import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.spi.CsvXPorter;
-import clazzfish.monitor.spi.FileXPorter;
+import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -71,7 +74,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     private final ClasspathMonitor classpathMonitor;
     private final FutureTask<SortedSet<ClazzRecord>> allClasses;
     private final URI csvURI;
-    private final CsvXPorter xPorter = new FileXPorter();
+    private final CsvXPorter xPorter = XPorter.getProviders().get(0).create();
 
     static {
         log.trace("{} will be registered as shudown hook.", INSTANCE);
