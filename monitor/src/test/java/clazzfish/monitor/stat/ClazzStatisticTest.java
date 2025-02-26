@@ -101,7 +101,7 @@ class ClazzStatisticTest {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
-        ClazzStatistic rec = new ClazzStatistic(csvFile);
+        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
         rec.exportCSV(csvFile);
         return rec;
     }

@@ -86,18 +86,18 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     private ClazzStatistic() {
-        this(getCsvFile());
+        this(getCsvURI());
     }
 
-    ClazzStatistic(File csvFile) {
-        this(csvFile, ClasspathMonitor.getInstance());
+    ClazzStatistic(URI csvURI) {
+        this(csvURI, ClasspathMonitor.getInstance());
     }
 
-    private ClazzStatistic(File csvFile, ClasspathMonitor classpathMonitor) {
+    private ClazzStatistic(URI csvURI, ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
         this.allClasses = collectFutureClasses(classpathMonitor);
-        this.csvURI = csvFile.toURI();
-        log.debug("Statistics will be imported from / exported to '{}'.", csvFile);
+        this.csvURI = csvURI;
+        log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
     }
 
     private static FutureTask<SortedSet<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
@@ -289,6 +289,10 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "-" + csvURI;
+    }
+
+    private static URI getCsvURI() {
+        return getCsvFile().toURI();
     }
 
     private static File getCsvFile() {
