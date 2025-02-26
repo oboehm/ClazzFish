@@ -231,23 +231,37 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     private void importCSV() {
-        File csvFile = getCsvFile();
-        if (csvFile.exists()) {
+        URI csvURI = getExportFile().toURI();
+        if (exists(csvURI)) {
             try {
-                importCSV(csvFile);
+                importCSV(csvURI);
             } catch (IOException ex) {
-                log.info("History could not be imported from {} ({}).", csvFile, ex.getMessage());
+                log.info("History could not be imported from {} ({}).", csvURI, ex.getMessage());
                 log.debug("Details:", ex);
             }
         } else {
-            log.debug("No CSV file '{}' for import available.", csvFile);
+            log.debug("No '{}' for import available.", csvURI);
+        }
+    }
+
+    private static boolean exists(URI uri) {
+        if ("file".equalsIgnoreCase(uri.getScheme())) {
+            File file = new File(uri);
+            return file.exists();
+        } else {
+            log.trace("Can't check if {} exists.", uri);
+            return true;
         }
     }
 
     public void importCSV(File csvFile) throws IOException {
-        List<String> csvLines = xPorter.importCSV(csvFile.toURI());
+        importCSV(csvFile.toURI());
+    }
+
+    public void importCSV(URI csvURI) throws IOException {
+        List<String> csvLines = xPorter.importCSV(csvURI);
         if (csvLines.isEmpty()) {
-            log.debug("File '{}' is empty and not imported.", csvFile);
+            log.debug("URI '{}' is empty and not imported.", csvURI);
             return;
         }
         int start = csvLines.get(0).equals(ClazzRecord.toCsvHeadline()) ? 1 : 0;
@@ -273,7 +287,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                 log.trace("Details:", ex);
             }
         }
-        log.debug("Class records from {} imported.", csvFile);
+        log.debug("Class records from {} imported.", csvURI);
     }
 
     @Override
@@ -292,15 +306,12 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     private static URI getCsvURI() {
-        return getCsvFile().toURI();
-    }
-
-    private static File getCsvFile() {
         String filename = Config.getEnvironment("clazzfish.statistics.file");
         if (StringUtils.isNotBlank(filename)) {
-            return new File(filename);
+            return new File(filename).toURI();
         } else {
-            return new File(Config.DEFAULT.getDumpDir(), "ClazzStatistic.csv");
+            URI dumpURI = Config.DEFAULT.getDumpURI();
+            return URI.create(dumpURI + "/ClazzStatistic.csv");
         }
     }
 
