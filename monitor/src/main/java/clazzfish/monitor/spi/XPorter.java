@@ -37,4 +37,13 @@ public class XPorter {
         return providers;
     }
 
+    public static CsvXPorter createCsvXPorter(String protocol) {
+        for (CsvXPorterProvider provider : getProviders()) {
+            if (provider.supports(protocol)) {
+                return provider.create();
+            }
+        }
+        throw new IllegalArgumentException("Unsupported protocol: " + protocol);
+    }
+
 }

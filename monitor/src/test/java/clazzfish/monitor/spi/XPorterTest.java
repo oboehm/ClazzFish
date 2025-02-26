@@ -19,9 +19,12 @@ package clazzfish.monitor.spi;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests for {@link XPorter}.
@@ -37,6 +40,13 @@ class XPorterTest {
         assertFalse(providers.isEmpty());
         CsvXPorter csvXPorter = providers.get(0).create();
         assertNotNull(csvXPorter);
+    }
+
+    @Test
+    void createCsvXPorter() {
+        URI fileURI = new File("src/test/resources/test.csv").toURI();
+        CsvXPorter xporter = XPorter.createCsvXPorter(fileURI.getScheme());
+        assertNotNull(xporter);
     }
 
 }

@@ -74,7 +74,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     private final ClasspathMonitor classpathMonitor;
     private final FutureTask<SortedSet<ClazzRecord>> allClasses;
     private final URI csvURI;
-    private final CsvXPorter xPorter = XPorter.getProviders().get(0).create();
+    private final CsvXPorter xPorter = XPorter.createCsvXPorter("file");
 
     static {
         log.trace("{} will be registered as shudown hook.", INSTANCE);

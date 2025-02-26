@@ -30,4 +30,9 @@ public class FileXPorterProvider implements CsvXPorterProvider {
         return new FileXPorter();
     }
 
+    @Override
+    public boolean supports(String protocol) {
+        return "file".equalsIgnoreCase(protocol);
+    }
+
 }

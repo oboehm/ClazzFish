@@ -21,10 +21,23 @@ package clazzfish.monitor.spi;
  * The interface CsvXPorterProvider describes the provider for SPI.
  *
  * @author oboehm
- * @since x.x (19.02.25)
+ * @since 2.5 (19.02.25)
  */
 public interface CsvXPorterProvider {
 
+    /**
+     * Creates an object which implements the {@link CsvXPorter} interface.
+     *
+     * @return a CsvXPorter object
+     */
     CsvXPorter create();
+
+    /**
+     * Indicates if the provider supports a given protocol.
+     *
+     * @param protocol e.g. "file"
+     * @return true or false
+     */
+    boolean supports(String protocol);
 
 }
