@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
 
 /**
  * The Starter class loads automatically the Monitor classes.
@@ -78,6 +79,19 @@ public final class Starter {
         record();
     }
 
+
+    /**
+     * Does not register all MBeans but add also the ClazzStatistic as shutdown
+     * hook.
+     *
+     * @param base URI where the statistic is stored
+     * @since 2.5
+     */
+    public static void record(URI base) {
+        Config.DEFAULT.setDumpURI(base);
+        record();
+    }
+
     /**
      * Does not register all MBeans but add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
@@ -87,6 +101,19 @@ public final class Starter {
      */
     public static void recordAll(File dir) {
         Config.DEFAULT.setDumpDir(dir);
+        recordAll();
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the given directory
+     *
+     * @param base URI where the statistic is stored
+     * @since 2.5
+     */
+    public static void recordAll(URI base) {
+        Config.DEFAULT.setDumpURI(base);
         recordAll();
     }
 

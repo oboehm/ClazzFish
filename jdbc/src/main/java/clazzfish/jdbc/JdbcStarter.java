@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
 
 /**
  * The JdbcStarter class loads automatically the Monitor and Statistic
@@ -77,6 +78,19 @@ public final class JdbcStarter {
     }
 
     /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the base URI.
+     *
+     * @param base URI where the dates are stored
+     * @since 2.5
+     */
+    public static void record(URI base) {
+        Config.DEFAULT.setDumpURI(base);
+        record();
+    }
+
+    /**
      * Registers all MBeans of jdbc module but also the statistic MBean of
      * monitor module as shutdown hook. This means at the end of the program all
      * alll statistic dates of the different modules are exported.
@@ -97,12 +111,25 @@ public final class JdbcStarter {
     /**
      * Does not register all MBeans but add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
-     * the given directory
+     * the given directory.
      *
      * @param dir directory where the dates are stored
      */
     public static void recordAll(File dir) {
         Config.DEFAULT.setDumpDir(dir);
+        recordAll();
+    }
+
+    /**
+     * Does not register all MBeans but add them also as shutdown hook.
+     * So at the end of the program all collected dates are exported to
+     * the base URI.
+     *
+     * @param base URI where the dates are stored
+     * @since 2.5
+     */
+    public static void recordAll(URI base) {
+        Config.DEFAULT.setDumpURI(base);
         recordAll();
     }
 
