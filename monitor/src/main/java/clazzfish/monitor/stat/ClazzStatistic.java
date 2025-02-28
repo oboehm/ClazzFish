@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -187,37 +188,50 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     @Override
-    public File exportCSV() throws IOException {
-        File csvFile = getExportFile();
-        File dir = csvFile.getParentFile();
-        if (dir.mkdirs()) {
-            log.debug("Export dir {} was created.", dir);
-        }
-        return exportCSV(csvFile);
+    public URI exportCSV() throws IOException {
+        return exportCSV(csvURI);
     }
 
     @Override
-    public File exportCSV(String filename) throws IOException {
-        return exportCSV(new File(filename)).getAbsoluteFile();
+    public URI exportCSV(String filename) throws IOException {
+        try {
+            return exportCSV(new URI(filename));
+        } catch (URISyntaxException ex) {
+            log.debug("Trying to export CSV file '{}':", filename, ex);
+            return exportCSV(new File(filename).getAbsoluteFile());
+        }
     }
 
-    public File exportCSV(File csvFile) throws IOException {
+    public URI exportCSV(File csvFile) throws IOException {
         log.debug("Exporting statistics to '{}'...", csvFile);
         if (csvFile.exists()) {
             importCSV();
         }
         exportDirect(csvFile);
         log.info("Statistics exported to '{}'.", csvFile);
-        return csvFile;
+        return csvFile.toURI();
+    }
+
+    public URI exportCSV(URI uri) throws IOException {
+        importCSV(uri);
+        log.debug("Exporting statistics to '{}'...", uri);
+        List<String> csvLines = getCsvLines();
+        xPorter.exportCSV(uri, ClazzRecord.toCsvHeadline(), csvLines);
+        return uri;
     }
 
     private void exportDirect(File file) throws IOException {
+        List<String> csvLines = getCsvLines();
+        xPorter.exportCSV(file.toURI(), ClazzRecord.toCsvHeadline(), csvLines);
+    }
+
+    private List<String> getCsvLines() {
         SortedSet<ClazzRecord> statistics = getStatistics();
         List<String> csvLines = new ArrayList<>();
         for (ClazzRecord rec : statistics) {
             csvLines.add(rec.toCSV());
         }
-        xPorter.exportCSV(file.toURI(), ClazzRecord.toCsvHeadline(), csvLines);
+        return csvLines;
     }
 
     private void writeCSV(PrintWriter writer) {

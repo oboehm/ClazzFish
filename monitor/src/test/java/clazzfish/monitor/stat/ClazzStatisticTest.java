@@ -18,6 +18,7 @@
 package clazzfish.monitor.stat;
 
 import clazzfish.monitor.jmx.MBeanFinder;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,18 @@ class ClazzStatisticTest {
 
     @Test
     void exportCSV() throws IOException {
-        File csvFile = recorder.exportCSV();
+        File csvFile = new File(recorder.exportCSV());
         assertTrue(csvFile.exists());
+    }
+
+    @Test
+    void exportToNotExistingDir() throws IOException {
+        File dir = new File("target", "tmp");
+        FileUtils.deleteDirectory(dir);
+        File file = new File(dir, "test.csv");
+        URI exported = recorder.exportCSV(file.toURI());
+        assertEquals(file.toURI(), exported);
+        assertTrue(file.exists());
     }
 
     @Test

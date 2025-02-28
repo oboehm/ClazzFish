@@ -61,19 +61,22 @@ public class FileXPorter implements CsvXPorter {
     }
 
     @Override
-    public List<String> importCSV(URI uri) throws IOException {
+    public List<String> importCSV(URI uri) {
         return importCSV(new File(uri));
     }
 
-    private List<String> importCSV(File file) throws IOException {
+    private List<String> importCSV(File file) {
         List<String> csvLines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while (reader.ready()) {
                 String line = reader.readLine();
                 csvLines.add(line);
             }
+            log.debug("{} lines imported from file '{}'.", csvLines.size(), file);
+        } catch (IOException ex) {
+            log.info("File '{}' cannot be imported ({}).", file, ex.getMessage());
+            log.debug("Details:", ex);
         }
-        log.debug("{} lines imported from file '{}'.", csvLines.size(), file);
         return csvLines;
     }
 

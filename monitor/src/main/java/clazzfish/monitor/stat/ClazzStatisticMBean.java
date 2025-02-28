@@ -22,6 +22,7 @@ import clazzfish.monitor.util.Shutdownable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * JMX-Interface for the {@link ClazzStatistic}.
@@ -38,22 +39,22 @@ public interface ClazzStatisticMBean extends Shutdownable {
     void logMe();
 
     /**
-     * Exports the statistics of the collected classes to the default file..
+     * Exports the statistics of the collected classes to the default location.
      *
      * @return export file
      * @throws IOException in case of I/O problems
      */
-    File exportCSV() throws IOException;
+    URI exportCSV() throws IOException;
 
     /**
      * Exports the statistics of the collected classes to the file with the
      * given filename.
      *
-     * @param filename the filename, where the statistics should be exported to
-     * @return export file
+     * @param filename filename or URI, where the statistics should be exported to
+     * @return export URI
      * @throws IOException in case of I/O problems
      */
-    File exportCSV(String filename) throws IOException;
+    URI exportCSV(String filename) throws IOException;
 
     /**
      * Returns the name of the default export file.
