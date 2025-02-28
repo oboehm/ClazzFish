@@ -247,12 +247,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     private void importCSV() {
         URI csvURI = getExportFile().toURI();
         if (exists(csvURI)) {
-            try {
-                importCSV(csvURI);
-            } catch (IOException ex) {
-                log.info("History could not be imported from {} ({}).", csvURI, ex.getMessage());
-                log.debug("Details:", ex);
-            }
+            importCSV(csvURI);
         } else {
             log.debug("No '{}' for import available.", csvURI);
         }
@@ -268,40 +263,45 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         }
     }
 
-    public void importCSV(File csvFile) throws IOException {
+    public void importCSV(File csvFile) {
         importCSV(csvFile.toURI());
     }
 
-    public void importCSV(URI csvURI) throws IOException {
-        List<String> csvLines = xPorter.importCSV(csvURI);
-        if (csvLines.isEmpty()) {
-            log.debug("URI '{}' is empty and not imported.", csvURI);
-            return;
-        }
-        int start = csvLines.get(0).equals(ClazzRecord.toCsvHeadline()) ? 1 : 0;
-        for (int i = start; i < csvLines.size(); i++) {
-            String line = csvLines.get(i);
-            try {
-                ClazzRecord r = ClazzRecord.fromCSV(line);
-                if (r.count() == 0) {
-                    continue;
-                }
-                String classname = r.classname();
-                Optional<ClazzRecord> any =
-                        getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
-                if (any.isPresent()) {
-                    ClazzRecord clazzRecord = any.get();
-                    getAllClasses().remove(clazzRecord);
-                    r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(),
-                            r.count() + clazzRecord.count());
-                    getAllClasses().add(r);
-                }
-            } catch (IllegalArgumentException ex) {
-                log.debug("Line {} ({}) is ignored ({}).", i+1, line, ex.getMessage());
-                log.trace("Details:", ex);
+    public void importCSV(URI csvURI) {
+        try {
+            List<String> csvLines = xPorter.importCSV(csvURI);
+            if (csvLines.isEmpty()) {
+                log.debug("URI '{}' is empty and not imported.", csvURI);
+                return;
             }
+            int start = csvLines.get(0).equals(ClazzRecord.toCsvHeadline()) ? 1 : 0;
+            for (int i = start; i < csvLines.size(); i++) {
+                String line = csvLines.get(i);
+                try {
+                    ClazzRecord r = ClazzRecord.fromCSV(line);
+                    if (r.count() == 0) {
+                        continue;
+                    }
+                    String classname = r.classname();
+                    Optional<ClazzRecord> any =
+                            getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
+                    if (any.isPresent()) {
+                        ClazzRecord clazzRecord = any.get();
+                        getAllClasses().remove(clazzRecord);
+                        r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(),
+                                r.count() + clazzRecord.count());
+                        getAllClasses().add(r);
+                    }
+                } catch (IllegalArgumentException ex) {
+                    log.debug("Line {} ({}) is ignored ({}).", i + 1, line, ex.getMessage());
+                    log.trace("Details:", ex);
+                }
+            }
+            log.debug("Class records from {} imported.", csvURI);
+        } catch (IOException ex) {
+            log.info("File '{}' cannot be imported ({}).", csvURI, ex.getMessage());
+            log.debug("Details:", ex);
         }
-        log.debug("Class records from {} imported.", csvURI);
     }
 
     @Override
