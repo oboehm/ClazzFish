@@ -42,11 +42,11 @@ public class CsvPrinter implements CsvXPorter {
      */
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) {
-        System.out.println("\n===== DEAD CLASSES =====");
+        System.err.println("\n===== DEAD CLASSES =====");
         for (String line : csvLines) {
             ClazzRecord clazzRecord = ClazzRecord.fromCSV(line);
             if ((clazzRecord.count() == 0) && clazzRecord.classname().startsWith("clazzfish.sample")) {
-                System.out.println(clazzRecord.classname());
+                System.err.println(clazzRecord.classname());
             }
         }
     }

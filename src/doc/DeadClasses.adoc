@@ -21,10 +21,13 @@ The unused classes are candiates for dead classes.
 But remember - it is only a snapshot.
 Perhaps some of these classes are needed for other branches of your program.
 
-What you can do?
+What can you do?
 ClasspathMonitor can dump unused classes at program end during the shutdown phase.
 All you have to do is to collect the different dumps and search for the intersection of all unused classes.
 This is the point where ClazzStatistic comes into play (see next section).
+
+
+== Activation
 
 To activate the dump of loaded and unused classes you have to add the following lines into your source code:
 
@@ -35,6 +38,14 @@ To activate the dump of loaded and unused classes you have to add the following 
     }
 ----
 
+Be sure you start your application with `clazzfish-agent` as Java agent, e.g.
+
+----
+java -javaagent:/Users/ob/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.4/clazzfish-agent-2.4.jar ...
+----
+
+The ClasspathMonitor and ClassStatistic (see below) will work also without the Java agent.
+But then classes with only static methods will be detected as "dead classes".
 
 
 == ClazzStatistic
@@ -44,7 +55,7 @@ ClazzStatistic uses the ClasspathMonitor to record for each class in the classpa
 * if class was loaded and
 * to which JAR or directory the class belongs.
 
-All you have to do to activate the export of ClazzStatistic.csv at the end of your application is encapsulated in the Starter class:
+All you have to do to activate the export of #ClazzStatistic.csv# at the end of your application is encapsulated in the Starter class:
 
 [source:java]
 ----
@@ -133,6 +144,19 @@ java -Dclazzfish.dump.dir=/path/to/global/dir MyApp.jar
 
 Each application will write its ClazzStatistic.csv in this directory.
 
+Since 2.5. ClazzFish listen also to the system property #clazzfish.dump.dir#
+
+[source:bash]
+----
+java -Dclazzfish.dump.uri=file://path/to/global/dir MyApp.jar
+----
+
+This is same directory location as before but as you guess you can use here also other protocols like (S)FTP, HTTP or GIT.
+As default ClazzFish only supports the file protocol.
+If you need another protocol you have to implement the link:../../monitor/src/main/java/clazzfish/monitor/spi/CsvXPorter.java[CsvXPorter] and link:../../monitor/src/main/java/clazzfish/monitor/spi/CsvXPorterProvider.java[CsvXPorterProvider] interface and register it as service.
+
+For more info see link:SPI.adoc[SPI].
+
 
 == Trouble Shooting
 
@@ -151,3 +175,16 @@ If you use Log4J2 add log4j-slf4j-impl to your dependencies (e.g. to your pom.xm
 ----
 
 To see more log messages you set the log level for clazzfish to DEBUG or TRACE.
+
+
+=== Dead Static Classes
+
+If you start your application without the Java agent `clazzfish-agent` static and abstract classes will be reported as dead classes.
+The reason for it is the use of the garbage collector (GC) as fallback.
+But the GC only collect object instances not classes.
+
+Start your application with `clazzfish-agent`:
+
+----
+java -javaagent:/Users/ob/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.4/clazzfish-agent-2.4.jar ...
+----

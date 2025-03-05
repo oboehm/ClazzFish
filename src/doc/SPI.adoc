@@ -1,0 +1,81 @@
+= How to Import/Export Statistics to Your URI
+
+
+As default the link:../../monitor/src/main/java/clazzfish/monitor/stat/ClazzStatistic.java[ClazzStatistic] exports the statistic to `ClazzStatistic.csv` in a temporary directory.
+But you can also define the system property #clazzfish.dump.uri# to use another directory or another location like e.g. `sftp://fritz.box/log` to export your statistic.
+
+
+== Support Your Wanted Protocol
+
+Let's assume you want only to print out the dead classes to stderr.
+Your `clazzfish.dump.uri` may look like
+
+    print://localhost
+
+If you start your application with this URI you probably will get the following execption:
+
+[source:java]
+----
+Caused by: java.lang.IllegalArgumentException: Unsupported protocol: print
+    at clazzfish.monitor.spi.XPorter.createCsvXPorter(XPorter.java:46)
+    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:101)
+    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:94)
+    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:90)
+    at clazzfish.monitor.stat.ClazzStatistic.<clinit>(ClazzStatistic.java:74)
+----
+
+To support the print protocol you have to
+
+* implement the link:../../monitor/src/main/java/clazzfish/monitor/spi/CsvXPorter.java[CsvXPorter] interface
+* implement the link:../../monitor/src/main/java/clazzfish/monitor/spi/CsvXPorterProvider.java[CsvXPorterProvider] interface
+* register your provider
+
+
+== Implement Interfaces
+.
+In the link:../../sample/README.md[sample project] you'll find an example how to support the print protocol.
+link:../../sample/src/main/java/clazzfish/sample/spi/CsvPrinter.java[CsvPrinter] implements the CsvXPorter interface,
+whereas link:../../sample/src/main/java/clazzfish/sample/spi/CsvPrintProvider.java[CsvPrinterProvider] the CsvXPorterProvider interface.
+
+
+== Register Provider
+
+To register your provider for the printer protocol you have to create in the META-INF directory in the service package a property file with the name of the implemented interface (link:../../sample/src/main/resources/META-INF/services/clazzfish.monitor.spi.CsvXPorterProvider[CsvXPorterProvider]):
+
+[source:java]
+----
+# Provider for CSV-Exports
+clazzfish.sample.spi.CsvPrintProvider
+----
+
+The content of this property file is the name of your provider.
+
+
+== Bank Example
+
+In the link:../../sample/src/main/java/clazzfish/sample/Bank.java[Bank] example the ClazzFish statistic is set up in the static initializer:
+
+[source:java]
+----
+    static {
+        Starter.record(URI.create("print://localhost"));
+    }
+----
+
+This will trigger link:../../sample/src/main/java/clazzfish/sample/spi/CsvPrinter.java[CsvPrinter] at the end of the program to print the dead classes of this run to stderr:
+
+----
+===== DEAD CLASSES =====
+clazzfish.sample.DeadClass
+----
+
+Be sure you start the Java VM with clazzfish-agent as Java agent.
+Otherwise classes which are not instantiated (e.g. only have static methods) will be also recognized as "dead classes":
+
+----
+===== DEAD CLASSES =====
+clazzfish.sample.Bank
+clazzfish.sample.DeadClass
+clazzfish.sample.jdbc.BankRepository
+clazzfish.sample.spi.CsvPrintProvider
+----
