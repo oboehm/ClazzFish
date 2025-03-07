@@ -43,6 +43,12 @@ class ClassDiagnosticTest {
         assertContains(loadedClasses, getClass());
     }
 
+    @Test
+    void getLoadedClasses() {
+        Collection<Class<?>> loadedClasses = ClassDiagnostic.getLoadedClasses();
+        assertContains(loadedClasses, getClass());
+    }
+
     private void assertContains(Collection<Class<?>> classes, Class<?> expectedClass) {
         for (Class<?> clazz : classes) {
             if (clazz.equals(expectedClass)) {

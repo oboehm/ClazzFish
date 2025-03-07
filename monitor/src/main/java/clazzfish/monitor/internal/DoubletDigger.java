@@ -67,7 +67,7 @@ public final class DoubletDigger {
 	 * only used by ClasspathMonitorTest by the testGetDoubletListPerformance()
 	 * method.
 	 */
-	protected final void reset() {
+	protected void reset() {
 		doubletList.clear();
 	}
 
@@ -208,7 +208,7 @@ public final class DoubletDigger {
 		LOG.debug("Calculating doublet resources...");
 		List<String> resources = this.getDoubletResourceList();
 		LOG.debug("Calculating doublet classes successful finished with {} doublet(s) found.", resources.size());
-		return resources.toArray(new String[resources.size()]);
+		return resources.toArray(new String[0]);
 	}
 
 	/**
@@ -245,14 +245,11 @@ public final class DoubletDigger {
 	 * performance reason it looks in the doubletList from the last time if it
 	 * is already found. This is done because normally the number of doublets
 	 * does not decrease.
-	 * <p>
-	 * The method is protetected for testing reasons.
-	 * </p>
 	 *
 	 * @return a sorted list of found doublets
 	 */
-	protected List<Class<?>> getDoubletListSerial() {
-		List<Class<?>> loadedClassList = this.classpathDigger.getLoadedClasses();
+	private List<Class<?>> getDoubletListSerial() {
+		Set<Class<?>> loadedClassList = this.classpathDigger.getLoadedClasses();
 		synchronized (doubletList) {
 			for (Class<?> clazz : loadedClassList) {
 				if (doubletList.contains(clazz)) {
@@ -284,7 +281,7 @@ public final class DoubletDigger {
 	 */
 	private void sortDoubletList() {
 		try {
-			Collections.sort(doubletList, new ObjectComparator());
+			doubletList.sort(new ObjectComparator());
 		} catch (UnsupportedOperationException ex) {
 			LOG.debug("Will sort doubletList with fallback because Collections.sort(..) failed:", ex);
 			sortList(doubletList);
@@ -293,7 +290,7 @@ public final class DoubletDigger {
 
 	private static void sortList(List<Class<?>> list) {
 		List<Class<?>> sorted = new ArrayList<>(list.size());
-		Collections.sort(sorted, new ObjectComparator());
+		sorted.sort(new ObjectComparator());
 		list.clear();
 		list.addAll(sorted);
 	}
@@ -362,15 +359,12 @@ public final class DoubletDigger {
 	 * "multiThreadingEnabled" is set to true or if more than one available
 	 * processor is found.
 	 * </p>
-	 * <p>
-	 * The method is protetected for testing reasons.
-	 * </p>
 	 *
 	 * @return a list of doublets
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<Class<?>> getDoubletListParallel() {
-		List<Class<?>> loadedClassList = this.classpathDigger.getLoadedClasses();
+	private List<Class<?>> getDoubletListParallel() {
+		List<Class<?>> loadedClassList = List.copyOf(this.classpathDigger.getLoadedClasses());
 		if (loadedClassList.isEmpty()) {
 			return loadedClassList;
 		}

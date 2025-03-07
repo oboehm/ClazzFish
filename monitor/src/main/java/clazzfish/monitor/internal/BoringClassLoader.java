@@ -115,7 +115,7 @@ public class BoringClassLoader extends ClassLoader {
         String classname = getClass().getName();
         if (findLoadedClass(classname) == null) {
             log.trace("Using fallback to find loaded classes because parent does not find not {} as loaded class.", classname);
-            return new HashSet<>(ClassDiagnostic.getLoadedClassesFromGC());
+            return ClassDiagnostic.getLoadedClasses();
         }
         Set<Class<?>> loadedClassSet = new HashSet<>();
         String[] packageNames = getPackageNames();

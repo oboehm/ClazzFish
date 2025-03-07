@@ -64,7 +64,7 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
      */
     @Test
     public void testGetLoadedClassList() {
-        List<Class<?>> classes = digger.getLoadedClasses();
+        Set<Class<?>> classes = digger.getLoadedClasses();
         assertFalse(classes.isEmpty());
         LOG.info("{} classes loaded.", classes.size());
         assertThat(classes, hasItem(this.getClass()));

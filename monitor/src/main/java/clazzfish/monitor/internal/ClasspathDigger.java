@@ -465,7 +465,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 *
 	 * @return list of classes
 	 */
-	public List<Class<?>> getLoadedClasses() {
+	public Set<Class<?>> getLoadedClasses() {
 		List<Class<?>> loadedClasses = new ArrayList<>();
 		if (agentMBean != null) {
             try {
@@ -473,7 +473,7 @@ public class ClasspathDigger extends AbstractDigger {
             } catch (JMException ex) {
 				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
 				LOG.trace("Details:", ex);
-				loadedClasses = ClassDiagnostic.getLoadedClassesFromGC();
+				return ClassDiagnostic.getLoadedClasses();
             }
         }
 		if (loadedClasses.isEmpty()) {
@@ -486,7 +486,7 @@ public class ClasspathDigger extends AbstractDigger {
 				loadedClasses = getLoadedClassesFrom(Thread.currentThread().getContextClassLoader());
 			}
 		}
-		return loadedClasses;
+		return Set.copyOf(loadedClasses);
 	}
 
 	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {

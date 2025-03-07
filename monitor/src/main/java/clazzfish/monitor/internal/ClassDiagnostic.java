@@ -41,6 +41,28 @@ public final class ClassDiagnostic {
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
     private static final Set<Class<?>> loadedClassesFromStacktrace = new HashSet<>();
 
+    /**
+     * This is a collection of the call of {@link #getLoadedClassesFromGC()}
+     * and {@link #getLoadedClassesFromStacktrace()}.
+     *
+     * @return a set of loaded classes
+     */
+    public static Set<Class<?>> getLoadedClasses() {
+        Set<Class<?>> loadedClasses = new HashSet<>();
+        loadedClasses.addAll(getLoadedClassesFromStacktrace());
+        loadedClasses.addAll(getLoadedClassesFromGC());
+        return loadedClasses;
+    }
+
+    /**
+     * Ask the GC (garbage collector) via JMX which classes are loaded.
+     * <p>
+     * NOTE: The GC handles only instantiated classes. I.e. static classes (and
+     * propably abstract classes) are not returned.
+     * </p>
+     *
+     * @return a list of instantiated classes
+     */
     public static List<Class<?>> getLoadedClassesFromGC() {
         String mbeanName = "com.sun.management:type=DiagnosticCommand";
         try {
@@ -77,6 +99,14 @@ public final class ClassDiagnostic {
         return classes;
     }
 
+    /**
+     * Scans the stacktraces of all treads to get the loaded classes. This
+     * method was introduced because {@link #getLoadedClassesFromGC()} does not
+     * return static classes.
+     *
+     * @return loaded classes from stacktrace
+     * @since 2.5
+     */
     public static Set<Class<?>> getLoadedClassesFromStacktrace() {
         for (StackTraceElement[] elements : Thread.getAllStackTraces().values()) {
             addLoadedClassesFrom(elements);
