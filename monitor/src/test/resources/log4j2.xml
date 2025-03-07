@@ -9,6 +9,7 @@
     <Logger name="clazzfish.monitor" level="INFO" />
     <Logger name="clazzfish.monitor.stat.ClazzStatistic" level="DEBUG" />
     <Logger name="clazzfish.monitor.Starter" level="DEBUG" />
+    <Logger name="clazzfish.monitor.internal.ClassDiagnostic" level="DEBUG" />
     <Logger name="clazzfish.monitor.jmx" level="INFO" />
     <Logger name="clazzfish.monitor.spi" level="DEBUG" />
     <Logger name="clazzfish.monitor.stat" level="DEBUG" />

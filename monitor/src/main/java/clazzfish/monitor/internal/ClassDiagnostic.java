@@ -24,7 +24,9 @@ import javax.management.JMException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The ClassDiagnostic is a little wrapper arounc Sun's MBean for
@@ -37,6 +39,7 @@ import java.util.List;
 public final class ClassDiagnostic {
 
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
+    private static final Set<Class<?>> loadedClassesFromStacktrace = new HashSet<>();
 
     public static List<Class<?>> getLoadedClassesFromGC() {
         String mbeanName = "com.sun.management:type=DiagnosticCommand";
@@ -72,6 +75,29 @@ public final class ClassDiagnostic {
             }
         }
         return classes;
+    }
+
+    public static Set<Class<?>> getLoadedClassesFromStacktrace() {
+        for (StackTraceElement[] elements : Thread.getAllStackTraces().values()) {
+            addLoadedClassesFrom(elements);
+        }
+        return loadedClassesFromStacktrace;
+    }
+
+    private static void addLoadedClassesFrom(StackTraceElement[] elements) {
+        for (StackTraceElement elem : elements) {
+            String className = elem.getClassName();
+            try {
+                if (isNotRealClass(className)) {
+                    log.trace("'{}' is ignored because it is not a real class name.", className);
+                    continue;
+                }
+                loadedClassesFromStacktrace.add(Class.forName(className));
+            } catch (ClassNotFoundException ex) {
+                log.debug("Class '{}' could not be loaded and is ignored ({}).", className, ex.getMessage());
+                log.trace("Details:", ex);
+            }
+        }
     }
 
     private static boolean isNotRealClass(String className) {

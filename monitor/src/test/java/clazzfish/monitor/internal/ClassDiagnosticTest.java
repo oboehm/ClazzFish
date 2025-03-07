@@ -37,4 +37,19 @@ class ClassDiagnosticTest {
         assertFalse(loadedClasses.isEmpty());
     }
 
+    @Test
+    void getLoadedClassesFromStacktrace() {
+        Collection<Class<?>> loadedClasses = ClassDiagnostic.getLoadedClassesFromStacktrace();
+        assertContains(loadedClasses, getClass());
+    }
+
+    private void assertContains(Collection<Class<?>> classes, Class<?> expectedClass) {
+        for (Class<?> clazz : classes) {
+            if (clazz.equals(expectedClass)) {
+                return;
+            }
+        }
+        fail("Class '" + expectedClass + "' not in " + classes);
+    }
+
 }

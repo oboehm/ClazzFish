@@ -62,9 +62,17 @@ public class ClasspathDigger extends AbstractDigger {
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
 	private final String[] bootClassPath = getClasspath("sun.boot.class.path");
-	private final ObjectInstance agentMBean;
+	private static final ObjectInstance agentMBean;
 
 	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
+
+	static {
+		agentMBean = MBeanFinder.findMBean(AGENT_MBEAN_NAMES);
+		if ((agentMBean == null)) {
+			LOG.debug("No MBean \"{}\" is found.", Arrays.toString(AGENT_MBEAN_NAMES));
+			LOG.info("ClazzFish agent not available - start '-java -javaagent:clazzfish-agent-2.x.jar...' to activate it.");
+		}
+	}
 
 	/**
 	 * Instantiates a new classpath digger.
@@ -91,11 +99,6 @@ public class ClasspathDigger extends AbstractDigger {
 	 */
 	public ClasspathDigger(final ClassLoader cloader) {
 		this.classLoader = cloader;
-		this.agentMBean = MBeanFinder.findMBean(AGENT_MBEAN_NAMES);
-		if ((this.agentMBean == null) && LOG.isDebugEnabled()) {
-			LOG.debug("No MBean \"{}\" found - be sure to call ClazzFish as agent"
-					+ " (e.g. 'java -javaagent:clazzfish-agent-2.2.jar...')", Arrays.toString(AGENT_MBEAN_NAMES));
-		}
 	}
 
 	/**
@@ -124,7 +127,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * @return true, if is agent available
 	 */
 	public static boolean isAgentAvailable() {
-		return MBeanFinder.findMBean(AGENT_MBEAN_NAMES) != null;
+		return agentMBean != null;
 	}
 
 	/**
