@@ -123,6 +123,7 @@ public final class ClassDiagnostic {
                 continue;
             }
             try {
+                log.trace("Try to get class '{}'...", className);
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException | Error ex) {
@@ -165,7 +166,11 @@ public final class ClassDiagnostic {
     }
 
     private static boolean isNotRealClass(String className) {
-        return className.contains("$$Lambda$") || className.startsWith("jdk.internal.reflect.Generated");
+        return className.contains("$$Lambda$")
+                || className.startsWith("jdk.internal.reflect.Generated")
+                || className.startsWith("java.lang.invoke.LambdaForm$")
+                || className.equals("org.apache.logging.log4j.core.net.MulticastDnsAdvertiser")
+                ;
     }
 
 }
