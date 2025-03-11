@@ -41,7 +41,7 @@ public final class ClassDiagnostic {
 
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
     private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
-    private static final Set<Class<?>> loadedClassesFromStacktrace = new HashSet<>();
+//    private static final Set<Class<?>> loadedClassesFromStacktrace = new HashSet<>();
 
     /**
      * This is a shortcut for the call of the preferred method.
@@ -60,7 +60,9 @@ public final class ClassDiagnostic {
      * </p>
      *
      * @return a list of instantiated classes
+     * @deprecated replaced by {@link #getLoadedClassesFromVmClassHierarchy()}
      */
+    @Deprecated(forRemoval = true)
     public static List<Class<?>> getLoadedClassesFromGC() {
         try {
             Object classHistogram = ManagementFactory.getPlatformMBeanServer().invoke(
@@ -134,36 +136,36 @@ public final class ClassDiagnostic {
         return classes;
     }
 
-    /**
-     * Scans the stacktraces of all treads to get the loaded classes. This
-     * method was introduced because {@link #getLoadedClassesFromGC()} does not
-     * return static classes.
-     *
-     * @return loaded classes from stacktrace
-     * @since 2.5
-     */
-    public static Set<Class<?>> getLoadedClassesFromStacktrace() {
-        for (StackTraceElement[] elements : Thread.getAllStackTraces().values()) {
-            addLoadedClassesFrom(elements);
-        }
-        return loadedClassesFromStacktrace;
-    }
-
-    private static void addLoadedClassesFrom(StackTraceElement[] elements) {
-        for (StackTraceElement elem : elements) {
-            String className = elem.getClassName();
-            try {
-                if (isNotRealClass(className)) {
-                    log.trace("'{}' is ignored because it is not a real class name.", className);
-                    continue;
-                }
-                loadedClassesFromStacktrace.add(Class.forName(className));
-            } catch (ClassNotFoundException ex) {
-                log.debug("Class '{}' could not be loaded and is ignored ({}).", className, ex.getMessage());
-                log.trace("Details:", ex);
-            }
-        }
-    }
+//    /**
+//     * Scans the stacktraces of all treads to get the loaded classes. This
+//     * method was introduced because {@link #getLoadedClassesFromGC()} does not
+//     * return static classes.
+//     *
+//     * @return loaded classes from stacktrace
+//     * @since 2.5
+//     */
+//    public static Set<Class<?>> getLoadedClassesFromStacktrace() {
+//        for (StackTraceElement[] elements : Thread.getAllStackTraces().values()) {
+//            addLoadedClassesFrom(elements);
+//        }
+//        return loadedClassesFromStacktrace;
+//    }
+//
+//    private static void addLoadedClassesFrom(StackTraceElement[] elements) {
+//        for (StackTraceElement elem : elements) {
+//            String className = elem.getClassName();
+//            try {
+//                if (isNotRealClass(className)) {
+//                    log.trace("'{}' is ignored because it is not a real class name.", className);
+//                    continue;
+//                }
+//                loadedClassesFromStacktrace.add(Class.forName(className));
+//            } catch (ClassNotFoundException ex) {
+//                log.debug("Class '{}' could not be loaded and is ignored ({}).", className, ex.getMessage());
+//                log.trace("Details:", ex);
+//            }
+//        }
+//    }
 
     private static boolean isNotRealClass(String className) {
         return className.contains("$$Lambda$")

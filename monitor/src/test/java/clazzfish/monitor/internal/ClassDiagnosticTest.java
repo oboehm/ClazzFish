@@ -48,12 +48,6 @@ class ClassDiagnosticTest {
     }
 
     @Test
-    void getLoadedClassesFromStacktrace() {
-        Collection<Class<?>> loadedClasses = ClassDiagnostic.getLoadedClassesFromStacktrace();
-        checkClasses(loadedClasses);
-    }
-
-    @Test
     void getLoadedClasses() {
         Collection<Class<?>> loadedClasses = ClassDiagnostic.getLoadedClasses();
         checkClasses(loadedClasses);
@@ -73,28 +67,5 @@ class ClassDiagnosticTest {
         }
         fail("Class '" + expectedClass + "' not in " + classes);
     }
-
-//    @Test
-//    void getSystemClasses() throws IOException {
-//        Set<ModuleReference> references = ModuleFinder.ofSystem().findAll();
-//        assertFalse(references.isEmpty());
-//        references.forEach(System.out::println);
-//        for (ModuleReference ref : references) {
-//            try (ModuleReader moduleReader = ref.open()) {
-//                moduleReader.list().forEach(System.out::println);
-//            }
-//        }
-//    }
-//
-//    @Test
-//    void getVmLog() throws JMException {
-//        String mbeanName = "com.sun.management:type=DiagnosticCommand";
-//        Object result = ManagementFactory.getPlatformMBeanServer().invoke(
-//                new ObjectName(mbeanName),
-//                "vmClassHierarchy",
-//                new Object[]{new String[]{}},
-//                new String[]{"[Ljava.lang.String;"});
-//        System.out.println(result.toString());
-//    }
 
 }
