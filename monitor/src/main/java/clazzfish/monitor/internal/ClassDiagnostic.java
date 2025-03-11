@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The ClassDiagnostic is a little wrapper arounc Sun's MBean for
+ * The ClassDiagnostic is a little wrapper around Sun's MBean for
  * DiagnosticCommand. This MBean allows you to contact the GC to ask
  * for the loaded classes.
  *
@@ -39,19 +40,16 @@ import java.util.Set;
 public final class ClassDiagnostic {
 
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
+    private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
     private static final Set<Class<?>> loadedClassesFromStacktrace = new HashSet<>();
 
     /**
-     * This is a collection of the call of {@link #getLoadedClassesFromGC()}
-     * and {@link #getLoadedClassesFromStacktrace()}.
+     * This is a shortcut for the call of the preferred method.
      *
      * @return a set of loaded classes
      */
     public static Set<Class<?>> getLoadedClasses() {
-        Set<Class<?>> loadedClasses = new HashSet<>();
-        loadedClasses.addAll(getLoadedClassesFromStacktrace());
-        loadedClasses.addAll(getLoadedClassesFromGC());
-        return loadedClasses;
+        return getLoadedClassesFromVmClassHierarchy();
     }
 
     /**
@@ -64,16 +62,15 @@ public final class ClassDiagnostic {
      * @return a list of instantiated classes
      */
     public static List<Class<?>> getLoadedClassesFromGC() {
-        String mbeanName = "com.sun.management:type=DiagnosticCommand";
         try {
             Object classHistogram = ManagementFactory.getPlatformMBeanServer().invoke(
-                    new ObjectName(mbeanName),
+                    new ObjectName(DIAGNOSTIC_COMMAND),
                     "gcClassHistogram",
                     new Object[]{new String[]{"-all"}},
                     new String[]{"[Ljava.lang.String;"});
             return parseClassHistogramm(classHistogram.toString());
         } catch (JMException ex) {
-            log.warn("Cannot call 'getLoadedClasses(..)' from MBean \"{}\"", mbeanName, ex);
+            log.warn("Cannot call 'gcClassHistogram(..)' from MBean \"{}\"", DIAGNOSTIC_COMMAND, ex);
             return new ArrayList<>();
         }
     }
@@ -92,6 +89,43 @@ public final class ClassDiagnostic {
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException ex) {
+                log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
+                log.trace("Details:", ex);
+            }
+        }
+        return classes;
+    }
+
+    public static Set<Class<?>> getLoadedClassesFromVmClassHierarchy() {
+        try {
+            Object classHierarchy = ManagementFactory.getPlatformMBeanServer().invoke(
+                    new ObjectName(DIAGNOSTIC_COMMAND),
+                    "vmClassHierarchy",
+                    new Object[]{new String[]{""}},
+                    new String[]{"[Ljava.lang.String;"});
+            return parseClassHierarchy(classHierarchy.toString());
+        } catch (JMException ex) {
+            log.warn("Cannot call 'vmClassHierarchy(..)' from MBean \"{}\"", DIAGNOSTIC_COMMAND, ex);
+            return new HashSet<>();
+        }
+    }
+
+    private static Set<Class<?>> parseClassHierarchy(String hierarchy) {
+        Set<Class<?>> classes = new HashSet<>();
+        String[] lines = hierarchy.split("\n");
+        for(String l : lines) {
+            String className = StringUtils.substringBefore(l.trim(), '/');
+            if (className.startsWith("|")) {
+                className = StringUtils.substringAfterLast(className, "|--");
+            }
+            if (isNotRealClass(className)) {
+                log.trace("'{}' is ignored because it is not a real class name.", classes);
+                continue;
+            }
+            try {
+                Class<?> cl = Class.forName(className);
+                classes.add(cl);
+            } catch (ClassNotFoundException | Error ex) {
                 log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
                 log.trace("Details:", ex);
             }

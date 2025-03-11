@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - array types are filtered out
   ([issue #23](https://github.com/oboehm/ClazzFish/issues/23))
 - ClazzStatistic writes the statistic not direct but to a tempory file to be more robust for parallel exports
+- ClassDiagnostic uses now the vmClassHierary(..) method to get loaded classes
 
 ### Breaking Changes
 - exportCSV-Methods in ClazzStatistic returns now an URI (before: File)
