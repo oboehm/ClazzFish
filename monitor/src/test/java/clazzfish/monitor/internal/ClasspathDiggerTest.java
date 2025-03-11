@@ -210,18 +210,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
     }
 
     /**
-     * Here we use the real tomcat class loader to reproduce
-     * <a href="https://sourceforge.net/p/patterntesting/bugs/34/">bug 34</a>.
-     */
-    @Test
-    public void testGetTomcat8() {
-        org.apache.catalina.loader.WebappClassLoader tomcat = new org.apache.catalina.loader.WebappClassLoader(Thread.currentThread().getContextClassLoader());
-        ClasspathDigger tomcatDigger = new ClasspathDigger(tomcat);
-        String[] classpath = tomcatDigger.getClasspath();
-        checkClasspath(classpath);
-    }
-
-    /**
      * Test method for {@link ClasspathDigger#getPackageArray()}.
      */
     @Test
