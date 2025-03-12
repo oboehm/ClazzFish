@@ -26,8 +26,11 @@ import patterntesting.runtime.junit.CollectionTester;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -77,6 +80,32 @@ class ClazzStatisticTest {
         assertTrue(file.exists());
     }
 
+    /**
+     * Unit test for issue #25.
+     *
+     * @throws IOException in case of I/O problems
+     */
+    @Test
+    void importExport() throws IOException {
+        ClazzRecord loaded = new ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
+        File csvFile = createImportCSV(loaded);
+        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
+        rec.exportCSV(csvFile.toURI());
+        String content = Files.readString(csvFile.toPath());
+        assertThat(content, containsString(loaded.classname()));
+    }
+
+    private static File createImportCSV(ClazzRecord clazzRecord) throws IOException {
+        File csvFile = new File("target/statistics", "import_export.csv");
+        File dir = csvFile.getParentFile();
+        if (dir.mkdirs()) {
+            log.info("Directory '{}' was created", dir);
+        }
+        Files.writeString(csvFile.toPath(), clazzRecord.toCSV());
+        return csvFile;
+    }
+
     @Test
     void importCSV() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
@@ -102,7 +131,7 @@ class ClazzStatisticTest {
     }
 
     @Test
-    void importCorruptCSV() throws IOException {
+    void importCorruptCSV() {
         File corrupt = new File("src/test/resources/clazzfish/monitor/stat/corrupt.csv");
         recorder.importCSV(corrupt.toURI());
         assertFalse(recorder.getStatistics().isEmpty());

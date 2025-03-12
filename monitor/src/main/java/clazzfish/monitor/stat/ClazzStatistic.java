@@ -291,8 +291,8 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                         getAllClasses().remove(clazzRecord);
                         r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(),
                                 r.count() + clazzRecord.count());
-                        getAllClasses().add(r);
                     }
+                    getAllClasses().add(r);
                 } catch (IllegalArgumentException ex) {
                     log.debug("Line {} ({}) is ignored ({}).", i + 1, line, ex.getMessage());
                     log.trace("Details:", ex);
