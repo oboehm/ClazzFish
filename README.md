@@ -27,9 +27,10 @@ The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-
 ## More Infos
 
 * Release Notes: [CHANGELOG](CHANGELOG.md)
+* [JavaDoc](http://aosd.de/ClazzFish/)
 * [How to Find Dead Classes](src/doc/DeadClasses.adoc)
 * [SQL Logging and Montitoring](src/doc/SQL-Logging.adoc)
 
 ---
-Jan. 2022,
+March 2022,
 Oli B.

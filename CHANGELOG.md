@@ -6,14 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [2.5.1] (12-Mar-2025)
 
 ### Fixed
 - lost loaded class statistic during import
   ([issue #25](https://github.com/oboehm/ClazzFish/issues/25))
 
 
-## [2.5] (22-Mar-2025)
+## [2.5] (11-Mar-2025)
 
 ### Added
 - Config accepts "clazzfish.dump.uri" as additional system property
@@ -30,22 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - exportCSV-Methods in ClazzStatistic returns now an URI (before: File)
 
 
-## [2.4.2] (10-Jan-2025)
-
-### Fixed
-- exception loop at shutdown is avoided
-  ([issue #22](https://github.com/oboehm/ClazzFish/issues/22))
-
-
-## [2.4.1] (09-Jan-2025)
-
-### Fixed
-- corrupt lines in exported CSV files were ignored
-
-
 ## [2.4] (08-Jan-2025)
 
 ### Fixed
+- **v2.4.2**: exception loop at shutdown is avoided
+  ([issue #22](https://github.com/oboehm/ClazzFish/issues/22))
+- **v2.4.1**: corrupt lines in exported CSV files were ignored
 - no double entries for updated entries
   ([issue #21](https://github.com/oboehm/ClazzFish/issues/21))
 - tested with Java 21 and PatternTesting
