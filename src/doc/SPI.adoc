@@ -68,14 +68,3 @@ This will trigger link:../../sample/src/main/java/clazzfish/sample/spi/CsvPrinte
 ===== DEAD CLASSES =====
 clazzfish.sample.DeadClass
 ----
-
-Be sure you start the Java VM with clazzfish-agent as Java agent.
-Otherwise classes which are not instantiated (e.g. only have static methods) will be also recognized as "dead classes":
-
-----
-===== DEAD CLASSES =====
-clazzfish.sample.Bank
-clazzfish.sample.DeadClass
-clazzfish.sample.jdbc.BankRepository
-clazzfish.sample.spi.CsvPrintProvider
-----
