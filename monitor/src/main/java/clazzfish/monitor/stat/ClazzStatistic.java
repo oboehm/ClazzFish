@@ -215,7 +215,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
 
     public URI exportCSV(URI uri) throws IOException {
         importCSV(uri);
-        log.debug("Exporting statistics to '{}'...", uri);
+        log.info("Exporting statistics to '{}'...", uri);
         List<String> csvLines = getCsvLines();
         xPorter.exportCSV(uri, ClazzRecord.toCsvHeadline(), csvLines);
         return uri;
