@@ -1,0 +1,2 @@
+# Provider for CSV-Exports with GIT
+clazzfish.spi.git.GitCsvXPorterProvider

@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.aosd.clazzfish</groupId>
+    <artifactId>clazzfish</artifactId>
+    <version>2.5.2-SNAPSHOT</version>
+  </parent>
+  <artifactId>clazzfish-spi</artifactId>
+  <packaging>pom</packaging>
+
+  <description>
+    collection of modules which supports the SPI interface
+    (CsvXPorter and CsvXPorterProvider) of classfish-monitor
+  </description>
+
+  <modules>
+    <module>git</module>
+  </modules>
+
+</project>
