@@ -98,7 +98,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         this.classpathMonitor = classpathMonitor;
         this.allClasses = collectFutureClasses(classpathMonitor);
         this.csvURI = csvURI;
-        this.xPorter = XPorter.createCsvXPorter(csvURI.getScheme());
+        this.xPorter = XPorter.createCsvXPorter(csvURI);
         log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
     }
 
