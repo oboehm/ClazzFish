@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.spi;
 
+import java.net.URI;
+
 /**
  * The interface CsvXPorterProvider describes the provider for SPI.
  *
@@ -39,5 +41,16 @@ public interface CsvXPorterProvider {
      * @return true or false
      */
     boolean supports(String protocol);
+
+    /**
+     * Indicates if the provider supports the given URI.
+     *
+     * @param uri e.g. "file://hello/world"
+     * @return true or false
+     * @since 2.6
+     */
+    default boolean supports(URI uri) {
+        return supports(uri.getScheme());
+    }
 
 }

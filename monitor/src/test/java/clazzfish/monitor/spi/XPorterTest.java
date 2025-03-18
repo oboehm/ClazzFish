@@ -45,7 +45,7 @@ class XPorterTest {
     @Test
     void createCsvXPorter() {
         URI fileURI = new File("src/test/resources/test.csv").toURI();
-        CsvXPorter xporter = XPorter.createCsvXPorter(fileURI.getScheme());
+        CsvXPorter xporter = XPorter.createCsvXPorter(fileURI);
         assertNotNull(xporter);
     }
 

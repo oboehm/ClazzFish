@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.spi;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -30,6 +31,11 @@ import java.util.ServiceLoader;
  */
 public class XPorter {
 
+    /**
+     * Gets a list of providers of {@link CsvXPorterProvider}.
+     *
+     * @return list of providers
+     */
     public static List<CsvXPorterProvider> getProviders() {
         ServiceLoader<CsvXPorterProvider> loader = ServiceLoader.load(CsvXPorterProvider.class);
         List<CsvXPorterProvider> providers = new ArrayList<>();
@@ -37,6 +43,31 @@ public class XPorter {
         return providers;
     }
 
+    /**
+     * Creates a CsvXPorter object which can be used for improts and
+     * exports of CSV data.
+     *
+     * @param uri URI for exporting / importing
+     * @return CsvXPorter instance
+     */
+    public static CsvXPorter createCsvXPorter(URI uri) {
+        for (CsvXPorterProvider provider : getProviders()) {
+            if (provider.supports(uri)) {
+                return provider.create();
+            }
+        }
+        throw new IllegalArgumentException("Unsupported URI: " + uri);
+    }
+
+    /**
+     * Creates a CsvXPorter object which can be used for improts and
+     * exports of CSV data.
+     *
+     * @param protocol e.g. "file"
+     * @return CsvXPorter instance
+     * @deprecated use {@link #createCsvXPorter(URI)}
+     */
+    @Deprecated(forRemoval = true)
     public static CsvXPorter createCsvXPorter(String protocol) {
         for (CsvXPorterProvider provider : getProviders()) {
             if (provider.supports(protocol)) {
