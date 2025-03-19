@@ -20,6 +20,7 @@ package clazzfish.spi.git;
 import clazzfish.monitor.spi.CsvXPorterProvider;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -27,6 +28,7 @@ import java.util.ServiceLoader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link GitCsvXPorterProvider}.
@@ -43,6 +45,12 @@ class GitCsvXPorterProviderTest {
         List<Class<?>> serviceClasses = new ArrayList<>();
         loader.forEach(provider -> serviceClasses.add(provider.getClass()));
         assertThat(serviceClasses, hasItem(GitCsvXPorterProvider.class));
+    }
+
+    @Test
+    void supports() {
+        CsvXPorterProvider provider = new GitCsvXPorterProvider();
+        assertTrue(provider.supports(URI.create("ssh://git@github.com:oboehm/ClazzFish.git")));
     }
 
 }

@@ -20,6 +20,8 @@ package clazzfish.spi.git;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.CsvXPorterProvider;
 
+import java.net.URI;
+
 /**
  * The class GitCsvXPorterProvider register itself as service for SPI.
  *
@@ -35,7 +37,16 @@ public class GitCsvXPorterProvider implements CsvXPorterProvider {
 
     @Override
     public boolean supports(String protocol) {
-        throw new UnsupportedOperationException("supports not yet implemented");
+        return protocol.equalsIgnoreCase("git");
+    }
+
+    @Override
+    public boolean supports(URI uri) {
+        if (uri.getAuthority().startsWith("git@")) {
+            return true;
+        } else {
+            return supports(uri.getScheme());
+        }
     }
 
 }
