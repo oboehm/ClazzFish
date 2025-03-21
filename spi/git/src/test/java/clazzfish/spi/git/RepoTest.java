@@ -52,6 +52,17 @@ class RepoTest {
     }
 
     @Test
+    void pull() throws GitAPIException, IOException {
+        URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
+        try (Repo repo = Repo.of(uri)) {
+            assertNotNull(repo);
+        }
+        try (Repo repo = Repo.of(uri)) {
+            assertNotNull(repo);
+        }
+    }
+
+    @Test
     @Disabled("not yet supported")
     void ofSsh() throws GitAPIException, IOException {
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");

@@ -19,6 +19,7 @@ package clazzfish.spi.git;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import java.nio.file.Paths;
  * @author oboehm
  * @since 2.6 (19.03.25)
  */
-public class Repo implements AutoCloseable{
+public class Repo implements AutoCloseable {
 
     private static final Logger log = LoggerFactory.getLogger(Repo.class);
     private final URI uri;
@@ -51,12 +52,27 @@ public class Repo implements AutoCloseable{
         if (gitURI.getScheme().equalsIgnoreCase("file")) {
             throw new UnsupportedOperationException(gitURI + ": file protocol is not supported");
         }
-        Git git = cloneRepo(gitURI);
+        Git git = getRepo(gitURI);
         return new Repo(gitURI, git);
     }
 
-    private static Git cloneRepo(URI gitURI) throws IOException, GitAPIException {
+    private static Git getRepo(URI gitURI) throws IOException, GitAPIException {
         Path repoDir = Paths.get(SystemUtils.getJavaIoTmpDir().toString(), "ClazzFishRepo", gitURI.getPath());
+        if (Files.exists(repoDir)) {
+            return pullRepo(repoDir);
+        } else {
+            return cloneRepo(gitURI, repoDir);
+        }
+    }
+
+    private static Git pullRepo(Path repoDir) throws IOException, GitAPIException {
+        Git git = Git.open(repoDir.toFile());
+        PullResult result = git.pull().call();
+        log.debug("Pull request into '{}' results in {}.", repoDir, result);
+        return git;
+    }
+
+    private static Git cloneRepo(URI gitURI, Path repoDir) throws IOException, GitAPIException {
         repoDir = Files.createDirectories(repoDir);
         Git git = Git.cloneRepository()
                 .setURI(gitURI.toString())
