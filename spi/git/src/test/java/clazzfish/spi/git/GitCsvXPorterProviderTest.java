@@ -50,7 +50,7 @@ class GitCsvXPorterProviderTest {
     @Test
     void supports() {
         CsvXPorterProvider provider = new GitCsvXPorterProvider();
-        assertTrue(provider.supports(URI.create("ssh://git@github.com:oboehm/ClazzFish.git")));
+        assertTrue(provider.supports(URI.create("ssh://git@github.com/oboehm/ClazzFish.git")));
     }
 
 }

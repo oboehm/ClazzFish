@@ -40,7 +40,7 @@ class GitCsvXPorterTest {
     @Test
     @Disabled("not yet implemented")
     void importCSV() throws IOException {
-        URI gitURI = URI.create("git://git@github.com:oboehm/ClazzFish.git//spi/git/src/test/resources/test.csv");
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git//spi/git/src/test/resources/test.csv");
         List<String> csvLines = xPorter.importCSV(gitURI);
         assertNotNull(csvLines);
         assertFalse(csvLines.isEmpty());

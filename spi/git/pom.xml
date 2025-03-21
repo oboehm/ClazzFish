@@ -15,11 +15,26 @@
     for SPI interface (CsvXPorter and CsvXPorterProvider)
   </description>
 
+  <properties>
+    <jgit.version>7.1.0.202411261347-r</jgit.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>clazzfish-monitor</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <!-- Git -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+      <version>${jgit.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

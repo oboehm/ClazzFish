@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Added
+- clazzfish-spi module added 
+- clazzfish-spi-git module added to support import/export of statistics using GIT protocol 
+
 ## [2.5.1] (12-Mar-2025)
 
 ### Fixed

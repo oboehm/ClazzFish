@@ -40,7 +40,7 @@ public interface CsvXPorter {
      * Interface for exporting CSV.
      *
      * @param uri         URI wher the CSV should be exported to
-Cs     * @param csvHeadLine CSV header
+     * @param csvHeadLine CSV header
      * @param csvLines    CSV lines
      * @throws IOException in case of I/O problems
      */
