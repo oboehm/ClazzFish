@@ -17,10 +17,17 @@
  */
 package clazzfish.spi.git;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import org.apache.commons.lang3.SystemUtils;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.SshTransport;
+import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.util.FS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +64,16 @@ public class Repo implements AutoCloseable {
     }
 
     private static Git getRepo(URI gitURI) throws IOException, GitAPIException {
-        Path repoDir = Paths.get(SystemUtils.getJavaIoTmpDir().toString(), "ClazzFishRepo", gitURI.getPath());
-        if (Files.exists(repoDir)) {
+        Path repoDir = getRepoPathOf(gitURI);
+        if (Files.exists(repoDir) && Files.list(repoDir).findAny().isPresent()) {
             return pullRepo(repoDir);
         } else {
             return cloneRepo(gitURI, repoDir);
         }
+    }
+
+    public static Path getRepoPathOf(URI gitURI) {
+        return Paths.get(SystemUtils.getJavaIoTmpDir().toString(), "ClazzFishRepo", gitURI.getPath());
     }
 
     private static Git pullRepo(Path repoDir) throws IOException, GitAPIException {
@@ -73,13 +84,44 @@ public class Repo implements AutoCloseable {
     }
 
     private static Git cloneRepo(URI gitURI, Path repoDir) throws IOException, GitAPIException {
-        repoDir = Files.createDirectories(repoDir);
-        Git git = Git.cloneRepository()
+        File dir = Files.createDirectories(repoDir).toFile();
+        CloneCommand cmd = Git.cloneRepository()
                 .setURI(gitURI.toString())
-                .setDirectory(repoDir.toFile())
-                .call();
+                .setDirectory(dir);
+        if (gitURI.getScheme().equalsIgnoreCase("ssh")) {
+            setSshCredentials(cmd);
+        }
+        Git git = cmd.call();
         log.debug("{} is cloned to dir '{}'.", gitURI, repoDir);
         return git;
+    }
+
+    private static void setSshCredentials(CloneCommand cmd) {
+        SshSessionFactory sshSessionFactory = getSshSessionFactory();
+        cmd.setTransportConfigCallback(transport -> {
+            SshTransport sshTransport = (SshTransport) transport;
+            sshTransport.setSshSessionFactory(sshSessionFactory);
+        });
+    }
+
+    private static SshSessionFactory getSshSessionFactory() {
+        Path privateKeyFile = Paths.get(System.getProperty("user.home"), ".ssh/id_rsa");
+        if (Files.exists(privateKeyFile)) {
+            SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+                @Override
+                protected JSch createDefaultJSch( FS fs ) throws JSchException {
+                    JSch defaultJSch = super.createDefaultJSch( fs );
+                    // if you'll get "invalid privatekey" transfrom your file into PEM format
+                    defaultJSch.addIdentity(privateKeyFile.toString());
+                    return defaultJSch;
+                }
+            };
+            log.debug("Using private key file '{}' as ssh identity.", privateKeyFile);
+            return sshSessionFactory;
+        } else {
+            log.warn("No private key file {} found, using default ssh identity.", privateKeyFile);
+            return new JschConfigSessionFactory();
+        }
     }
 
     public File getDir() {

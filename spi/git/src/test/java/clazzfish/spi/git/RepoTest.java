@@ -20,16 +20,21 @@ package clazzfish.spi.git;
 import com.github.sparsick.testcontainers.gitserver.plain.GitServerContainer;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.utility.DockerImageName;
+import patterntesting.runtime.junit.NetworkTester;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Unit tests for {@link Repo}.
@@ -42,7 +47,7 @@ class RepoTest {
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
     private static GitServerContainer gitServer;
 
-    @BeforeAll
+    //@BeforeAll
     static void startGitServer() {
         gitServer =
                 new GitServerContainer(DockerImageName.parse("rockstorm/git-server:2.47"))
@@ -54,11 +59,28 @@ class RepoTest {
     @Test
     void ofHttps() throws GitAPIException, IOException {
         URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
+        deleteRepoPath(uri);
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
-            FileUtils.deleteDirectory(repo.getDir());
-            log.info("'{}' wurde wieder entfernt.", repo.getDir());
+        }
+    }
+
+    @Test
+    void ofSsh() throws GitAPIException, IOException {
+        URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
+        deleteRepoPath(uri);
+        try (Repo repo = Repo.of(uri)) {
+            assertNotNull(repo);
+            assertTrue(repo.getDir().isDirectory());
+        }
+    }
+
+    private static void deleteRepoPath(URI uri) throws IOException {
+        Path repoPath = Repo.getRepoPathOf(uri);
+        if (Files.exists(repoPath)) {
+            FileUtils.deleteDirectory(repoPath.toFile());
+            log.info("'{}' wurde entfernt.", repoPath);
         }
     }
 
@@ -74,15 +96,17 @@ class RepoTest {
     }
 
     @Test
-    @Disabled("not yet supported")
-    void ofSsh() throws GitAPIException, IOException {
-        URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
+    void ofTestRepo() throws GitAPIException, IOException {
+        String testRepoProp = System.getProperty("test.repo.uri");
+        assumeFalse(testRepoProp == null, "system property 'test.repo.uri' not set");
+        URI uri = URI.create(testRepoProp);
+        assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
         }
     }
 
-    @AfterAll
+    //@AfterAll
     static void stopGitServer() {
         gitServer.stop();
     }
