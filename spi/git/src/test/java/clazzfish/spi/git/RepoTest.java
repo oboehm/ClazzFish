@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -68,6 +69,8 @@ class RepoTest {
 
     @Test
     void ofSsh() throws GitAPIException, IOException {
+        assumeTrue(Files.exists(Paths.get(System.getProperty("user.home"), ".ssh/id_rsa")),
+                "no private ssh key available");
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
         deleteRepoPath(uri);
         try (Repo repo = Repo.of(uri)) {
