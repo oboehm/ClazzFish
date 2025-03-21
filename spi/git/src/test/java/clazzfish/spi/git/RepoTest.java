@@ -17,12 +17,13 @@
  */
 package clazzfish.spi.git;
 
+import com.github.sparsick.testcontainers.gitserver.plain.GitServerContainer;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,6 +40,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
+    private static GitServerContainer gitServer;
+
+    @BeforeAll
+    static void startGitServer() {
+        gitServer =
+                new GitServerContainer(DockerImageName.parse("rockstorm/git-server:2.47"))
+                        .withGitRepo("testRepo")
+                        .withGitPassword("topsecret");
+        gitServer.start();
+    }
 
     @Test
     void ofHttps() throws GitAPIException, IOException {
@@ -69,6 +80,11 @@ class RepoTest {
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
         }
+    }
+
+    @AfterAll
+    static void stopGitServer() {
+        gitServer.stop();
     }
 
 }

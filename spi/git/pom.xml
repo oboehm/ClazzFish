@@ -36,6 +36,13 @@
       <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
       <version>${jgit.version}</version>
     </dependency>
+    <!-- Testing -->
+    <dependency>
+      <groupId>io.github.sparsick.testcontainers.gitserver</groupId>
+      <artifactId>testcontainers-gitserver</artifactId>
+      <version>0.11.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j2-impl</artifactId>
