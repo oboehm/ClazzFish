@@ -268,12 +268,28 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         importCSV(csvFile.toURI());
     }
 
+    /**
+     * Imports the statistics from the given URI. With issue #26 an internal
+     * {@link Map} is now used to find a {@link ClazzRecord}. The speeds up
+     * the import by a factor of 5:
+     * <ul>
+     *     <li>import of 10,000 lines: 130 - 150 ms (old), 20 - 30 ms (now)</li>
+     *     <li>import of 60,000 lines: 200 - 230 ms (old), 50 - 80 ms (now)</li>
+     * </ul>
+     * The times were measured on an MBP from 2020.
+     *
+     * @param csvURI URI where the statistic should be imported from
+     */
     public void importCSV(URI csvURI) {
         try {
             List<String> csvLines = xPorter.importCSV(csvURI);
             if (csvLines.isEmpty()) {
                 log.debug("URI '{}' is empty and not imported.", csvURI);
                 return;
+            }
+            Map<String, ClazzRecord> loaded = new HashMap<>();
+            for (ClazzRecord record : getAllClasses()) {
+                loaded.put(record.classname(), record);
             }
             int start = csvLines.get(0).equals(ClazzRecord.toCsvHeadline()) ? 1 : 0;
             for (int i = start; i < csvLines.size(); i++) {
@@ -284,10 +300,8 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
                         continue;
                     }
                     String classname = r.classname();
-                    Optional<ClazzRecord> any =
-                            getAllClasses().stream().filter(cr -> classname.equals(cr.classname())).findAny();
-                    if (any.isPresent()) {
-                        ClazzRecord clazzRecord = any.get();
+                    ClazzRecord clazzRecord = loaded.get(classname);
+                    if (clazzRecord != null) {
                         getAllClasses().remove(clazzRecord);
                         r = new ClazzRecord(clazzRecord.classpath(), clazzRecord.classname(),
                                 r.count() + clazzRecord.count());
