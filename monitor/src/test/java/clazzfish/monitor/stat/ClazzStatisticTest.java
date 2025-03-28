@@ -32,6 +32,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Unit tests for {@link ClazzStatistic}.
@@ -113,6 +114,23 @@ class ClazzStatisticTest {
         rec.importCSV(csvFile.toURI());
         checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
         checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
+    }
+
+    /**
+     * This unit test was used to test the performance for issu #26. To do so
+     * copy a big.csv file to the target/statistics dir and start this test
+     * with a profiler (e.g. the IntelliJ Profiler).
+     */
+    @Test
+    void importBigCSV() {
+        File csvFile = new File("target/statistics", "big.csv");
+        assumeTrue(csvFile.exists(), "performance test skipped");
+        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
+        rec.importCSV(csvFile.toURI());
     }
 
     /**
