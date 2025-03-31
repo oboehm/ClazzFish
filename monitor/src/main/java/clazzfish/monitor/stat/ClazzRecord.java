@@ -66,10 +66,14 @@ public final class ClazzRecord implements Comparable<ClazzRecord> {
 
     public static ClazzRecord fromCSV(String line) {
         String[] parts = line.split(";");
-        if (parts.length < 3) {
+        if (parts.length < 2) {
             throw new IllegalArgumentException(String.format("to less columns (%d) in '%s'", parts.length, line));
         }
-        return new ClazzRecord(URI.create(parts[0]), parts[1], Integer.parseInt(parts[2]));
+        if (parts.length == 2) {
+            return new ClazzRecord(null, parts[0], Integer.parseInt(parts[1]));
+        } else {
+            return new ClazzRecord(URI.create(parts[0]), parts[1], Integer.parseInt(parts[2]));
+        }
     }
 
     public static String toCsvHeadline() {

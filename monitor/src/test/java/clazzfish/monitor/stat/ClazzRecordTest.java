@@ -24,6 +24,7 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ClazzRecordTest {
 
@@ -41,6 +42,22 @@ class ClazzRecordTest {
         assertEquals(r0, r1);
         assertEquals(r0.hashCode(), r1.hashCode());
         assertEquals(0, r0.compareTo(r1));
+    }
+
+    @Test
+    void testFromCSV() {
+        ClazzRecord r = ClazzRecord.fromCSV("file:/tmp/classes;clazzfish.monitor.Starter;1");
+        assertEquals(URI.create("file:/tmp/classes"), r.classpath());
+        assertEquals("clazzfish.monitor.Starter", r.classname());
+        assertEquals(1, r.count());
+    }
+
+    @Test
+    void testFromCSVwithoutClasspath() {
+        ClazzRecord r = ClazzRecord.fromCSV("clazzfish.monitor.Starter;1");
+        assertNull(r.classpath());
+        assertEquals("clazzfish.monitor.Starter", r.classname());
+        assertEquals(1, r.count());
     }
 
 }

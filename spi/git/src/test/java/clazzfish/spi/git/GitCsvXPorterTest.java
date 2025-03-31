@@ -17,15 +17,14 @@
  */
 package clazzfish.spi.git;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link GitCsvXPorter}.
@@ -38,12 +37,11 @@ class GitCsvXPorterTest {
     private final GitCsvXPorter xPorter = new GitCsvXPorter();
 
     @Test
-    @Disabled("not yet implemented")
-    void importCSV() throws IOException {
-        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git//spi/git/src/test/resources/test.csv");
+    void importCSVnotExists() throws IOException {
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
         List<String> csvLines = xPorter.importCSV(gitURI);
         assertNotNull(csvLines);
-        assertFalse(csvLines.isEmpty());
+        assertTrue(csvLines.isEmpty(), "ClazzStatistics.csv should not exist direct under " + gitURI);
     }
 
 }

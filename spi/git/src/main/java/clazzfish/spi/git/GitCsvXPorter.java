@@ -18,9 +18,15 @@
 package clazzfish.spi.git;
 
 import clazzfish.monitor.spi.CsvXPorter;
+import clazzfish.monitor.spi.FileXPorter;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +36,24 @@ import java.util.List;
  * @since 2.6 (15.03.25)
  */
 public class GitCsvXPorter implements CsvXPorter {
+
+    private static final Logger log = LoggerFactory.getLogger(GitCsvXPorter.class);
+
+    @Override
+    public List<String> importCSV(URI uri) throws IOException {
+        try (Repo repo = Repo.of(uri)) {
+            return importCSV(new File(repo.getDir(), "ClazzStatistic.csv"));
+        } catch (GitAPIException ex) {
+            log.info("Cannot import ClazzStatistic.csv from {} ({}).", uri, ex.getMessage());
+            log.debug("Details: ", ex);
+            return Collections.emptyList();
+        }
+    }
+
+    private List<String> importCSV(File file) throws IOException {
+        FileXPorter fileXPorter = new FileXPorter();
+        return fileXPorter.importCSV(file.toURI());
+    }
 
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
