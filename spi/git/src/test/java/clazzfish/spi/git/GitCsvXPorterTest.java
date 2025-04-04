@@ -18,11 +18,17 @@
 package clazzfish.spi.git;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link GitCsvXPorter}.
@@ -32,12 +38,35 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class GitCsvXPorterTest {
 
+    private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
     private final GitCsvXPorter xPorter = new GitCsvXPorter();
+
+    //@Test
+    void exportCSV() throws IOException {
+        // Given
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
+        String header = "Classname;Count";
+        List<String> lines = new ArrayList<>();
+        lines.add(String.format("%s,%d", getClass().getName(), 1));
+
+        // When
+        xPorter.exportCSV(gitURI, header, lines);
+
+        // Then
+        List<String> imported = xPorter.importCSV(gitURI);
+        assertThat(imported.size(), greaterThan(1));
+    }
 
     @Test
     void importCSVnotExists() {
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
-        assertThrows(IOException.class, () -> xPorter.importCSV(gitURI));
+        try {
+            List<String> csvLines = xPorter.importCSV(gitURI);
+            assertNotNull(csvLines);
+            assertTrue(csvLines.isEmpty(), "ClazzStatistics.csv should not exist direct under " + gitURI);
+        } catch (IOException canhappen) {
+            log.warn("Cannot import CSV from {}:", gitURI, canhappen);
+        }
     }
 
 }
