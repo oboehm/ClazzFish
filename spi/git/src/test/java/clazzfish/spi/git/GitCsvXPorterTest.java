@@ -21,10 +21,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link GitCsvXPorter}.
@@ -37,11 +35,9 @@ class GitCsvXPorterTest {
     private final GitCsvXPorter xPorter = new GitCsvXPorter();
 
     @Test
-    void importCSVnotExists() throws IOException {
+    void importCSVnotExists() {
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
-        List<String> csvLines = xPorter.importCSV(gitURI);
-        assertNotNull(csvLines);
-        assertTrue(csvLines.isEmpty(), "ClazzStatistics.csv should not exist direct under " + gitURI);
+        assertThrows(IOException.class, () -> xPorter.importCSV(gitURI));
     }
 
 }
