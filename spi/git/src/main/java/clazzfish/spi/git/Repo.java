@@ -23,6 +23,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
@@ -37,6 +38,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 /**
  * The class Repo is responsible for the access to a GIT repository.
@@ -64,12 +66,15 @@ public class Repo implements AutoCloseable {
     }
 
     private static Git getRepo(URI gitURI) throws IOException, GitAPIException {
-        Path repoDir = getRepoPathOf(gitURI);
-        if (Files.exists(repoDir) && Files.list(repoDir).findAny().isPresent()) {
-            return pullRepo(repoDir);
-        } else {
-            return cloneRepo(gitURI, repoDir);
+        final Path repoDir = getRepoPathOf(gitURI);
+        if (Files.exists(repoDir)) {
+            try (Stream<Path> list = Files.list(repoDir)) {
+                if (list.findAny().isPresent()) {
+                    return pullRepo(repoDir);
+                }
+            }
         }
+        return cloneRepo(gitURI, repoDir);
     }
 
     public static Path getRepoPathOf(URI gitURI) {
@@ -137,6 +142,22 @@ public class Repo implements AutoCloseable {
     public void close() {
         git.close();
         log.debug("{} is closed.", git);
+    }
+
+    public Status getStatus() throws GitAPIException {
+        return git.status().call();
+    }
+
+    public void add(File file) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    public void commit(String msg) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    public void push() {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
 }

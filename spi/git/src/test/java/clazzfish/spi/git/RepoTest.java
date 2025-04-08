@@ -17,8 +17,13 @@
  */
 package clazzfish.spi.git;
 
+import clazzfish.spi.git.test.GitServer;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +49,13 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
+    private static Server SERVER;
+
+    @BeforeAll
+    static void startGitServer() throws Exception {
+        SERVER = GitServer.startServer();
+        log.info("{} was started.", SERVER);
+    }
 
     @Test
     void ofHttps() throws GitAPIException, IOException {
@@ -101,6 +113,22 @@ class RepoTest {
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
         }
+    }
+
+    @Test
+    void getStatus() throws GitAPIException, IOException {
+        URI uri = URI.create("http://localhost:8080/TestRepo");
+        try (Repo repo = Repo.of(uri)) {
+            Status status = repo.getStatus();
+            assertNotNull(status);
+            assertTrue(status.isClean());
+        }
+    }
+
+    @AfterAll
+    static void stopServer() throws Exception {
+        SERVER.stop();
+        log.info("{} was stopped.", SERVER);
     }
 
 }
