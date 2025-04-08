@@ -51,6 +51,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
+    private static final URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
     private static Server SERVER;
 
     @BeforeAll
@@ -107,12 +108,10 @@ class RepoTest {
 
     @Test
     void pull() throws GitAPIException, IOException {
-        URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
-        assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(TEST_URI)) {
             assertNotNull(repo);
         }
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(TEST_URI)) {
             assertNotNull(repo);
         }
     }
@@ -130,8 +129,8 @@ class RepoTest {
 
     @Test
     void getStatus() throws GitAPIException, IOException {
-        URI uri = URI.create("http://localhost:8080/TestRepo");
-        try (Repo repo = Repo.of(uri)) {
+        URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
+        try (Repo repo = Repo.of(TEST_URI)) {
             Status status = repo.getStatus();
             assertNotNull(status);
             assertTrue(status.isClean());
