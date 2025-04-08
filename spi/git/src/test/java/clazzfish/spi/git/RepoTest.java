@@ -17,13 +17,11 @@
  */
 package clazzfish.spi.git;
 
-import com.github.sparsick.testcontainers.gitserver.plain.GitServerContainer;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.utility.DockerImageName;
 import patterntesting.runtime.junit.NetworkTester;
 
 import java.io.IOException;
@@ -46,21 +44,11 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
-    private static GitServerContainer gitServer;
-
-    //@BeforeAll
-    static void startGitServer() {
-        gitServer =
-                new GitServerContainer(DockerImageName.parse("rockstorm/git-server:2.47"))
-                        .withGitRepo("testRepo")
-                        .withGitPassword("topsecret");
-        gitServer.start();
-    }
 
     @Test
     void ofHttps() throws GitAPIException, IOException {
         URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
-        deleteRepoPath(uri);
+        prepareRepo(uri);
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
@@ -72,11 +60,16 @@ class RepoTest {
         assumeTrue(Files.exists(Paths.get(System.getProperty("user.home"), ".ssh/id_rsa")),
                 "no private ssh key available");
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
-        deleteRepoPath(uri);
+        prepareRepo(uri);
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }
+    }
+
+    private static void prepareRepo(URI uri) throws IOException {
+        deleteRepoPath(uri);
+        assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
     }
 
     private static void deleteRepoPath(URI uri) throws IOException {
@@ -90,6 +83,7 @@ class RepoTest {
     @Test
     void pull() throws GitAPIException, IOException {
         URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
+        assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
         }
@@ -107,11 +101,6 @@ class RepoTest {
         try (Repo repo = Repo.of(uri)) {
             assertNotNull(repo);
         }
-    }
-
-    //@AfterAll
-    static void stopGitServer() {
-        gitServer.stop();
     }
 
 }
