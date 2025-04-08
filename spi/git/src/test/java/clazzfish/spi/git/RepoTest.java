@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import patterntesting.runtime.junit.NetworkTester;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,7 +83,18 @@ class RepoTest {
 
     private static void prepareRepo(URI uri) throws IOException {
         deleteRepoPath(uri);
-        assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
+        try {
+            URL url = uri.toURL();
+            assumeTrue(NetworkTester.exists(url), url + " is offline");
+        } catch (MalformedURLException ex) {
+            if (uri.getScheme().equals("ssh")) {
+                log.warn("URI {} is not a known URI ({}).", uri, ex.getMessage());
+                log.debug("Details: ", ex);
+                assumeTrue(NetworkTester.isOnline(uri.getHost(), 22), uri + " is offline");
+            } else {
+                throw ex;
+            }
+        }
     }
 
     private static void deleteRepoPath(URI uri) throws IOException {
