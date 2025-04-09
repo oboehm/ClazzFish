@@ -25,6 +25,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
@@ -175,8 +176,10 @@ public class Repo implements AutoCloseable {
         log.debug("Changes were commited with '{}'.", message);
     }
 
-    public void push() {
-        throw new UnsupportedOperationException("not implemented yet");
+    public Iterable<PushResult> push() throws GitAPIException {
+        Iterable<PushResult> results = git.push().call();
+        log.debug("Changes are pushed to {}.", uri);
+        return results;
     }
 
 }

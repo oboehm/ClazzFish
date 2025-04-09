@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.PushResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import patterntesting.runtime.junit.NetworkTester;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -156,6 +158,25 @@ class RepoTest {
             addTo(repo, "crash.com");
             repo.commit("bumm");
             assertTrue(repo.getStatus().isClean());
+        }
+    }
+
+    @Test
+    void push() throws GitAPIException, IOException {
+        try (Repo repo = Repo.of(TEST_URI)) {
+            addTo(repo, "push.it");
+            repo.commit("go");
+            Iterable<PushResult> results = repo.push();
+            assertNotNull(results);
+        }
+        assertFilePushed(TEST_URI, "push.it");
+    }
+
+    private void assertFilePushed(URI testUri, String filename) throws IOException, GitAPIException {
+        deleteRepoPath(testUri);
+        try (Repo repo = Repo.of(testUri)) {
+            File pushed = new File(repo.getDir(), filename);
+            assertTrue(pushed.isFile());
         }
     }
 
