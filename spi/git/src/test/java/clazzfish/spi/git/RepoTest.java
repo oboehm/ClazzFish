@@ -37,8 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -98,14 +97,6 @@ class RepoTest {
         }
     }
 
-    private static void deleteRepoPath(URI uri) throws IOException {
-        Path repoPath = Repo.getRepoPathOf(uri);
-        if (Files.exists(repoPath)) {
-            FileUtils.deleteDirectory(repoPath.toFile());
-            log.info("'{}' wurde entfernt.", repoPath);
-        }
-    }
-
     @Test
     void pull() throws GitAPIException, IOException {
         try (Repo repo = Repo.of(TEST_URI)) {
@@ -129,7 +120,7 @@ class RepoTest {
 
     @Test
     void getStatus() throws GitAPIException, IOException {
-        URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
+        deleteRepoPath(TEST_URI);
         try (Repo repo = Repo.of(TEST_URI)) {
             Status status = repo.getStatus();
             assertNotNull(status);
@@ -137,10 +128,30 @@ class RepoTest {
         }
     }
 
+    private static void deleteRepoPath(URI uri) throws IOException {
+        Path repoPath = Repo.getRepoPathOf(uri);
+        if (Files.exists(repoPath)) {
+            FileUtils.deleteDirectory(repoPath.toFile());
+            log.info("'{}' wurde entfernt.", repoPath);
+        }
+    }
+
+    @Test
+    void add() throws GitAPIException, IOException {
+        try (Repo repo = Repo.of(TEST_URI)) {
+            Path file = Paths.get(repo.getDir().getAbsolutePath(), "hello.world");
+            Files.createFile(file);
+            repo.add(file.toFile());
+            Status status = repo.getStatus();
+            assertFalse(status.isClean());
+        }
+    }
+
     @AfterAll
     static void stopServer() throws Exception {
         SERVER.stop();
         log.info("{} was stopped.", SERVER);
+        deleteRepoPath(TEST_URI);
     }
 
 }

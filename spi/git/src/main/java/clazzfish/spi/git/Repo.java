@@ -19,12 +19,12 @@ package clazzfish.spi.git;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
@@ -148,8 +148,26 @@ public class Repo implements AutoCloseable {
         return git.status().call();
     }
 
-    public void add(File file) {
-        throw new UnsupportedOperationException("not implemented yet");
+    public void add(File... files) throws GitAPIException {
+        Repository repository = git.getRepository();
+        AddCommand command = new AddCommand(repository);
+        for (File f : files) {
+            String filename = asFilename(f);
+            command.addFilepattern(filename);
+            log.debug("File '{}' is added to {}.", filename, repository);
+        }
+        command.call();
+    }
+
+    private String asFilename(File file) {
+        String filename = StringUtils.substringAfter(file.getAbsolutePath(), getDir().getAbsolutePath());
+        filename = FilenameUtils.separatorsToUnix(filename);
+        if (filename.startsWith("/")) {
+            filename = filename.substring(1);
+        } else if (filename.isEmpty()) {
+            filename = file.toString();
+        }
+        return filename;
     }
 
     public void commit(String msg) {
