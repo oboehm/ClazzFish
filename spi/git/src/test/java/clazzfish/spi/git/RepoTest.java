@@ -139,11 +139,23 @@ class RepoTest {
     @Test
     void add() throws GitAPIException, IOException {
         try (Repo repo = Repo.of(TEST_URI)) {
-            Path file = Paths.get(repo.getDir().getAbsolutePath(), "hello.world");
-            Files.createFile(file);
-            repo.add(file.toFile());
-            Status status = repo.getStatus();
-            assertFalse(status.isClean());
+            addTo(repo, "hello.world");
+            assertFalse(repo.getStatus().isClean());
+        }
+    }
+
+    private static void addTo(Repo repo, String filename) throws IOException, GitAPIException {
+        Path file = Paths.get(repo.getDir().getAbsolutePath(), filename);
+        Files.createFile(file);
+        repo.add(file.toFile());
+    }
+
+    @Test
+    void commit() throws GitAPIException, IOException {
+        try (Repo repo = Repo.of(TEST_URI)) {
+            addTo(repo, "crash.com");
+            repo.commit("bumm");
+            assertTrue(repo.getStatus().isClean());
         }
     }
 

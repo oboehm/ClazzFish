@@ -170,8 +170,9 @@ public class Repo implements AutoCloseable {
         return filename;
     }
 
-    public void commit(String msg) {
-        throw new UnsupportedOperationException("not implemented yet");
+    public void commit(String message) throws GitAPIException {
+        git.commit().setMessage(message).call();
+        log.debug("Changes were commited with '{}'.", message);
     }
 
     public void push() {
