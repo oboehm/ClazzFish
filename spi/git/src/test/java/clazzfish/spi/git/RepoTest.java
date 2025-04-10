@@ -19,7 +19,6 @@ package clazzfish.spi.git;
 
 import clazzfish.spi.git.test.GitServer;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.PushResult;
@@ -53,11 +52,12 @@ class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
     private static final URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
-    private static Server SERVER;
+    private static GitServer SERVER;
 
     @BeforeAll
     static void startGitServer() throws Exception {
-        SERVER = GitServer.startServer();
+        SERVER = new GitServer(8080);
+        SERVER.start();
         log.info("{} was started.", SERVER);
     }
 

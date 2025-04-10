@@ -46,40 +46,73 @@ import java.io.IOException;
  */
 public class GitServer {
 
-    public static void main(String[] args) throws Exception {
-        Server server = startServer();
+    private final Server server;
 
+    public GitServer() throws GitAPIException, IOException {
+        this(8080);
+    }
+
+    public GitServer(int port) throws GitAPIException, IOException {
+        GitServlet gs = createGitServlet();
+        server = configureHttpServer(gs, port);
+    }
+
+    public void start() throws Exception {
+        server.start();
+    }
+
+    public void stop() throws Exception {
+        server.stop();
+    }
+
+    public void join() throws InterruptedException {
+        server.join();
+    }
+
+    public static void main(String[] args) throws Exception {
+        GitServer server = new GitServer();
+        server.start();
         // finally wait for the Server being stopped
         server.join();
     }
 
-    public static Server startServer() throws Exception {
+    /**
+     * Creates the JGit Servlet which handles the Git protocol.
+     *
+     * @return JGit Servlet
+     * @throws IOException     in case of I/O errors
+     * @throws GitAPIException in case of problems with Git
+     */
+    private static GitServlet createGitServlet() throws IOException, GitAPIException {
         Repository repository = createNewRepository();
-
         populateRepository(repository);
-
-        // Create the JGit Servlet which handles the Git protocol
         GitServlet gs = new GitServlet();
         gs.setRepositoryResolver((req, name) -> {
             repository.incrementOpen();
             return repository;
         });
-
-        // start up the Servlet and start serving requests
-        return configureAndStartHttpServer(gs);
+        return gs;
     }
 
-    private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
-        Server server = new Server(8080);
+    /**
+     * Start up the servlet and start serving requests.
+     *
+     * @param gs the JGit Servlet
+     * @return the started server
+     * @throws Exception if server start fails
+     */
+    private static Server configureAndStartHttpServer(GitServlet gs, int port) throws Exception {
+        Server server = configureHttpServer(gs, port);
+        server.start();
+        return server;
+    }
 
+    private static Server configureHttpServer(GitServlet gs, int port) {
+        Server server = new Server(port);
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
-
         ServletHolder holder = new ServletHolder(gs);
-
         handler.addServletWithMapping(holder, "/*");
-
-        server.start();
         return server;
     }
 
