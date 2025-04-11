@@ -57,7 +57,28 @@ public class GitCsvXPorter implements CsvXPorter {
 
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
-        throw new UnsupportedOperationException("exportCSV not yet implemented");
+        try (Repo repo = Repo.of(uri)) {
+            writeCSV(repo, csvHeadLine, csvLines);
+            log.debug("Statistic exported with {} lines to '{}'.", csvLines.size(), uri);
+        } catch (GitAPIException ex) {
+            log.info("Cannot export statistic to {} ({}).", uri, ex.getMessage());
+            log.debug("Details: ", ex);
+        }
+    }
+
+    private void writeCSV(Repo repo, String csvHeadLine, List<String> csvLines) throws IOException, GitAPIException {
+        File outputFile = new File(repo.getDir(), "ClazzStatistic.csv");
+        if (!outputFile.exists()) {
+            if (outputFile.createNewFile()) {
+                repo.add(outputFile);
+            } else {
+                throw new IOException("cannot create file " + outputFile.getAbsolutePath());
+            }
+        }
+        FileXPorter fileXPorter = new FileXPorter();
+        fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, csvLines);
+        repo.commit(csvHeadLine + " - " + csvHeadLine.length() + " lines");
+        repo.push();
     }
 
 }

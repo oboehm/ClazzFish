@@ -41,7 +41,7 @@ class GitCsvXPorterTest {
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
     private final GitCsvXPorter xPorter = new GitCsvXPorter();
 
-    //@Test
+    @Test
     void exportCSV() throws IOException {
         // Given
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
