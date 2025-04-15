@@ -19,6 +19,7 @@ package clazzfish.spi.git;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -29,6 +30,7 @@ import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
 import org.eclipse.jgit.util.FS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,15 @@ public class Repo implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(Repo.class);
     private final URI uri;
     private final Git git;
+
+    static {
+        SshSessionFactory.setInstance(new JschConfigSessionFactory() {
+            public void configure(OpenSshConfig.Host hc, Session session) {
+                session.setConfig("StrictHostKeyChecking", "no");
+            }
+        });
+        log.debug("SSH sessions are set up with non-strict host checking.");
+    }
 
     private Repo(URI uri, Git git) {
         this.uri = uri;
