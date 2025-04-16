@@ -18,7 +18,6 @@
 
 package clazzfish.monitor;
 
-import clazzfish.monitor.internal.Config;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ReflectionHelper;

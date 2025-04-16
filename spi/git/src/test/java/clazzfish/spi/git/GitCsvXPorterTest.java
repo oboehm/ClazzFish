@@ -17,6 +17,7 @@
  */
 package clazzfish.spi.git;
 
+import clazzfish.monitor.Config;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,9 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Unit tests for {@link GitCsvXPorter}.
@@ -44,6 +47,7 @@ class GitCsvXPorterTest {
     @Test
     void exportCSV() throws IOException {
         // Given
+        assumeTrue(Config.getEnvironment("clazzfish.git.ssh.keyfile") != null);
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
         String header = "Classname;Count";
         List<String> lines = new ArrayList<>();

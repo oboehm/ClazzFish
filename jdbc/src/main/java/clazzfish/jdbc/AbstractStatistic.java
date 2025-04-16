@@ -22,7 +22,7 @@ package clazzfish.jdbc;
 import clazzfish.jdbc.monitor.*;
 import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.monitor.internal.Config;
+import clazzfish.monitor.Config;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;

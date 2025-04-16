@@ -15,7 +15,7 @@
  *
  * (c)reated 05.12.24 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.monitor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;

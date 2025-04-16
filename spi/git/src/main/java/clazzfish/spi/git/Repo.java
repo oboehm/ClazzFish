@@ -17,6 +17,7 @@
  */
 package clazzfish.spi.git;
 
+import clazzfish.monitor.Config;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -56,11 +57,26 @@ public class Repo implements AutoCloseable {
     private final Git git;
 
     static {
-        SshSessionFactory.setInstance(new JschConfigSessionFactory() {
-            public void configure(OpenSshConfig.Host hc, Session session) {
+        SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+            @Override
+            protected void configure(OpenSshConfig.Host host, Session session) {
                 session.setConfig("StrictHostKeyChecking", "no");
+                log.debug("Strict host checking of {} is disabled for {}.", host, session);
             }
-        });
+            @Override
+            protected JSch createDefaultJSch(FS fs) throws JSchException {
+                JSch defaultJSch = super.createDefaultJSch(fs);
+                String propname = "clazzfish.git.ssh.keyfile";
+                String filename = Config.getEnvironment(propname);
+                if (filename == null) {
+                    filename = new File(SystemUtils.getUserHome(), ".ssh/id_rsa").toString();
+                    log.debug("Using {} as SSH key because property '{}' is not set.", filename, propname);
+                }
+                defaultJSch.addIdentity(filename);
+                return defaultJSch;
+            }
+        };
+        SshSessionFactory.setInstance(sshSessionFactory);
         log.debug("SSH sessions are set up with non-strict host checking.");
     }
 
@@ -95,7 +111,8 @@ public class Repo implements AutoCloseable {
 
     private static Git pullRepo(Path repoDir) throws IOException, GitAPIException {
         Git git = Git.open(repoDir.toFile());
-        PullResult result = git.pull().call();
+        PullCommand pull = git.pull();
+        PullResult result = pull.call();
         log.debug("Pull request into '{}' results in {}.", repoDir, result);
         return git;
     }
