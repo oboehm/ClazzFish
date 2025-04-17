@@ -66,18 +66,26 @@ public class Repo implements AutoCloseable {
             @Override
             protected JSch createDefaultJSch(FS fs) throws JSchException {
                 JSch defaultJSch = super.createDefaultJSch(fs);
-                String propname = "clazzfish.git.ssh.keyfile";
-                String filename = Config.getEnvironment(propname);
-                if (filename == null) {
-                    filename = new File(SystemUtils.getUserHome(), ".ssh/id_rsa").toString();
-                    log.debug("Using {} as SSH key because property '{}' is not set.", filename, propname);
-                }
-                defaultJSch.addIdentity(filename);
+                File keyFile = getSshKeyFile();
+                defaultJSch.addIdentity(keyFile.getAbsolutePath());
                 return defaultJSch;
             }
         };
         SshSessionFactory.setInstance(sshSessionFactory);
         log.debug("SSH sessions are set up with non-strict host checking.");
+    }
+
+    public static File getSshKeyFile() {
+        String propname = "clazzfish.git.ssh.keyfile";
+        String filename = Config.getEnvironment(propname);
+        if (filename == null) {
+            File defaultFile = new File(System.getProperty("user.home"), ".ssh/id_rsa");
+            log.debug("Using '{}' for SSH key because property '{}' is not set.", defaultFile, propname);
+            return defaultFile;
+        } else {
+            log.debug("Using '{}' for SSH key.", filename);
+            return new File(filename);
+        }
     }
 
     private Repo(URI uri, Git git) {

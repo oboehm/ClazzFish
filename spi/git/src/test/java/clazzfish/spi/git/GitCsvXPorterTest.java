@@ -17,7 +17,6 @@
  */
 package clazzfish.spi.git;
 
-import clazzfish.monitor.Config;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ class GitCsvXPorterTest {
     @Test
     void exportCSV() throws IOException {
         // Given
-        assumeTrue(Config.getEnvironment("clazzfish.git.ssh.keyfile") != null);
+        assumeTrue(Repo.getSshKeyFile().exists(), "no SSH key file");
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
         String header = "Classname;Count";
         List<String> lines = new ArrayList<>();

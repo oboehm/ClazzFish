@@ -48,12 +48,38 @@ public final class Config {
         this.dumpURI = dumpURI;
     }
 
+    /**
+     * Gets the system property for the given key. If it is not set as system
+     * property it tries to find it as environment variable (in uppercase and
+     * with underscores instead of dots).
+     *
+     * @param key name of the property or environment variable (in lowercase)
+     * @return found value or null
+     */
     public static String getEnvironment(String key) {
         String value = System.getProperty(key);
         if (StringUtils.isBlank(value)) {
             String envKey = key.replace('.', '_').toUpperCase();
             log.debug("System property '{}' is not set, trying environment variable '{}'.", key, envKey);
             value = System.getenv(envKey);
+        }
+        return value;
+    }
+
+    /**
+     * Uses {@link #getEnvironment(String)} to find the key as system property
+     * or environment variable. If key is not set the given defaultValue will
+     * be returned.
+     *
+     * @param key name of the property or environment variable (in lowercase)
+     * @param defaultValue default value
+     * @return value found or default value
+     */
+    public static String getEnvironment(String key, String defaultValue) {
+        String value = getEnvironment(key);
+        if (StringUtils.isBlank(value)) {
+            log.debug("Environment '{}' is not set, using default value '{}'.", key, defaultValue);
+            value = defaultValue;
         }
         return value;
     }
