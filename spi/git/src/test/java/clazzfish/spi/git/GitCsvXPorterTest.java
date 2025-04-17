@@ -20,6 +20,8 @@ package clazzfish.spi.git;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import patterntesting.runtime.junit.CollectionTester;
+import patterntesting.runtime.junit.NetworkTester;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,9 +50,10 @@ class GitCsvXPorterTest {
         // Given
         assumeTrue(Repo.getSshKeyFile().exists(), "no SSH key file");
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
+        assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
         String header = "Classname;Count";
         List<String> lines = new ArrayList<>();
-        lines.add(String.format("%s,%d", getClass().getName(), 1));
+        lines.add(String.format("%s;%d", getClass().getName(), 1));
 
         // When
         xPorter.exportCSV(gitURI, header, lines);
@@ -58,6 +61,8 @@ class GitCsvXPorterTest {
         // Then
         List<String> imported = xPorter.importCSV(gitURI);
         assertThat(imported.size(), greaterThan(1));
+        RepoTest.deleteRepoPath(gitURI);
+        CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
     }
 
     @Test

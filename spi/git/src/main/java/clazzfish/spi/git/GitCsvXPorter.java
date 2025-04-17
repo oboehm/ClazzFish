@@ -69,14 +69,13 @@ public class GitCsvXPorter implements CsvXPorter {
     private void writeCSV(Repo repo, String csvHeadLine, List<String> csvLines) throws IOException, GitAPIException {
         File outputFile = new File(repo.getDir(), "ClazzStatistic.csv");
         if (!outputFile.exists()) {
-            if (outputFile.createNewFile()) {
-                repo.add(outputFile);
-            } else {
+            if (!outputFile.createNewFile()) {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
         FileXPorter fileXPorter = new FileXPorter();
         fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, csvLines);
+        repo.add(outputFile);
         repo.commit(csvHeadLine + " - " + csvHeadLine.length() + " lines");
         repo.push();
     }

@@ -130,7 +130,7 @@ class RepoTest {
         }
     }
 
-    private static void deleteRepoPath(URI uri) throws IOException {
+    public static void deleteRepoPath(URI uri) throws IOException {
         Path repoPath = Repo.getRepoPathOf(uri);
         if (Files.exists(repoPath)) {
             FileUtils.deleteDirectory(repoPath.toFile());
