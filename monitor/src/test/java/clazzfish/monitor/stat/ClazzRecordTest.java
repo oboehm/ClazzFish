@@ -36,6 +36,13 @@ class ClazzRecordTest {
     }
 
     @Test
+    void compareToNoClasspath() {
+        ClazzRecord a = new ClazzRecord(null, "hello");
+        ClazzRecord b = new ClazzRecord(null, "hello");
+        assertEquals(0, a.compareTo(b));
+    }
+
+    @Test
     void testEquals() {
         ClazzRecord r0 = new ClazzRecord(URI.create("file:a.jar"), "hello");
         ClazzRecord r1 = new ClazzRecord(URI.create("file:a.jar"), "hello", 1);
