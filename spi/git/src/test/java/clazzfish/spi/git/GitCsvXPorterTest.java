@@ -17,21 +17,20 @@
  */
 package clazzfish.spi.git;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import patterntesting.runtime.junit.CollectionTester;
 import patterntesting.runtime.junit.NetworkTester;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -51,16 +50,17 @@ class GitCsvXPorterTest {
         assumeTrue(Repo.getSshKeyFile().exists(), "no SSH key file");
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
         assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
-        String header = "Classname;Count";
+        String header = "Classpath;Classname;Count";
         List<String> lines = new ArrayList<>();
-        lines.add(String.format("%s;%d", getClass().getName(), 1));
+        lines.add(String.format("%s;%s;%d", new File("target", "classes").toURI(), getClass().getName(), 1));
 
         // When
         xPorter.exportCSV(gitURI, header, lines);
 
         // Then
         List<String> imported = xPorter.importCSV(gitURI);
-        assertThat(imported.size(), greaterThan(1));
+        assertEquals("Classname;Count", imported.get(0));
+        assertEquals(StringUtils.substringAfter(lines.get(0), ";"), imported.get(1));
         RepoTest.deleteRepoPath(gitURI);
         CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
     }

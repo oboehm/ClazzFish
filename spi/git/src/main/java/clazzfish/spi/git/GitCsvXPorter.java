@@ -19,6 +19,7 @@ package clazzfish.spi.git;
 
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Die Klasse GitCsvXPorter ...
@@ -73,10 +75,14 @@ public class GitCsvXPorter implements CsvXPorter {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
+        csvHeadLine = StringUtils.substringAfter(csvHeadLine, ";");
+        List<String> lines = csvLines.stream()
+                .map(l -> StringUtils.substringAfter(l, ";"))
+                .collect(Collectors.toList());
         FileXPorter fileXPorter = new FileXPorter();
-        fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, csvLines);
+        fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, lines);
         repo.add(outputFile);
-        repo.commit(csvHeadLine + " - " + csvHeadLine.length() + " lines");
+        repo.commit(csvHeadLine + " - " + lines.size() + " lines");
         repo.push();
     }
 
