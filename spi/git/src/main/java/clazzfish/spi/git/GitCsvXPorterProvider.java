@@ -32,7 +32,7 @@ public class GitCsvXPorterProvider implements CsvXPorterProvider {
 
     @Override
     public CsvXPorter create() {
-        throw new UnsupportedOperationException("create not yet implemented");
+        return new GitCsvXPorter();
     }
 
     @Override

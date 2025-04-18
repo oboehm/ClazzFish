@@ -17,6 +17,7 @@
  */
 package clazzfish.spi.git;
 
+import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.CsvXPorterProvider;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class GitCsvXPorterProviderTest {
 
+    private final CsvXPorterProvider provider = new GitCsvXPorterProvider();
+
     @Test
     void testServiceProvider() {
         ServiceLoader<CsvXPorterProvider> loader = ServiceLoader.load(CsvXPorterProvider.class);
@@ -49,8 +52,13 @@ class GitCsvXPorterProviderTest {
 
     @Test
     void supports() {
-        CsvXPorterProvider provider = new GitCsvXPorterProvider();
         assertTrue(provider.supports(URI.create("ssh://git@github.com/oboehm/ClazzFish.git")));
+    }
+
+    @Test
+    void create() {
+        CsvXPorter csvXPorter = provider.create();
+        assertNotNull(csvXPorter);
     }
 
 }

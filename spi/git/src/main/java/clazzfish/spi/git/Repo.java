@@ -97,8 +97,19 @@ public class Repo implements AutoCloseable {
         if (gitURI.getScheme().equalsIgnoreCase("file")) {
             throw new UnsupportedOperationException(gitURI + ": file protocol is not supported");
         }
-        Git git = getRepo(gitURI);
-        return new Repo(gitURI, git);
+        URI baseURI = getBaseURI(gitURI);
+        Git git = getRepo(baseURI);
+        return new Repo(baseURI, git);
+    }
+
+    private static URI getBaseURI(URI gitURI) {
+        String uri = gitURI.toString();
+        if (uri.contains(".git/")) {
+            return URI.create(StringUtils.substringBefore(uri, ".git/") + ".git");
+        } else if (uri.endsWith("/ClazzStatistic.csv")) {
+            return URI.create(StringUtils.substringBefore(uri, "/ClazzStatistic.csv") + ".csv");
+        }
+        return gitURI;
     }
 
     private static Git getRepo(URI gitURI) throws IOException, GitAPIException {

@@ -44,7 +44,8 @@ public class Bank {
     static {
         //JdbcStarter.recordAll(new File("target", "statistic").toURI());
         //JdbcStarter.recordAll();
-        Starter.record(URI.create("print://localhost"));
+        Starter.record(URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git"));
+        //Starter.record(URI.create("print://localhost"));
     }
 
     public static void main(String[] args) {

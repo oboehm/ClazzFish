@@ -12,6 +12,7 @@
     <Logger name="clazzfish.jdbc" level="DEBUG" />
     <Logger name="clazzfish.monitor" level="DEBUG" />
     <Logger name="clazzfish.monitor.internal" level="INFO" />
+    <Logger name="clazzfish.spi.git" level="DEBUG" />
     <!--
       If you want to see the executed SQL statements in the log set the
       logger of SqlStatistic to

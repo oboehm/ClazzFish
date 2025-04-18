@@ -83,6 +83,17 @@ class RepoTest {
         }
     }
 
+    @Test
+    void ofSshWithContextPath() throws GitAPIException, IOException {
+        assumeTrue(Files.exists(Paths.get(System.getProperty("user.home"), ".ssh/id_rsa")),
+                "no private ssh key available");
+        URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/ClazzStatistic.csv");
+        try (Repo repo = Repo.of(uri)) {
+            assertNotNull(repo);
+            assertTrue(repo.getDir().isDirectory());
+        }
+    }
+
     private static void prepareRepo(URI uri) throws IOException {
         deleteRepoPath(uri);
         try {
