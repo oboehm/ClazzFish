@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - clazzfish-spi module added
 - clazzfish-spi-git module added to support import/export of statistics using GIT protocol
 
+### Fixed
+- ClasspathMonitor.getIncompatibleClassList()
+
 
 ## [2.5.2] (28-Mar-2025)
 

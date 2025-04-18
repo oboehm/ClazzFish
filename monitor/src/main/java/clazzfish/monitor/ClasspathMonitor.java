@@ -1214,13 +1214,13 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 				while (resources.hasMoreElements()) {
 					url = resources.nextElement();
 					ArchivEntry doubletEntry = new ArchivEntry(url);
-					if (!archivEntry.equals(doubletEntry)) {
+					if (!Arrays.equals(archivEntry.getBytes(), doubletEntry.getBytes())) {
 						incompatibleClassList.add(clazz);
 						break;
 					}
 				}
-			} catch (NoSuchElementException nse) {
-				LOG.warn("{} is not added to incompatible class list:", clazz, nse);
+			} catch (IOException | NoSuchElementException ex) {
+				LOG.warn("{} is not added to incompatible class list:", clazz, ex);
 			}
 		}
 		return Collections.unmodifiableList(incompatibleClassList);
