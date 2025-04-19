@@ -77,7 +77,7 @@ public final class ClazzRecord implements Comparable<ClazzRecord> {
     }
 
     public static String toCsvHeadline() {
-        return "Classpath; Classname; Count";
+        return "Classpath;Classname;Count";
     }
 
     public String toCSV() {

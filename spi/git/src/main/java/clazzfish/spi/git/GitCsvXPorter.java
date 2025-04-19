@@ -76,7 +76,7 @@ public class GitCsvXPorter implements CsvXPorter {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
-        csvHeadLine = StringUtils.substringAfter(csvHeadLine, ";");
+        csvHeadLine = StringUtils.substringAfter(csvHeadLine, ";").trim();
         List<String> lines = mapClazzRecords(csvLines);
         FileXPorter fileXPorter = new FileXPorter();
         fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, lines);
