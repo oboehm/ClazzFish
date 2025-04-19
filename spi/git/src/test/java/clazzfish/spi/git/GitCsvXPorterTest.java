@@ -17,7 +17,6 @@
  */
 package clazzfish.spi.git;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ class GitCsvXPorterTest {
         assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
         String header = "Classpath;Classname;Count";
         List<String> lines = new ArrayList<>();
-        lines.add(String.format("%s;%s;%d", new File("target", "classes").toURI(), getClass().getName(), 1));
+        lines.add(String.format("%s;%s;%d", new File("target", "classes").toURI(), getClass().getName(), 2));
 
         // When
         xPorter.exportCSV(gitURI, header, lines);
@@ -60,7 +59,7 @@ class GitCsvXPorterTest {
         // Then
         List<String> imported = xPorter.importCSV(gitURI);
         assertEquals("Classname;Count", imported.get(0));
-        assertEquals(StringUtils.substringAfter(lines.get(0), ";"), imported.get(1));
+        assertEquals(getClass().getName() + ";1", imported.get(1));
         RepoTest.deleteRepoPath(gitURI);
         CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
     }

@@ -19,6 +19,7 @@ package clazzfish.spi.git;
 
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
+import clazzfish.monitor.stat.ClazzRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
@@ -76,14 +77,19 @@ public class GitCsvXPorter implements CsvXPorter {
             }
         }
         csvHeadLine = StringUtils.substringAfter(csvHeadLine, ";");
-        List<String> lines = csvLines.stream()
-                .map(l -> StringUtils.substringAfter(l, ";"))
-                .collect(Collectors.toList());
+        List<String> lines = mapClazzRecords(csvLines);
         FileXPorter fileXPorter = new FileXPorter();
         fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, lines);
         repo.add(outputFile);
         repo.commit(csvHeadLine + " - " + lines.size() + " lines");
         repo.push();
+    }
+
+    private static List<String> mapClazzRecords(List<String> csvLines) {
+        return csvLines.stream()
+                .map(ClazzRecord::fromCSV)
+                .map(cr -> cr.classname() + ";" + (cr.count() > 0 ? "1" : "0"))
+                .collect(Collectors.toList());
     }
 
 }
