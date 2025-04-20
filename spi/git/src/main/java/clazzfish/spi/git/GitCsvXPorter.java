@@ -96,7 +96,10 @@ public class GitCsvXPorter implements CsvXPorter {
 
     private String getStatistic(List<ClazzRecord> clazzRecords) {
         long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
-        return String.format("%d classes (%d loaded, %d dead)", clazzRecords.size(), lc, clazzRecords.size() - lc);
+        long ac = clazzRecords.size();
+        long dc = ac - lc;
+        return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
+                lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
     }
 
 }
