@@ -20,7 +20,6 @@ package clazzfish.spi.git;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
 import clazzfish.monitor.stat.ClazzRecord;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,26 +69,34 @@ public class GitCsvXPorter implements CsvXPorter {
     }
 
     private void writeCSV(Repo repo, String csvHeadLine, List<String> csvLines) throws IOException, GitAPIException {
+        List<ClazzRecord> clazzRecords = csvLines.stream()
+                .map(ClazzRecord::fromCSV)
+                .collect(Collectors.toList());
+        writeCSV(repo, clazzRecords);
+        log.trace("{} lines with headline '{}'", csvLines.size(), csvHeadLine);
+    }
+
+    private void writeCSV(Repo repo, List<ClazzRecord> clazzRecords) throws IOException, GitAPIException {
         File outputFile = new File(repo.getDir(), "ClazzStatistic.csv");
         if (!outputFile.exists()) {
             if (!outputFile.createNewFile()) {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
-        csvHeadLine = StringUtils.substringAfter(csvHeadLine, ";").trim();
-        List<String> lines = mapClazzRecords(csvLines);
         FileXPorter fileXPorter = new FileXPorter();
-        fileXPorter.exportCSV(outputFile.toURI(), csvHeadLine, lines);
+        List<String> csvLines = clazzRecords.stream()
+                .map(cr -> cr.classname() + ";" + (cr.count() > 0 ? "1" : "0"))
+                .collect(Collectors.toList());
+        fileXPorter.exportCSV(outputFile.toURI(), "Classname;Count", csvLines);
         repo.add(outputFile);
-        repo.commit(csvHeadLine + " - " + lines.size() + " lines");
+        String statistic = getStatistic(clazzRecords);
+        repo.commit(statistic);
         repo.push();
     }
 
-    private static List<String> mapClazzRecords(List<String> csvLines) {
-        return csvLines.stream()
-                .map(ClazzRecord::fromCSV)
-                .map(cr -> cr.classname() + ";" + (cr.count() > 0 ? "1" : "0"))
-                .collect(Collectors.toList());
+    private String getStatistic(List<ClazzRecord> clazzRecords) {
+        long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
+        return String.format("%d classes (%d loaded, %d dead)", clazzRecords.size(), lc, clazzRecords.size() - lc);
     }
 
 }
