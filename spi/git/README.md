@@ -18,7 +18,17 @@ Ususally both are store in your home directory in the .ssh directory:
 * id_rsa.pub: public key
 
 
-### Invalid Privateky
+### Define SSH-Key
+
+As default clazzfish-spi-git module uses $HOME/id_rsa as private SSH key.
+If you want to use another SSH key you can set the environment variable `clazzfish.git.ssh.keyfile`:
+
+    java -Dclazzfish.git.ssh.keyfile=id_ed25519 ...
+
+This will use `id_ed25519` in the current directory as SSH key.
+
+
+### Invalid Privatekey
 
 clazzfish-spi-git uses [JSch](https://mvnrepository.com/artifact/com.jcraft/jsch) for SSH support.
 It uses your local private key to access your GIT server.
