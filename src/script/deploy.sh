@@ -8,7 +8,7 @@
 
 # set up some constants
 URL=https://oss.sonatype.org/service/local/staging/deploy/maven2/
-VERSION=2.5.2
+VERSION=2.6.0
 options="gpg:sign-and-deploy-file -Durl=$URL -DrepositoryId=sonatype-nexus-staging"
 
 # passphrase is needed for signing
@@ -44,3 +44,4 @@ deploy_pom_for clazzfish
 deploy_jar_for monitor clazzfish-monitor
 deploy_jar_for agent clazzfish-agent
 deploy_jar_for jdbc clazzfish-jdbc
+deploy_jar_for spi/git clazzfish-spi-git
