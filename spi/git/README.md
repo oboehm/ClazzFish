@@ -6,6 +6,12 @@ It supports URIs like
 * https://github.com/oboehm/ClazzFish.git or
 * ssh://git@github.com/oboehm/ClazzFish.git
 
+It is recommended to use SSH because HTTPS needs user/password authentification which is not yet supported:
+
+    java -Dclazzfish.dump.uri=ssh://git@github.com/oboehm/ClazzFish.git
+
+This will import and export `ClazzStatistic.csv` to a GitHub repository.
+
 
 ## SSH-Support
 

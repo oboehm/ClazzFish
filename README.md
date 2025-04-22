@@ -12,6 +12,7 @@ Part of ClassFish are several modules:
 * [monitor](monitor/README.md)
 * jdbc
 * [sample](sample/README.md)
+* [spi/git](spi/git/README.md)
 
 
 
