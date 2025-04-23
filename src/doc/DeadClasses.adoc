@@ -5,6 +5,8 @@ To find dead classes in your application there are mainly two classes in clazzfi
 * ClasspathMonitor
 * ClazzStatistic
 
+TIP: See also the talk https://www.java-forum-stuttgart.de/vortraege/dead-classes/[Dead Classes] on the https://www.java-forum-stuttgart.de/vortraege/2025/[Java Forum Stuttgart 2025]
+
 
 == Snapshot
 
@@ -179,11 +181,12 @@ To see more log messages you set the log level for clazzfish to DEBUG or TRACE.
 
 === Dead Static Classes
 
-If you start your application without the Java agent `clazzfish-agent` static and abstract classes will be reported as dead classes.
+If you start your application without the Java agent `clazzfish-agent` static and abstract classes will be reported as dead classes in older versions of ClazzFish (before 2.5).
 The reason for it is the use of the garbage collector (GC) as fallback.
 But the GC only collect object instances not classes.
 
-Start your application with `clazzfish-agent`:
+Also this problem ist fixed with v2.5 it is not guaranteed that it works with all kind of Java VMs.
+In this case start your application with `clazzfish-agent`:
 
 ----
 java -javaagent:/Users/ob/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.4/clazzfish-agent-2.4.jar ...
