@@ -21,9 +21,12 @@ stty $stty_orig
 options="gpg:sign-and-deploy-file -Durl=$URL -DrepositoryId=sonatype-nexus-staging -Dgpg.passphrase=$passphrase"
 
 deploy_pom_for() {
-	module=$1
-	echo deploying $module...
+    subdir=$1
+	module=$2
+	pushd $subdir
+	echo deploying $module in $subdir...
 	mvn -N $options -DpomFile=target/$module-$VERSION.pom -Dfile=target/$module-$VERSION.pom
+    popd
     echo
 }
 
@@ -40,8 +43,9 @@ deploy_jar_for() {
 }
 
 # start deployment
-deploy_pom_for clazzfish
+deploy_pom_for . clazzfish
 deploy_jar_for monitor clazzfish-monitor
 deploy_jar_for agent clazzfish-agent
 deploy_jar_for jdbc clazzfish-jdbc
+deploy_pom_for spi clazzfish-spi
 deploy_jar_for spi/git clazzfish-spi-git
