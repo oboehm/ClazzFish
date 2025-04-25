@@ -21,6 +21,7 @@ import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.CsvXPorterProvider;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * The class GitCsvXPorterProvider register itself as service for SPI.
@@ -42,7 +43,8 @@ public class GitCsvXPorterProvider implements CsvXPorterProvider {
 
     @Override
     public boolean supports(URI uri) {
-        if (uri.getAuthority().startsWith("git@")) {
+        String authority = Objects.toString(uri.getAuthority());
+        if (authority.startsWith("git@")) {
             return true;
         } else {
             return supports(uri.getScheme());

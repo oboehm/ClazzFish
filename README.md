@@ -44,5 +44,5 @@ The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-
 * [SQL Logging and Montitoring](src/doc/SQL-Logging.adoc)
 
 ---
-March 2022,
+April 2025,
 Oli B.

@@ -43,7 +43,7 @@ To activate the dump of loaded and unused classes you have to add the following 
 Be sure you start your application with `clazzfish-agent` as Java agent, e.g.
 
 ----
-java -javaagent:/Users/ob/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.4/clazzfish-agent-2.4.jar ...
+java -javaagent:/Users/ob/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.5.0/clazzfish-agent-2.5.0.jar ...
 ----
 
 The ClasspathMonitor and ClassStatistic (see below) will work also without the Java agent.
