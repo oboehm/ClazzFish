@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-[Unreleased]
+## [2.6.1] (26-Apr-2025)
 
-### [2.6.1] (26-Apr-2025)
+### FIXED
 - NPE during startup of clazzfish-spi-git
   ([issue #27](https://github.com/oboehm/ClazzFish/issues/27))
 
