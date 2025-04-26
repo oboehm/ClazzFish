@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]
 
-### Fixed
+### [2.6.1] (26-Apr-2025)
 - NPE during startup of clazzfish-spi-git
   ([issue #27](https://github.com/oboehm/ClazzFish/issues/27))
 
