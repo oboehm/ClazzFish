@@ -72,7 +72,7 @@ public class ArchivEntryTest {
         FilenameUtils.separatorsToUnix(Environment.getLocalMavenRepositoryDir().getPath());
         File logDir = new File(mavenRepositoryDir, "commons-logging/commons-logging");
         log0jar = new File(logDir, "1.1/commons-logging-1.1.jar");
-        log1jar = new File(logDir, "1.3.4/commons-logging-1.3.4.jar");
+        log1jar = new File(logDir, "1.3.5/commons-logging-1.3.5.jar");
     }
 
     /**
