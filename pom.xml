@@ -174,6 +174,11 @@
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
+            <!-- unused dependencies: mvn dependency:analyze -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
             <!-- call 'mvn versions:display-dependency-updates' to see upates -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
