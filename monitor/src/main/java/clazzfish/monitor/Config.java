@@ -128,7 +128,7 @@ public final class Config {
     }
 
     private static URI findDumpURI() {
-        String dumpUri = System.getenv("clazzfish.dump.uri");
+        String dumpUri = Config.getEnvironment("clazzfish.dump.uri");
         if (StringUtils.isBlank(dumpUri)) {
             return findDumpDir().toURI();
         } else {
