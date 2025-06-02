@@ -1,0 +1,4 @@
+Classpath; Classname; Count
+file:/ClazzFish/monitor/target/classes;clazzfish.monitor.AbstractMonitor;1
+file:/ClazzFish/monitor/target/classes;clazzfish.monitor.AbstractMonitorMBean;0
+file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0

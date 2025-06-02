@@ -28,9 +28,10 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -153,6 +154,18 @@ class ClazzStatisticTest {
         File corrupt = new File("src/test/resources/clazzfish/monitor/stat/corrupt.csv");
         recorder.importCSV(corrupt.toURI());
         assertFalse(recorder.getStatistics().isEmpty());
+    }
+
+    /**
+     * Unit test for issue #30.
+     */
+    @Test
+    void importOutdatedCSV() {
+        File outdated = new File("src/test/resources/clazzfish/monitor/stat/outdated.csv");
+        recorder.importCSV(outdated.toURI());
+        SortedSet<ClazzRecord> classes = recorder.getAllClasses();
+        ClazzRecord outdatedRecord = ClazzRecord.fromCSV("file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0");
+        assertThat(classes, not(hasItems(outdatedRecord)));
     }
 
     private static ClazzStatistic exportStatistic(File csvFile) throws IOException {
