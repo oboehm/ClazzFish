@@ -29,9 +29,9 @@ Usually both are stored in your home directory in the .ssh directory:
 As default clazzfish-spi-git module uses $HOME/id_rsa as private SSH key.
 If you want to use another SSH key you can set the environment variable `clazzfish.git.ssh.keyfile`:
 
-    java -Dclazzfish.git.ssh.keyfile=id_ed25519 ...
+    java -Dclazzfish.git.ssh.keyfile=my_id_rsa ...
 
-This will use `id_ed25519` in the current directory as SSH key.
+This will use `my_id_rsa` in the current directory as SSH key.
 
 
 ### Invalid Privatekey
@@ -43,9 +43,15 @@ If you get the error message like
 
     invalid privatekey: [B@59c40796.
 
-it is likely that your private keyfile is in the wrong format.
+it is likely that your private keyfile is in the wrong format or not supported.
 You can transform it using `ssh-keygen`:
 
     ssh-keygen -p -f .ssh/id_rsa -m pem
 
 For more info, see this [stackoverflow article](https://stackoverflow.com/questions/53134212/invalid-privatekey-when-using-jsch).
+
+Another pitfall is the protocol type.
+Not all types (e.g. ed25519) are supported.
+Use `rsa` if you are not sure if the protocol type is supported:
+
+    ssh-keygen -t rsa -m pem
