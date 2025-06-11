@@ -313,7 +313,7 @@ public class ClasspathDigger extends AbstractDigger {
 			throws IOException {
         Collection<String> allElements = readElementsFromNestedArchive(archive);
         for(String resource : allElements) {
-            if (resource.endsWith(suffix)) {
+            if (resource.endsWith(suffix) && (ClassWalker.isClassName(resource))) {
                 elements.add(Converter.resourceToClass(resource));
             }
         }

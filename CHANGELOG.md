@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - attribute 'ExportFile' of ClazzStatistic changed to 'ExportURI'
 
+### Fixed
+- 'module-info' is no longer considered as class
+  ([issue #32](https://github.com/oboehm/ClazzFish/issues/32))
+
+
 ## [2.6.1] (26-Apr-2025)
 
 ### FIXED

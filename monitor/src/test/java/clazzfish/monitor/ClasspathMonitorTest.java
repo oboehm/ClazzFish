@@ -239,13 +239,20 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     /**
-     * Test get classpath classes.
+     * Test get classpath classes. It is also a unit test for issue #32.
      */
     @Test
     public void testGetClasspathClasses() {
         LOG.info("testGetClasspathClasses() is started.");
         String[] allClasses = cpMon.getClasspathClasses();
         assertTrue(allClasses.length > 0, "no classes found?");
+        assertNotContains(allClasses, "module-info");
+    }
+
+    private static void assertNotContains(String[] classes, String name) {
+        for (String clazz : classes) {
+            assertNotEquals(name, clazz, "in list of " + classes.length + " classes");
+        }
     }
 
     /**
