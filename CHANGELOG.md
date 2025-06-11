@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - generating SBOM with CycloneDX Maven Plugin
 
+### Changed
+- attribute 'ExportFile' of ClazzStatistic changed to 'ExportURI'
+
 ## [2.6.1] (26-Apr-2025)
 
 ### FIXED

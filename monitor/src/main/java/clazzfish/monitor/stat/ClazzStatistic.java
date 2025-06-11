@@ -184,8 +184,8 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     @Override
-    public File getExportFile() {
-        return new File(csvURI);
+    public URI getExportURI() {
+        return csvURI;
     }
 
     @Override
@@ -246,7 +246,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
     }
 
     private void importCSV() {
-        URI csvURI = getExportFile().toURI();
+        URI csvURI = getExportURI();
         if (exists(csvURI)) {
             importCSV(csvURI);
         } else {

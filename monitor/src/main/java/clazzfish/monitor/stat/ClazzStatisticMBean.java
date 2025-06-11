@@ -20,7 +20,6 @@ package clazzfish.monitor.stat;
 import clazzfish.monitor.jmx.Description;
 import clazzfish.monitor.util.Shutdownable;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -57,10 +56,10 @@ public interface ClazzStatisticMBean extends Shutdownable {
     URI exportCSV(String filename) throws IOException;
 
     /**
-     * Returns the name of the default export file.
+     * Returns the URI where the statistic should be exported to.
      *
-     * @return export file
+     * @return export URI
      */
-    File getExportFile();
+    URI getExportURI();
 
 }

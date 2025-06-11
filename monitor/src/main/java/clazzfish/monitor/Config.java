@@ -46,6 +46,7 @@ public final class Config {
 
     private Config(final URI dumpURI) {
         this.dumpURI = dumpURI;
+        log.debug("Config with dumpURI {} is created.", dumpURI);
     }
 
     /**
