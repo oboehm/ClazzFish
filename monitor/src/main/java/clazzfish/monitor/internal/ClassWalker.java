@@ -60,15 +60,12 @@ public class ClassWalker extends ResourceWalker {
 		Collection<String> resources = this.getResources();
 		Collection<String> classes = new ArrayList<>(resources.size());
 		for (String res : resources) {
-			if (isClassName(res)) {
-				classes.add(Converter.resourceToClass(res));
+			String classname = Converter.resourceToClass(res);
+			if (ClassFilter.DEFAULT.isClassName(classname)) {
+				classes.add(classname);
 			}
 		}
 		return classes;
-	}
-
-	public static boolean isClassName(String res) {
-		return !"module-info.class".equals(res);
 	}
 
 }

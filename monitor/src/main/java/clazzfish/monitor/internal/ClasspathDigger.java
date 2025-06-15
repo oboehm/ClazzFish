@@ -313,8 +313,11 @@ public class ClasspathDigger extends AbstractDigger {
 			throws IOException {
         Collection<String> allElements = readElementsFromNestedArchive(archive);
         for(String resource : allElements) {
-            if (resource.endsWith(suffix) && (ClassWalker.isClassName(resource))) {
-                elements.add(Converter.resourceToClass(resource));
+            if (resource.endsWith(suffix)) {
+				String classname = Converter.resourceToClass(resource);
+				if (ClassFilter.DEFAULT.isClassName(classname)) {
+					elements.add(Converter.resourceToClass(classname));
+				}
             }
         }
 	}
@@ -463,7 +466,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 * HANDLE WITH CARE (it's a hack and it depends on the used classloader)
 	 * </p>
 	 *
-	 * @return list of classes
+	 * @return set of classes
 	 */
 	public Set<Class<?>> getLoadedClasses() {
 		List<Class<?>> loadedClasses = new ArrayList<>();
