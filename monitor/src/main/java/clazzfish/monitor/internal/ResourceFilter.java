@@ -33,7 +33,7 @@ public final class ResourceFilter {
     private final Pattern exclude;
 
     private ResourceFilter() {
-        this(".*module-info.class");
+        this(".*module-info.class|/META-INF/.*");
     }
 
     public ResourceFilter(String pattern) {

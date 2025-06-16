@@ -38,8 +38,14 @@ class ResourceFilterTest {
     }
 
     @Test
-    void isIncludedFalse() {
+    void isIncludedModuleInfo() {
         assertFalse(filter.isIncluded("module-info.class"));
+        assertFalse(filter.isIncluded("/META-INF/versions/9/module-info.class"));
+    }
+
+    @Test
+    void isIncludedMetaInfo() {
+        assertFalse(filter.isIncluded("/META-INF/versions/9/org/bouncycastle/util/Strings.class"));
     }
 
 }
