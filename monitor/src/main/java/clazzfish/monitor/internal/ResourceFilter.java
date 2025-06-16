@@ -21,22 +21,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The ClassFilter was introduced with issue #34. It allows you to exclude
- * classes which are of no interest for you.
+ * The ResourceFilter was introduced with issue #34. It allows you to exclude
+ * resources (and classes) which are of no interest for you.
  *
  * @author oboehm
  * @since 2.7 (12.06.25)
  */
-public final class ClassFilter {
+public final class ResourceFilter {
 
-    public static ClassFilter DEFAULT = new ClassFilter();
+    public static ResourceFilter DEFAULT = new ResourceFilter();
     private final Pattern exclude;
 
-    private ClassFilter() {
-        this(".*module-info");
+    private ResourceFilter() {
+        this(".*module-info.class");
     }
 
-    public ClassFilter(String pattern) {
+    public ResourceFilter(String pattern) {
         this.exclude = Pattern.compile(pattern);
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * (c)reated 14.06.25 by oboehm
+ * (c)reated 16.06.25 by oboehm
  */
 package clazzfish.monitor.internal;
 
@@ -22,23 +22,24 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link ClassFilter}.
+ * Unit tests for {@link ResourceFilter}.
  *
  * @author oboehm
- * @since 14.06.25
+ * @since 16.06.25
  */
-class ClassFilterTest {
+class ResourceFilterTest {
 
-    private final ClassFilter filter = ClassFilter.DEFAULT;
+
+    private final ResourceFilter filter = ResourceFilter.DEFAULT;
 
     @Test
     void isIncluded() {
-        assertTrue(filter.isIncluded("java.lang.Object "));
+        assertTrue(filter.isIncluded("/java/lang/Object "));
     }
 
     @Test
     void isIncludedFalse() {
-        assertFalse(filter.isIncluded("module-info"));
+        assertFalse(filter.isIncluded("module-info.class"));
     }
 
 }

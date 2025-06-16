@@ -313,11 +313,9 @@ public class ClasspathDigger extends AbstractDigger {
 			throws IOException {
         Collection<String> allElements = readElementsFromNestedArchive(archive);
         for(String resource : allElements) {
-            if (resource.endsWith(suffix)) {
+            if (resource.endsWith(suffix) && ResourceFilter.DEFAULT.isIncluded(resource)) {
 				String classname = Converter.resourceToClass(resource);
-				if (ClassFilter.DEFAULT.isClassName(classname)) {
-					elements.add(Converter.resourceToClass(classname));
-				}
+				elements.add(Converter.resourceToClass(classname));
             }
         }
 	}
