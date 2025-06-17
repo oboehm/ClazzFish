@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Fixed
+- dependency `com.jcraft:jsch` replaced with `com.github.mwiede:jsch`
+  ([issue #36](https://github.com/oboehm/ClazzFish/issues/36))
+
+
 ## [2.6.2] (11-Jun-2025)
 
 ### Added
