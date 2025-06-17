@@ -16,7 +16,7 @@
   </description>
 
   <properties>
-    <jgit.version>7.2.0.202503040940-r</jgit.version>
+    <jgit.version>7.3.0.202506031305-r</jgit.version>
   </properties>
 
   <dependencies>
@@ -35,6 +35,17 @@
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
       <version>${jgit.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.jcraft</groupId>
+          <artifactId>jsch</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.mwiede</groupId>
+      <artifactId>jsch</artifactId>
+      <version>2.27.0</version>
     </dependency>
     <!-- Testing -->
     <dependency>
