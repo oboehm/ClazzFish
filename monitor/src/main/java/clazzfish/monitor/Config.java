@@ -26,6 +26,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
  * All config stuff is encapsulated in this class.
@@ -36,17 +37,34 @@ import java.util.Objects;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
-    private URI dumpURI;
+    private final Properties properties;
 
     public static Config DEFAULT = new Config();
 
     private Config() {
-        this(findDumpURI());
+        this(readProperties());
     }
 
-    private Config(final URI dumpURI) {
-        this.dumpURI = dumpURI;
-        log.debug("Config with dumpURI {} is created.", dumpURI);
+    private Config(Properties properties) {
+        this.properties = properties;
+        log.debug("Config with {} is created.", properties);
+    }
+
+    private static Properties readProperties() {
+        Properties props = new Properties();
+        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+            if (entry.getKey().toString().startsWith("clazzfish.")) {
+                props.setProperty((String) entry.getKey(), (String) entry.getValue());
+            }
+        }
+        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+            String envKey = entry.getKey().toLowerCase();
+            if (envKey.startsWith("clazzfish")) {
+                String key = envKey.replace('_', '.');
+                props.setProperty(key, entry.getValue());
+            }
+        }
+        return props;
     }
 
     /**
@@ -68,31 +86,19 @@ public final class Config {
     }
 
     /**
-     * Uses {@link #getEnvironment(String)} to find the key as system property
-     * or environment variable. If key is not set the given defaultValue will
-     * be returned.
-     *
-     * @param key name of the property or environment variable (in lowercase)
-     * @param defaultValue default value
-     * @return value found or default value
-     */
-    public static String getEnvironment(String key, String defaultValue) {
-        String value = getEnvironment(key);
-        if (StringUtils.isBlank(value)) {
-            log.debug("Environment '{}' is not set, using default value '{}'.", key, defaultValue);
-            value = defaultValue;
-        }
-        return value;
-    }
-
-    /**
      * Get the directory where the collected dates and statistics are dumped
      * to.
      *
      * @return directory for export
      */
     public File getDumpDir() {
-        return new File(dumpURI);
+        String dirname = properties.getProperty("clazzfish.dump.dir");
+        if (StringUtils.isNotBlank(dirname)) {
+            return new File(dirname);
+        } else {
+            File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish");
+            return new File(dir, getAppName());
+        }
     }
 
     /**
@@ -112,7 +118,12 @@ public final class Config {
      * @return directory or URI for export
      */
     public URI getDumpURI() {
-        return dumpURI;
+        String dumpUri = properties.getProperty("clazzfish.dump.uri");
+        if (StringUtils.isBlank(dumpUri)) {
+            return getDumpDir().toURI();
+        } else {
+            return URI.create(dumpUri);
+        }
     }
 
     /**
@@ -122,29 +133,14 @@ public final class Config {
      * @param uri directory or URI for export
      */
     public void setDumpURI(URI uri) {
-        if (!Objects.equals(uri, this.dumpURI)) {
-            this.dumpURI = uri;
+        if (!Objects.equals(uri, this.getDumpURI())) {
+            properties.setProperty("clazzfish.dump.uri", uri.toString());
             log.info("Dump-URI is set to '{}'.", uri);
         }
     }
 
-    private static URI findDumpURI() {
-        String dumpUri = Config.getEnvironment("clazzfish.dump.uri");
-        if (StringUtils.isBlank(dumpUri)) {
-            return findDumpDir().toURI();
-        } else {
-            return URI.create(dumpUri);
-        }
-    }
-
-    private static File findDumpDir() {
-        String dirname = Config.getEnvironment("clazzfish.dump.dir");
-        if (StringUtils.isNotBlank(dirname)) {
-            return new File(dirname);
-        } else {
-            File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish");
-            return new File(dir, getAppName());
-        }
+    public String getProperty(String name) {
+        return getEnvironment(name);
     }
 
     private static String getAppName() {

@@ -15,9 +15,8 @@
  *
  * (c)reated 19.12.24 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.monitor;
 
-import clazzfish.monitor.Config;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
