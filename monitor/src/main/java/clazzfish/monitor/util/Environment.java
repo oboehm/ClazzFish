@@ -53,9 +53,6 @@ public class Environment {
 	private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 	private static final String FALSE = "false";
 
-	/** The only instance of this class. */
-	public static final Environment INSTANCE = new Environment();
-
 	/** System property to disable multithreading. */
 	public static final String DISABLE_THREADS = "clazzfish.disableThreads";
 
@@ -153,6 +150,7 @@ public class Environment {
 		}
 		Properties props = loadProperties(istream);
 		istream.close();
+		LOG.debug("{} properties loaded from '{}'.", props.size(), resource);
 		return props;
 	}
 

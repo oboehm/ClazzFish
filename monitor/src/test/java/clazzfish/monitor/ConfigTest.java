@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit-Test fuer {@link Config} ...
@@ -49,6 +48,13 @@ class ConfigTest {
         URI uri = Config.DEFAULT.getDumpURI();
         assertNotNull(uri);
         log.info("dumpURI = '{}'", uri);
+    }
+
+    @Test
+    void ofResource() {
+        Config config = Config.of("clazzfish/monitor/util/test.properties");
+        assertFalse(config.getProperties().isEmpty());
+        log.info("config = {}", config);
     }
 
 }

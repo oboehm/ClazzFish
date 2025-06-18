@@ -17,12 +17,14 @@
  */
 package clazzfish.monitor;
 
+import clazzfish.monitor.util.Environment;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
@@ -50,13 +52,24 @@ public final class Config {
         log.debug("Config with {} is created.", properties);
     }
 
+    public static Config of(String resource) {
+        Properties properties = readProperties(resource);
+        return new Config(properties);
+    }
+
+    private static Properties readProperties(String resource) {
+        try {
+            Properties props = Environment.loadProperties(resource);
+            Properties sysProps = readProperties();
+            props.putAll(sysProps);
+            return props;
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("not a resource: " + resource, ex);
+        }
+    }
+
     private static Properties readProperties() {
         Properties props = new Properties();
-        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-            if (entry.getKey().toString().startsWith("clazzfish.")) {
-                props.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
         for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
             String envKey = entry.getKey().toLowerCase();
             if (envKey.startsWith("clazzfish")) {
@@ -64,6 +77,13 @@ public final class Config {
                 props.setProperty(key, entry.getValue());
             }
         }
+        log.trace("{} properties loaded from environment.", props.size());
+        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+            if (entry.getKey().toString().startsWith("clazzfish.")) {
+                props.setProperty((String) entry.getKey(), (String) entry.getValue());
+            }
+        }
+        log.trace("{} properties loaded from environment and system properties.", props.size());
         return props;
     }
 
@@ -139,8 +159,17 @@ public final class Config {
         }
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public String getProperty(String name) {
         return getEnvironment(name);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + properties;
     }
 
     private static String getAppName() {
