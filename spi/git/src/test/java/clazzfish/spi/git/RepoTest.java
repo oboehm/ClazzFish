@@ -52,7 +52,7 @@ class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
     private static final URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
-    private static final SshConfig sshConfig = new SshConfig();
+    private static final SshConfig sshConfig = SshConfig.DEFAULT;
     private static GitServer SERVER;
 
     @BeforeAll
@@ -66,7 +66,7 @@ class RepoTest {
     void ofHttps() throws GitAPIException, IOException {
         URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
         prepareRepo(uri);
-        try (Repo repo = Repo.of(uri,  sshConfig)) {
+        try (Repo repo = Repo.of(uri, sshConfig)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }
@@ -89,7 +89,7 @@ class RepoTest {
         assumeTrue(Files.exists(Paths.get(System.getProperty("user.home"), ".ssh/id_rsa")),
                 "no private ssh key available");
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/ClazzStatistic.csv");
-        try (Repo repo = Repo.of(uri,  sshConfig)) {
+        try (Repo repo = Repo.of(uri, sshConfig)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }

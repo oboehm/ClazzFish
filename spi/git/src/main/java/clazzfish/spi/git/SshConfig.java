@@ -29,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * The class SshConfig ...
@@ -39,15 +42,24 @@ import java.io.File;
 public final class SshConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SshConfig.class);
+    private static final Map<Config, SshConfig> CACHE = new HashMap<>();
     private final Config config;
+    private final SshSessionFactory sshSessionFactory;
 
-    public SshConfig() {
-        this(Config.DEFAULT);
-    }
+    public static final SshConfig DEFAULT = SshConfig.of(Config.DEFAULT);
 
     public SshConfig(Config config) {
         this.config = config;
-        setUpSshSessionFactory(config);
+        sshSessionFactory = createSshSessionFactory(config);
+    }
+
+    public static SshConfig of(Config cfg) {
+        SshConfig sshCfg = CACHE.get(cfg);
+        if (sshCfg == null) {
+            sshCfg = new SshConfig(cfg);
+            CACHE.put(cfg, sshCfg);
+        }
+        return sshCfg;
     }
 
     private static File getPrivateKeyFile(Config cfg) {
@@ -67,7 +79,7 @@ public final class SshConfig {
         return getPrivateKeyFile(config);
     }
 
-    private static void setUpSshSessionFactory(Config cfg) {
+    private static SshSessionFactory createSshSessionFactory(Config cfg) {
         File keyFile = getPrivateKeyFile(cfg);
         SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
             @Override
@@ -78,32 +90,35 @@ public final class SshConfig {
             @Override
             protected JSch createDefaultJSch(FS fs) throws JSchException {
                 JSch defaultJSch = super.createDefaultJSch(fs);
+                // if you'll get "invalid privatekey" transfrom your file into PEM format
                 defaultJSch.addIdentity(keyFile.getAbsolutePath());
                 return defaultJSch;
             }
         };
         SshSessionFactory.setInstance(sshSessionFactory);
         log.debug("SSH sessions are set up with non-strict host checking and '{}' as private key.", keyFile);
+        return sshSessionFactory;
     }
 
     public SshSessionFactory getSshSessionFactory() {
-        File privateKeyFile = getPrivateKeyFile();
-        if (privateKeyFile.exists()) {
-            SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
-                @Override
-                protected JSch createDefaultJSch( FS fs ) throws JSchException {
-                    JSch defaultJSch = super.createDefaultJSch(fs);
-                    // if you'll get "invalid privatekey" transfrom your file into PEM format
-                    defaultJSch.addIdentity(privateKeyFile.toString());
-                    return defaultJSch;
-                }
-            };
-            log.debug("Using private key file '{}' as ssh identity.", privateKeyFile);
-            return sshSessionFactory;
-        } else {
-            log.warn("No private key file {} found, using default ssh identity.", privateKeyFile);
-            return new JschConfigSessionFactory();
-        }
+        return sshSessionFactory;
+    }
+
+    @Override
+    public String toString() {
+        return "SSH-" + config;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SshConfig)) return false;
+        SshConfig sshConfig = (SshConfig) o;
+        return Objects.equals(config, sshConfig.config);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(config);
     }
 
 }

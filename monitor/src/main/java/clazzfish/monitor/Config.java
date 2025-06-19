@@ -172,6 +172,18 @@ public final class Config {
         return getClass().getSimpleName() + properties;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Config)) return false;
+        Config config = (Config) o;
+        return Objects.equals(properties, config.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(properties);
+    }
+
     private static String getAppName() {
         String[] keys = { "appname", "app.name", "progname", "prog.name", "application.name", "spring.application.name" };
         for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {

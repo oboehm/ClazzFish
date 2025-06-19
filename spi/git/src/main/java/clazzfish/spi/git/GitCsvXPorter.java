@@ -43,7 +43,7 @@ public class GitCsvXPorter implements CsvXPorter {
     private final SshConfig sshConfig;
 
     public GitCsvXPorter() {
-        this(new SshConfig());
+        this(SshConfig.DEFAULT);
     }
 
     public GitCsvXPorter(SshConfig sshConfig) {

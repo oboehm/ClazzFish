@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class GitCsvXPorterTest {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
-    private final SshConfig sshConfig = new SshConfig();
+    private final SshConfig sshConfig = SshConfig.DEFAULT;
     private final GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig);
 
     @Test

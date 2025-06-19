@@ -19,6 +19,7 @@ package clazzfish.spi.git;
 
 import clazzfish.monitor.Config;
 import org.junit.jupiter.api.Test;
+import patterntesting.runtime.junit.ObjectTester;
 
 import java.io.File;
 
@@ -36,10 +37,17 @@ class SshConfigTest {
     @Test
     void getPrivateKeyFile() {
         Config config = Config.of("config/clazzfish-test.properties");
-        SshConfig sshConfig = new SshConfig(config);
+        SshConfig sshConfig = SshConfig.of(config);
         File keyFile = sshConfig.getPrivateKeyFile();
         assertTrue(keyFile.exists());
         assertEquals("id_ed25519", keyFile.getName());
+    }
+
+    @Test
+    void testEquals() {
+        ObjectTester.assertEquals(SshConfig.DEFAULT, SshConfig.DEFAULT);
+        ObjectTester.assertEquals(SshConfig.of(Config.of("config/clazzfish-test.properties")),
+                SshConfig.of(Config.of("config/clazzfish-test.properties")));
     }
 
 }
