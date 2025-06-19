@@ -54,7 +54,11 @@ public final class Config {
 
     public static Config of(String resource) {
         Properties properties = readProperties(resource);
-        return new Config(properties);
+        return Config.of(properties);
+    }
+
+    public static Config of(Properties props) {
+        return new Config(props);
     }
 
     private static Properties readProperties(String resource) {

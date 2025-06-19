@@ -17,6 +17,8 @@
  */
 package clazzfish.spi.git;
 
+import clazzfish.monitor.Config;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -41,8 +44,16 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class GitCsvXPorterTest {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
-    private final SshConfig sshConfig = SshConfig.DEFAULT;
+    private static SshConfig sshConfig;
     private final GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig);
+
+    @BeforeAll
+    static void setUpSshConfig() {
+        File keyFile = new File(System.getProperty("user.home"), ".ssh/id_rsa");
+        Properties props = new Properties();
+        props.setProperty("clazzfish.git.ssh.keyfile", keyFile.getAbsolutePath());
+        sshConfig = SshConfig.of(Config.of(props));
+    }
 
     @Test
     void exportCSV() throws IOException {
