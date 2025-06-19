@@ -17,10 +17,6 @@
  */
 package clazzfish.spi.git;
 
-import clazzfish.monitor.Config;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -30,9 +26,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
-import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
-import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
-import org.eclipse.jgit.util.FS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,49 +49,17 @@ public class Repo implements AutoCloseable {
     private final URI uri;
     private final Git git;
 
-    static {
-        SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
-            @Override
-            protected void configure(OpenSshConfig.Host host, Session session) {
-                session.setConfig("StrictHostKeyChecking", "no");
-                log.debug("Strict host checking of {} is disabled for {}.", host, session);
-            }
-            @Override
-            protected JSch createDefaultJSch(FS fs) throws JSchException {
-                JSch defaultJSch = super.createDefaultJSch(fs);
-                File keyFile = getSshKeyFile();
-                defaultJSch.addIdentity(keyFile.getAbsolutePath());
-                return defaultJSch;
-            }
-        };
-        SshSessionFactory.setInstance(sshSessionFactory);
-        log.debug("SSH sessions are set up with non-strict host checking.");
-    }
-
-    public static File getSshKeyFile() {
-        String propname = "clazzfish.git.ssh.keyfile";
-        String filename = Config.getEnvironment(propname);
-        if (filename == null) {
-            File defaultFile = new File(System.getProperty("user.home"), ".ssh/id_rsa");
-            log.debug("Using '{}' for SSH key because property '{}' is not set.", defaultFile, propname);
-            return defaultFile;
-        } else {
-            log.debug("Using '{}' for SSH key.", filename);
-            return new File(filename);
-        }
-    }
-
     private Repo(URI uri, Git git) {
         this.uri = uri;
         this.git = git;
     }
 
-    public static Repo of(URI gitURI) throws IOException, GitAPIException {
+    public static Repo of(URI gitURI, SshConfig sshCfg) throws IOException, GitAPIException {
         if (gitURI.getScheme().equalsIgnoreCase("file")) {
             throw new UnsupportedOperationException(gitURI + ": file protocol is not supported");
         }
         URI baseURI = getBaseURI(gitURI);
-        Git git = getRepo(baseURI);
+        Git git = getRepo(baseURI, sshCfg);
         return new Repo(baseURI, git);
     }
 
@@ -112,7 +73,7 @@ public class Repo implements AutoCloseable {
         return gitURI;
     }
 
-    private static Git getRepo(URI gitURI) throws IOException, GitAPIException {
+    private static Git getRepo(URI gitURI, SshConfig sshCfg) throws IOException, GitAPIException {
         final Path repoDir = getRepoPathOf(gitURI);
         if (Files.exists(repoDir)) {
             try (Stream<Path> list = Files.list(repoDir)) {
@@ -121,7 +82,7 @@ public class Repo implements AutoCloseable {
                 }
             }
         }
-        return cloneRepo(gitURI, repoDir);
+        return cloneRepo(gitURI, repoDir, sshCfg);
     }
 
     public static Path getRepoPathOf(URI gitURI) {
@@ -136,45 +97,25 @@ public class Repo implements AutoCloseable {
         return git;
     }
 
-    private static Git cloneRepo(URI gitURI, Path repoDir) throws IOException, GitAPIException {
+    private static Git cloneRepo(URI gitURI, Path repoDir, SshConfig sshCfg) throws IOException, GitAPIException {
         File dir = Files.createDirectories(repoDir).toFile();
         CloneCommand cmd = Git.cloneRepository()
                 .setURI(gitURI.toString())
                 .setDirectory(dir);
         if (gitURI.getScheme().equalsIgnoreCase("ssh")) {
-            setSshCredentials(cmd);
+            setSshCredentials(cmd, sshCfg);
         }
         Git git = cmd.call();
         log.debug("{} is cloned to dir '{}'.", gitURI, repoDir);
         return git;
     }
 
-    private static void setSshCredentials(CloneCommand cmd) {
-        SshSessionFactory sshSessionFactory = getSshSessionFactory();
+    private static void setSshCredentials(CloneCommand cmd, SshConfig sshCfg) {
+        SshSessionFactory sshSessionFactory = sshCfg.getSshSessionFactory();
         cmd.setTransportConfigCallback(transport -> {
             SshTransport sshTransport = (SshTransport) transport;
             sshTransport.setSshSessionFactory(sshSessionFactory);
         });
-    }
-
-    private static SshSessionFactory getSshSessionFactory() {
-        Path privateKeyFile = Paths.get(System.getProperty("user.home"), ".ssh/id_rsa");
-        if (Files.exists(privateKeyFile)) {
-            SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
-                @Override
-                protected JSch createDefaultJSch( FS fs ) throws JSchException {
-                    JSch defaultJSch = super.createDefaultJSch( fs );
-                    // if you'll get "invalid privatekey" transfrom your file into PEM format
-                    defaultJSch.addIdentity(privateKeyFile.toString());
-                    return defaultJSch;
-                }
-            };
-            log.debug("Using private key file '{}' as ssh identity.", privateKeyFile);
-            return sshSessionFactory;
-        } else {
-            log.warn("No private key file {} found, using default ssh identity.", privateKeyFile);
-            return new JschConfigSessionFactory();
-        }
     }
 
     public File getDir() {

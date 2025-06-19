@@ -40,10 +40,19 @@ import java.util.stream.Collectors;
 public class GitCsvXPorter implements CsvXPorter {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorter.class);
+    private final SshConfig sshConfig;
+
+    public GitCsvXPorter() {
+        this(new SshConfig());
+    }
+
+    public GitCsvXPorter(SshConfig sshConfig) {
+        this.sshConfig = sshConfig;
+    }
 
     @Override
     public List<String> importCSV(URI uri) throws IOException {
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri, sshConfig)) {
             return importCSV(new File(repo.getDir(), "ClazzStatistic.csv"));
         } catch (GitAPIException ex) {
             log.info("Cannot import ClazzStatistic.csv from {} ({}).", uri, ex.getMessage());
@@ -59,7 +68,7 @@ public class GitCsvXPorter implements CsvXPorter {
 
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri, sshConfig)) {
             writeCSV(repo, csvHeadLine, csvLines);
             log.debug("Statistic exported with {} lines to '{}'.", csvLines.size(), uri);
         } catch (GitAPIException ex) {

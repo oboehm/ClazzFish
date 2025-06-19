@@ -41,12 +41,13 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class GitCsvXPorterTest {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
-    private final GitCsvXPorter xPorter = new GitCsvXPorter();
+    private final SshConfig sshConfig = new SshConfig();
+    private final GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig);
 
     @Test
     void exportCSV() throws IOException {
         // Given
-        assumeTrue(Repo.getSshKeyFile().exists(), "no SSH key file");
+        assumeTrue(sshConfig.getPrivateKeyFile().exists(), "no SSH key file");
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
         assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
         String header = "Classpath;Classname;Count";

@@ -52,6 +52,7 @@ class RepoTest {
 
     private static final Logger log = LoggerFactory.getLogger(RepoTest.class);
     private static final URI TEST_URI = URI.create("http://localhost:8080/TestRepo");
+    private static final SshConfig sshConfig = new SshConfig();
     private static GitServer SERVER;
 
     @BeforeAll
@@ -65,7 +66,7 @@ class RepoTest {
     void ofHttps() throws GitAPIException, IOException {
         URI uri = URI.create("https://github.com/oboehm/ClazzFish.git");
         prepareRepo(uri);
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri,  sshConfig)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }
@@ -77,7 +78,7 @@ class RepoTest {
                 "no private ssh key available");
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
         prepareRepo(uri);
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri,  sshConfig)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }
@@ -88,7 +89,7 @@ class RepoTest {
         assumeTrue(Files.exists(Paths.get(System.getProperty("user.home"), ".ssh/id_rsa")),
                 "no private ssh key available");
         URI uri = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/ClazzStatistic.csv");
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri,  sshConfig)) {
             assertNotNull(repo);
             assertTrue(repo.getDir().isDirectory());
         }
@@ -112,10 +113,10 @@ class RepoTest {
 
     @Test
     void pull() throws GitAPIException, IOException {
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             assertNotNull(repo);
         }
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             assertNotNull(repo);
         }
     }
@@ -126,7 +127,7 @@ class RepoTest {
         assumeFalse(testRepoProp == null, "system property 'test.repo.uri' not set");
         URI uri = URI.create(testRepoProp);
         assumeTrue(NetworkTester.isOnline(uri.getHost(), uri.getPort()), uri + " is offline");
-        try (Repo repo = Repo.of(uri)) {
+        try (Repo repo = Repo.of(uri, sshConfig)) {
             assertNotNull(repo);
         }
     }
@@ -134,7 +135,7 @@ class RepoTest {
     @Test
     void getStatus() throws GitAPIException, IOException {
         deleteRepoPath(TEST_URI);
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             Status status = repo.getStatus();
             assertNotNull(status);
             assertTrue(status.isClean());
@@ -151,7 +152,7 @@ class RepoTest {
 
     @Test
     void add() throws GitAPIException, IOException {
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             addTo(repo, "hello.world");
             assertFalse(repo.getStatus().isClean());
         }
@@ -165,7 +166,7 @@ class RepoTest {
 
     @Test
     void commit() throws GitAPIException, IOException {
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             addTo(repo, "crash.com");
             repo.commit("bumm");
             assertTrue(repo.getStatus().isClean());
@@ -174,7 +175,7 @@ class RepoTest {
 
     @Test
     void push() throws GitAPIException, IOException {
-        try (Repo repo = Repo.of(TEST_URI)) {
+        try (Repo repo = Repo.of(TEST_URI, sshConfig)) {
             addTo(repo, "push.it");
             repo.commit("go");
             Iterable<PushResult> results = repo.push();
@@ -185,7 +186,7 @@ class RepoTest {
 
     private void assertFilePushed(URI testUri, String filename) throws IOException, GitAPIException {
         deleteRepoPath(testUri);
-        try (Repo repo = Repo.of(testUri)) {
+        try (Repo repo = Repo.of(testUri, sshConfig)) {
             File pushed = new File(repo.getDir(), filename);
             assertTrue(pushed.isFile());
         }
