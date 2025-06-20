@@ -116,7 +116,7 @@ public final class ClassDiagnostic {
         Set<Class<?>> classes = new HashSet<>();
         String[] lines = hierarchy.split("\n");
         for(String l : lines) {
-            String className = StringUtils.substringBefore(l.trim(), '/');
+            String className = StringUtils.substringBefore(l.trim(), '/').trim();
             if (className.startsWith("|")) {
                 className = StringUtils.substringAfterLast(className, "|--");
             }

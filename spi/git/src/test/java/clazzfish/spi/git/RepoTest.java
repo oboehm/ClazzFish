@@ -121,6 +121,16 @@ class RepoTest {
         }
     }
 
+    /**
+     * This test is more an integration test. If you want to test a special
+     * GIT repos call e.g.
+     * <p>
+     *     java -Dtest.repo.uri=ssh://git@bitbucket.example.com:7999/demo/dead-classes.git/ClazzStatistic.csv
+     *     -Dclazzfish.git.ssh.keyfile=...
+     * </p>
+     * @throws GitAPIException in case of GIT problems
+     * @throws IOException.    in case of I/O problems
+     */
     @Test
     void ofTestRepo() throws GitAPIException, IOException {
         String testRepoProp = System.getProperty("test.repo.uri");

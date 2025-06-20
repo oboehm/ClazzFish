@@ -649,7 +649,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @return list of classes
 	 */
-	public synchronized List<Class<?>> getLoadedClassList() {
+	public List<Class<?>> getLoadedClassList() {
 		List<Class<?>> loadedClassList = new ArrayList<>();
 		for (Class<?> loadedClass : classpathDigger.getLoadedClasses()) {
 			if (!loadedClass.isArray()) {
@@ -666,7 +666,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the classes as sorted string array
 	 */
 	@Override
-	public synchronized String[] getLoadedClasses() {
+	public String[] getLoadedClasses() {
 		List<Class<?>> classes = getLoadedClassList();
 		if (classes.size() != loadedClasses.length) {
 			loadedClasses = new String[classes.size()];
