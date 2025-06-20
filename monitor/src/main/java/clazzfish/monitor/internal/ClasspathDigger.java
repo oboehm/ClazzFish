@@ -490,6 +490,30 @@ public class ClasspathDigger extends AbstractDigger {
 		return Set.copyOf(loadedClasses);
 	}
 
+	/**
+	 * Asks the clazzfish agent for the loaded classnames. If agent was not
+	 * started it asks the {@link ClassDiagnostic} class for help.
+	 *
+	 * @return a set of classnames
+	 * @since 2.7
+	 */
+	public Set<String> getLoadedClassnames() {
+		if (agentMBean != null) {
+            try {
+				List<Class<?>> loadedClasses = getLoadedClassListFrom(agentMBean);
+				Set<String> loadedClassnames = new HashSet<>();
+				for (Class<?> loadedClass : loadedClasses) {
+					loadedClassnames.add(loadedClass.getName());
+				}
+				return loadedClassnames;
+			} catch (JMException ex) {
+				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
+				LOG.trace("Details:", ex);
+            }
+        }
+		return ClassDiagnostic.getLoadedClassnames();
+	}
+
 	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {
 		BoringClassLoader bcl = BoringClassLoader.of(classLoader);
 		return new ArrayList<>(bcl.getLoadedClasses());

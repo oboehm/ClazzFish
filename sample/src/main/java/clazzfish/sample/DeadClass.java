@@ -27,6 +27,7 @@ abstract class DeadClass {
 
     static {
         System.err.println("You should never see this message!");
+        System.err.println("You should never see this result:" + (1 / 0));
     }
 
 }

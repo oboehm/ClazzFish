@@ -75,6 +75,19 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         }
     }
 
+    @Test
+    public void testGetLoadedClassnames() {
+        Set<String> classnames = digger.getLoadedClassnames();
+        assertFalse(classnames.isEmpty());
+        LOG.info("{} classes loaded.", classnames.size());
+        assertThat(classnames, hasItem(this.getClass().getName()));
+        for (String clname : classnames) {
+            if ("clazzfish.monitor.internal.DeadClass".equals(clname)) {
+                fail(clname + " should be not loaded!");
+            }
+        }
+    }
+
     /**
      * Test for {@link ClasspathDigger#isLoaded(String)}.
      */
