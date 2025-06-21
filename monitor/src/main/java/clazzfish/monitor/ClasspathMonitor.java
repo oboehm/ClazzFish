@@ -660,6 +660,16 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	/**
+	 * Returns a list of classnames which are loaded by the classloader.
+	 *
+	 * @return list of classnames
+	 * @since 2.7
+	 */
+	public List<String> getLoadedClassnames() {
+        return new ArrayList<>(this.classpathDigger.getLoadedClassnames());
+	}
+
+	/**
 	 * As MBean a string array could be displayed by the 'jconsole'. A class
 	 * array not.
 	 *
