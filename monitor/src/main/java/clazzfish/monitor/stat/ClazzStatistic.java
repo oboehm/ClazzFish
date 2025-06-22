@@ -39,7 +39,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.stream.Collectors;
 
 /**
  * The ClazzStatistic collects classes and resources to find classes which are
@@ -147,8 +146,7 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
 
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
-        Set<String> loaded = classpathMonitor.getLoadedClassList().stream().map(Class::getName).collect(
-                Collectors.toSet());
+        Set<String> loaded = new HashSet<>(classpathMonitor.getLoadedClassnames());
         for (ClazzRecord record : getAllClasses()) {
             if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
