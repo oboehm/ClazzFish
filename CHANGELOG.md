@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Fixed
+- avoiding Class.forName() calls to create ClazzStatistic
+  ([issue #38](https://github.com/oboehm/ClazzFish/issues/38))
+
+  
 ## [2.6.4] (19-Jun-2025)
 
 ### Fixed
