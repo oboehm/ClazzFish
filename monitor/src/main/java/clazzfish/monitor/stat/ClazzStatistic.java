@@ -262,6 +262,27 @@ public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
         }
     }
 
+    /**
+     * Importes the statistics form the given filename or URI.
+     *
+     * @param filename filename or URI
+     * @since 2.7
+     */
+    @Override
+    public void importCSV(String filename) {
+        log.debug("Statistic will be imported from '{}'...", filename);
+        URI uri = (filename.contains(":")) ? URI.create(filename) : new File(filename).toURI();
+        importCSV(uri);
+        log.info("Statistic was imported from '{}'.", uri);
+    }
+
+    /**
+     * Importes the statistics form the given file.
+     *
+     * @param csvFile import file
+     * @deprecated use {@link #importCSV(URI)} with csvFile.toURI() as parameter
+     */
+    @Deprecated(forRemoval = true)
     public void importCSV(File csvFile) {
         importCSV(csvFile.toURI());
     }

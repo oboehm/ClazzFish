@@ -112,7 +112,7 @@ class ClazzStatisticTest {
     void importCSV() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
         ClazzStatistic rec = exportStatistic(csvFile);
-        rec.importCSV(csvFile.toURI());
+        rec.importCSV(csvFile.toString());
         checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
         checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
     }
@@ -145,7 +145,7 @@ class ClazzStatisticTest {
         ClazzStatistic rec = exportStatistic(csvFile);
         Set<URI> classpathes = rec.getClasspathes();
         File updated = updatedDependenciesIn(csvFile);
-        rec.importCSV(updated.toURI());
+        rec.importCSV(updated.toURI().toString());
         CollectionTester.assertEquals(classpathes, rec.getClasspathes());
     }
 

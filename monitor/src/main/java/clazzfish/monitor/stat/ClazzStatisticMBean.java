@@ -56,6 +56,14 @@ public interface ClazzStatisticMBean extends Shutdownable {
     URI exportCSV(String filename) throws IOException;
 
     /**
+     * Importes the statistics form the given filename or URI.
+     *
+     * @param filename filename or URI
+     * @since 2.7
+     */
+    void importCSV(String filename);
+
+    /**
      * Returns the URI where the statistic should be exported to.
      *
      * @return export URI
