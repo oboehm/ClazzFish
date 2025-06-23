@@ -63,19 +63,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ClasspathMonitor.getIncompatibleClassList()
 
 
-## [2.5.2] (28-Mar-2025)
+## [2.5] (Mar-2025)
 
 ### Fixed
-- import performance improved
+- **v2.5.2**: import performance improved
   ([issue #26](https://github.com/oboehm/ClazzFish/issues/26))
-
-## [2.5.1] (12-Mar-2025)
-
-### Fixed
-- lost loaded class statistic during import
+- **v2.5.1**: lost loaded class statistic during import
   ([issue #25](https://github.com/oboehm/ClazzFish/issues/25))
-
-## [2.5] (11-Mar-2025)
 
 ### Added
 - Config accepts "clazzfish.dump.uri" as additional system property
@@ -92,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - exportCSV-Methods in ClazzStatistic returns now an URI (before: File)
 
 
-## [2.4] (08-Jan-2025)
+## [2.4] (Jan-2025)
 
 ### Fixed
 - **v2.4.2**: exception loop at shutdown is avoided
