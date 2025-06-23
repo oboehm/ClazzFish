@@ -677,11 +677,11 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 */
 	@Override
 	public String[] getLoadedClasses() {
-		List<Class<?>> classes = getLoadedClassList();
-		if (classes.size() != loadedClasses.length) {
-			loadedClasses = new String[classes.size()];
+		List<String> classnames = getLoadedClassnames();
+		if (classnames.size() != loadedClasses.length) {
+			loadedClasses = new String[classnames.size()];
 			for (int i = 0; i < loadedClasses.length; i++) {
-				loadedClasses[i] = classes.get(i).toString();
+				loadedClasses[i] = classnames.get(i);
 			}
 			Arrays.sort(loadedClasses);
 		}
