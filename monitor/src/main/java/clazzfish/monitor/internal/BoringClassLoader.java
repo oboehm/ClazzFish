@@ -17,17 +17,22 @@
  */
 package clazzfish.monitor.internal;
 
-import io.github.classgraph.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Die Klasse BoringClassLoader is used for boring into some internals of
- * a {@link ClassLoader}. It uses "io.github.classgraph" for boring and
+ * a {@link ClassLoader}. It used "io.github.classgraph" for boring and
  * encapsulate the needed API calls.
+ * <p>
+ * Sincd 2.8 the dependency to "io.github.classgraph" was removed to reduce
+ * the dependencies.
+ * </p>
  *
  * @author oboehm
  * @since 2.0 (15.02.23)
@@ -36,11 +41,8 @@ public class BoringClassLoader extends ClassLoader {
 
     private static final Logger log = LoggerFactory.getLogger(BoringClassLoader.class);
     private final Map<String, Class<?>> loadedClasses = new HashMap<>();
-    private String[] packageNames = new String[0];
-    private final SortedSet<URI> usedClasspath = new TreeSet<>();
 
     public static BoringClassLoader DEFAULT_CLOADER = new BoringClassLoader();
-    public static BoringClassLoader SYSTEM_CLOADER = new BoringClassLoader(getSystemClassLoader());
 
     /**
      * Creates a {@link BoringClassLoader} from the given classLoder.
@@ -72,27 +74,11 @@ public class BoringClassLoader extends ClassLoader {
      * @return set of all package names
      */
     public Set<String> getAllPackageNames() {
-        Set<String> packageNames;
-        try (ScanResult scanResult = new ClassGraph()
-                .enableExternalClasses()
-                .verbose(log.isTraceEnabled())
-                .scan()
-        ) {
-            PackageInfoList packageInfos = scanResult.getPackageInfo();
-            packageNames = new HashSet<>(packageInfos.getNames());
-        }
+        Set<String> packageNames = new HashSet<>();
         for (Package pkg : getPackages()) {
             packageNames.add(pkg.getName());
         }
         packageNames.remove("");
-        return packageNames;
-    }
-
-    public Set<String> getUnusedPackageNames() {
-        Set<String> packageNames = getAllPackageNames();
-        for (Package pkg : getPackages()) {
-            packageNames.remove(pkg.getName());
-        }
         return packageNames;
     }
 
@@ -112,79 +98,11 @@ public class BoringClassLoader extends ClassLoader {
      * @return all loaded classes
      */
     public Set<Class<?>> getLoadedClasses() {
-        String classname = getClass().getName();
-        if (findLoadedClass(classname) == null) {
-            log.trace("Using fallback to find loaded classes because parent does not find not {} as loaded class.", classname);
-            return ClassDiagnostic.getLoadedClasses();
-        }
-        Set<Class<?>> loadedClassSet = new HashSet<>();
-        String[] packageNames = getPackageNames();
-        log.debug("{} packages found.", packageNames.length);
-        try (ScanResult scanResult = new ClassGraph()
-                .enableClassInfo()
-                .acceptPackages(packageNames)
-                .verbose(log.isTraceEnabled())
-                .scan()) {
-            ClassInfoList list = scanResult.getAllClasses();
-            for (ClassInfo info : list) {
-                classname = info.getName();
-                try {
-                    Class<?> loaded = getLoadedClass(classname);
-                    if (loaded == null) {
-                        loaded = findClass(classname);
-                    }
-                    if (loaded != null) {
-                        loadedClassSet.add(loaded);
-                    }
-                } catch (ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError | ExceptionInInitializerError ex) {
-                    log.debug("'{}' is not found as class ({}).", classname, ex.getMessage());
-                    log.trace("Details:", ex);
-                }
-            }
-        }
-        return loadedClassSet;
-    }
-
-    private static Class<?> getLoadedClass(String classname) {
-        Class<?> loaded = SYSTEM_CLOADER.findLoadedClass(classname);
-        if (loaded == null) {
-            loaded = DEFAULT_CLOADER.findLoadedClass(classname);
-        }
-        return loaded;
-    }
-
-    /**
-     * Scans the classpath to return a set of the used classpath.
-     *
-     * @return used classpath (sorted)
-     */
-    public SortedSet<URI> getUsedClassspath() {
-        if (usedClasspath.isEmpty()) {
-            String[] packageNames = getPackageNames();
-            try (ScanResult scanResult = new ClassGraph()
-                    .acceptPackages(packageNames)
-                    .verbose(log.isTraceEnabled())
-                    .scan()) {
-                ResourceList rscList = scanResult.getAllResources();
-                for (Resource rsc : rscList) {
-                    usedClasspath.add(rsc.getClasspathElementURI());
-                }
-            }
-        }
-        return usedClasspath;
-    }
-
-    private String[] getPackageNames() {
-        Package[] packages = super.getPackages();
-        if (packages.length != packageNames.length) {
-            packageNames = Arrays.stream(packages).map(Package::getName).toArray(String[]::new);
-            usedClasspath.clear();
-        }
-        return packageNames;
+        return ClassDiagnostic.getLoadedClasses();
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) {
         Class<?> found = loadedClasses.get(name);
         if (found != null) {
             return found;
@@ -198,18 +116,5 @@ public class BoringClassLoader extends ClassLoader {
         }
         return found;
     }
-
-//    private static Map<String, Class<?>> scanStacktrace(StackTraceElement[] stacktrace) {
-//        Map<String, Class<?>> stacktraceClasses = new HashMap<>();
-//        for (StackTraceElement element : stacktrace) {
-//            String classname = element.getClassName();
-//            try {
-//                stacktraceClasses.put(classname, Class.forName(classname));
-//            } catch (ClassNotFoundException ex) {
-//                log.debug("Class '{}' not found:", classname, ex);
-//            }
-//        }
-//        return stacktraceClasses;
-//    }
 
 }
