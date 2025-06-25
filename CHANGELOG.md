@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- import of file is supported now by clazzfish-spi-git
+  ([issue #39](https://github.com/oboehm/ClazzFish/issues/39))
 - dependency to `io.github.classgraph` removed
   ([issue #28](https://github.com/oboehm/ClazzFish/issues/28))
 

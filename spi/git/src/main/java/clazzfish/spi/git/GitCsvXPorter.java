@@ -52,6 +52,9 @@ public class GitCsvXPorter implements CsvXPorter {
 
     @Override
     public List<String> importCSV(URI uri) throws IOException {
+        if (uri.getScheme().equalsIgnoreCase("file")) {
+            return importCSV(new File(uri));
+        }
         try (Repo repo = Repo.of(uri, sshConfig)) {
             return importCSV(new File(repo.getDir(), "ClazzStatistic.csv"));
         } catch (GitAPIException ex) {
@@ -62,6 +65,7 @@ public class GitCsvXPorter implements CsvXPorter {
     }
 
     private List<String> importCSV(File file) throws IOException {
+        log.debug("Importing file {}...", file);
         FileXPorter fileXPorter = new FileXPorter();
         return fileXPorter.importCSV(file.toURI());
     }

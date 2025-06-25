@@ -88,4 +88,13 @@ class GitCsvXPorterTest {
         }
     }
 
+    @Test
+    void importCsvFile() throws IOException {
+        File csvFile = new File("src/test/resources/clazzfish/spi/git/test.csv");
+        assertTrue(csvFile.exists());
+        List<String> csvLines = xPorter.importCSV(csvFile.toURI());
+        assertNotNull(csvLines);
+        assertFalse(csvLines.isEmpty());
+    }
+
 }
