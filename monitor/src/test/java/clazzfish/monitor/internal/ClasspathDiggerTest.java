@@ -230,10 +230,11 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         String[] packages = digger.getPackageArray();
         assertThat(packages.length, Matchers.not(0));
         List<String> pkgs = Arrays.asList(packages);
-        assertThat(pkgs, hasItem("org/junit/"));
+        assertThat(pkgs, hasItem("org/junit/jupiter/api/"));
         assertFalse(pkgs.contains(null), "contains null values: " + pkgs);
         Package[] clPackages = Package.getPackages();
         LOG.info("{} packages found, {} packages loaded.", packages.length, clPackages.length);
+        pkgs = Arrays.asList(digger.getPackageArray());
         for (Package pkg : clPackages) {
             assertThat(pkgs, hasItem(pkg.getName().replace('.', '/') + '/'));
         }
