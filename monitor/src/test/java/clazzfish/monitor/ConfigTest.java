@@ -51,6 +51,13 @@ class ConfigTest {
     }
 
     @Test
+    void getPatternExclude() {
+        String pattern = Config.DEFAULT.getProperty(clazzfish.monitor.Config.PATTERN_EXCLUDE);
+        assertNotNull(pattern);
+        log.info("pattern = '{}'", pattern);
+    }
+
+    @Test
     void ofResource() {
         Config config = Config.of("clazzfish/monitor/util/test.properties");
         assertFalse(config.getProperties().isEmpty());

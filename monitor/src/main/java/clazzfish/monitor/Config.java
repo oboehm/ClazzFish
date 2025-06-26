@@ -43,13 +43,10 @@ public final class Config {
     public static final String DUMP_URI = "clazzfish.dump.uri";
     /** Property name of the directory where the class statistic is dumpoed to. */
     public static final String DUMP_DIR = "clazzfish.dump.dir";
+    public static final String PATTERN_EXCLUDE = "clazzfish.pattern.exclude";
     private final Properties properties;
 
-    public static Config DEFAULT = new Config();
-
-    private Config() {
-        this(readProperties());
-    }
+    public static Config DEFAULT = Config.of("clazzfish-default.properties");
 
     private Config(Properties properties) {
         this.properties = properties;
