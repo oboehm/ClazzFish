@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.monitor.Config;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +35,7 @@ public final class ResourceFilter {
     private final Pattern exclude;
 
     private ResourceFilter() {
-        this(".*module-info.class|/META-INF/.*");
+        this(Config.DEFAULT.getProperty(Config.PATTERN_EXCLUDE));
     }
 
     public ResourceFilter(String pattern) {
