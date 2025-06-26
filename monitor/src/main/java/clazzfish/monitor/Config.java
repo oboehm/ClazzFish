@@ -39,6 +39,10 @@ import java.util.Properties;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
+    /** Property name of URI where the class statistic is dumped to. */
+    public static final String DUMP_URI = "clazzfish.dump.uri";
+    /** Property name of the directory where the class statistic is dumpoed to. */
+    public static final String DUMP_DIR = "clazzfish.dump.dir";
     private final Properties properties;
 
     public static Config DEFAULT = new Config();
@@ -116,7 +120,7 @@ public final class Config {
      * @return directory for export
      */
     public File getDumpDir() {
-        String dirname = properties.getProperty("clazzfish.dump.dir");
+        String dirname = properties.getProperty(DUMP_DIR);
         if (StringUtils.isNotBlank(dirname)) {
             return new File(dirname);
         } else {
@@ -142,7 +146,7 @@ public final class Config {
      * @return directory or URI for export
      */
     public URI getDumpURI() {
-        String dumpUri = properties.getProperty("clazzfish.dump.uri");
+        String dumpUri = properties.getProperty(DUMP_URI);
         if (StringUtils.isBlank(dumpUri)) {
             return getDumpDir().toURI();
         } else {
@@ -158,7 +162,7 @@ public final class Config {
      */
     public void setDumpURI(URI uri) {
         if (!Objects.equals(uri, this.getDumpURI())) {
-            properties.setProperty("clazzfish.dump.uri", uri.toString());
+            properties.setProperty(DUMP_URI, uri.toString());
             log.info("Dump-URI is set to '{}'.", uri);
         }
     }
