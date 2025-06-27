@@ -46,15 +46,19 @@ public final class Config {
     public static final String PATTERN_EXCLUDE = "clazzfish.pattern.exclude";
     private final Properties properties;
 
-    public static Config DEFAULT = Config.of("clazzfish-default.properties");
+    public static Config DEFAULT = Config.of("clazzfish-default.properties", "clazzfish.properties");
 
     private Config(Properties properties) {
         this.properties = properties;
         log.debug("Config with {} is created.", properties);
     }
 
-    public static Config of(String resource) {
-        Properties properties = readProperties(resource);
+    public static Config of(String... resources) {
+        Properties properties = new Properties();
+        for (String rsc : resources) {
+            Properties props = readProperties(rsc);
+            properties.putAll(props);
+        }
         return Config.of(properties);
     }
 

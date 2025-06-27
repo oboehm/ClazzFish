@@ -148,10 +148,15 @@ public class Environment {
 			LOG.debug("Using Environment.class to get {}...", resource);
 			istream = Environment.class.getResourceAsStream(resource);
 		}
-		Properties props = loadProperties(istream);
-		istream.close();
-		LOG.debug("{} properties loaded from '{}'.", props.size(), resource);
-		return props;
+		if (istream == null) {
+			LOG.info("Resource '{}' is not available.", resource);
+			return new Properties();
+		} else {
+			Properties props = loadProperties(istream);
+			istream.close();
+			LOG.debug("{} properties loaded from '{}'.", props.size(), resource);
+			return props;
+		}
 	}
 
 	/**

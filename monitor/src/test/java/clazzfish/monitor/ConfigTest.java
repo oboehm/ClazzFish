@@ -64,4 +64,12 @@ class ConfigTest {
         log.info("config = {}", config);
     }
 
+    @Test
+    void clazzfishProperties() {
+        String defaultResource = "clazzfish/monitor/util/test.properties";
+        Config config = Config.of(defaultResource);
+        Config defaultConfig = Config.of("clazzfish-default.properties", defaultResource);
+        assertEquals(defaultConfig,  config);
+    }
+
 }
