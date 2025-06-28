@@ -86,12 +86,9 @@ public final class ClazzRecord implements Comparable<ClazzRecord> {
 
     @Override
     public int compareTo(ClazzRecord other) {
-        int n = 0;
-        if ((this.classpath != null) && (other.classpath != null)) {
+        int n = this.classname.compareTo(other.classname);
+        if ((n == 0) && (this.classpath != null) && (other.classpath != null)) {
             n = this.classpath.compareTo(other.classpath);
-        }
-        if (n == 0) {
-            n = this.classname.compareTo(other.classname);
         }
         return n;
     }

@@ -30,7 +30,7 @@ class ClazzRecordTest {
 
     @Test
     void compareTo() {
-        ClazzRecord a = new ClazzRecord(URI.create("file:a.jar"), "hello");
+        ClazzRecord a = new ClazzRecord(URI.create("file:c.jar"), "hello");
         ClazzRecord b = new ClazzRecord(URI.create("file:b.jar"), "world");
         assertThat(a.compareTo(b),  lessThan(0));
     }

@@ -27,6 +27,7 @@ import patterntesting.runtime.junit.CollectionTester;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -70,6 +71,17 @@ class ClazzStatisticTest {
     void exportCSV() throws IOException {
         File csvFile = new File(recorder.exportCSV());
         assertTrue(csvFile.exists());
+        assertIsSorted(csvFile);
+    }
+
+    private void assertIsSorted(File csvFile) throws IOException {
+        List<String> lines = Files.readAllLines(csvFile.toPath());
+        for (int i = 2; i < lines.size(); i++) {
+            ClazzRecord r1 = ClazzRecord.fromCSV(lines.get(i-1));
+            ClazzRecord r2 = ClazzRecord.fromCSV(lines.get(i));
+            assertTrue(r1.classname().compareTo(r2.classname()) < 0,
+                    i + ": " + r1.classname() + " < " + r2.classname() + '?');
+        }
     }
 
     @Test
