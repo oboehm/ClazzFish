@@ -42,7 +42,8 @@ The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-
 * [JavaDoc](http://aosd.de/ClazzFish/)
 * [How to Find Dead Classes](src/doc/DeadClasses.adoc)
 * [SQL Logging and Montitoring](src/doc/SQL-Logging.adoc)
+* [Configuration](src/doc/Config.adoc)
 
 ---
-April 2025,
+July 2025,
 Oli B.

@@ -39,10 +39,11 @@ import java.util.Properties;
 public final class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
+    /** Property name of the directory where the class statistic is dumped to. */
+    public static final String DUMP_DIR = "clazzfish.dump.dir";
     /** Property name of URI where the class statistic is dumped to. */
     public static final String DUMP_URI = "clazzfish.dump.uri";
-    /** Property name of the directory where the class statistic is dumpoed to. */
-    public static final String DUMP_DIR = "clazzfish.dump.dir";
+    /** Pattern of the resources (and classes) which should be filtered out. */
     public static final String PATTERN_EXCLUDE = "clazzfish.pattern.exclude";
     private final Properties properties;
 

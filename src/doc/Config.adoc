@@ -1,0 +1,74 @@
+= Configuration
+
+
+Mainly for the export of `ClazzStatistic.csv` in 2025 the configuration was extended to be able to control the output.
+
+
+== Configuration Parameters
+
+
+All configuration parameters have `clazzfish` as prefix:
+
+|===
+|Parameter |Default Value |Description
+
+|clazzfish.dump.dir
+|a temporary directory
+|directory where the class statistic is dumped to
+
+|clazzfish.dump.uri
+|-
+|URI where the class statistic is dumped to
+
+|clazzfish.pattern.exclude
+|.\*module-info.class\|/META-INF/.*
+|module-info class and classes/resources below /META-INF are filtered out
+|===
+
+The default values for these parameters are stored in link:../../monitor/src/main/resources/clazzfish-default.properties[clazzfish-default.properties].
+
+
+== Environment or Properties
+
+In the beginning only system properties were supported.
+Now you can configure ClazzFish by
+
+* property file (clazzfish.properties)
+* environment variable
+* system property
+
+
+=== clazzfish.properties
+
+After the default properties are read ClazzFish looks after a `clazzfish.properties` resource in the classpath.
+If it is found the properties in this resource replaces the default properties.
+
+
+=== Environment
+
+Most operating system allows you to set environment variables globally.
+In contraction to the property names the environment variables are expected in uppercase and the dot ('.') is replaced by an underscore ('_'):
+
+|===
+|Environment Variables |Description
+
+|CLAZZFISH_DUMP_DIR
+|directory where the class statistic is dumped to
+
+|CLAZZFISH_DUMP_URI
+|URI where the class statistic is dumped to
+
+|CLAZZFISH_PATTERN_EXCLUDE
+|classes/resources which are filtered out
+|===
+
+Environment overrides parameter of `clazzfish.properties`.
+
+
+=== System Properties
+
+System properties can set during start of the VM with the `-D` option:
+
+    java -Dclazzfish.dump.uri=file://tmp/mystat.csv ...
+
+Property given as system property (here: `clazzfish.dump.uri`) overrides the value of environment variable or `clazzfish.properties`.
