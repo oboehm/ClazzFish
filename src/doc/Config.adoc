@@ -23,6 +23,10 @@ All configuration parameters have `clazzfish` as prefix:
 |clazzfish.pattern.exclude
 |.\*module-info.class\|/META-INF/.*
 |module-info class and classes/resources below /META-INF are filtered out
+
+|clazzfish.git.ssh.keyfile
+|${user.home}/.ssh/id_rsa
+|keyfile needed for SSH connection if you use clazzfish-spi-git
 |===
 
 The default values for these parameters are stored in link:../../monitor/src/main/resources/clazzfish-default.properties[clazzfish-default.properties].
@@ -60,6 +64,9 @@ In contraction to the property names the environment variables are expected in u
 
 |CLAZZFISH_PATTERN_EXCLUDE
 |classes/resources which are filtered out
+
+|CLAZZFISH_GIT_SSH_KEYFILE
+|keyfile needed for SSH connection if you use clazzfish-spi-git
 |===
 
 Environment overrides parameter of `clazzfish.properties`.
