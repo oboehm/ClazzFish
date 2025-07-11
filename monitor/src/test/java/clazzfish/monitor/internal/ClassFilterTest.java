@@ -22,14 +22,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link ResourceFilter}.
+ * Unit tests for {@link ClassFilter}.
  *
  * @author oboehm
  * @since 16.06.25
  */
-class ResourceFilterTest {
+class ClassFilterTest {
 
-    private final ResourceFilter filter = ResourceFilter.DEFAULT;
+    private final ClassFilter filter = ClassFilter.DEFAULT;
 
     @Test
     void isIncluded() {
@@ -38,13 +38,13 @@ class ResourceFilterTest {
 
     @Test
     void isIncludedModuleInfo() {
-        assertFalse(filter.isIncluded("module-info.class"));
-        assertFalse(filter.isIncluded("/META-INF/versions/9/module-info.class"));
+        assertFalse(filter.isIncluded("module-info"));
+        assertFalse(filter.isIncluded("META-INF.versions.9.module-info"));
     }
 
     @Test
     void isIncludedMetaInfo() {
-        assertFalse(filter.isIncluded("/META-INF/versions/9/org/bouncycastle/util/Strings.class"));
+        assertFalse(filter.isIncluded("META-INF.versions.9.org.bouncycastle.util.Strings"));
     }
 
 }

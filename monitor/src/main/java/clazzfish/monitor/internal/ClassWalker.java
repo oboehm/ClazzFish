@@ -60,8 +60,8 @@ public class ClassWalker extends ResourceWalker {
 		Collection<String> resources = this.getResources();
 		Collection<String> classes = new ArrayList<>(resources.size());
 		for (String res : resources) {
-			if (ResourceFilter.DEFAULT.isIncluded(res)) {
-				String classname = Converter.resourceToClass(res);
+			String classname = Converter.resourceToClass(res);
+			if (ClassFilter.DEFAULT.isIncluded(classname)) {
 				classes.add(classname);
 			}
 		}

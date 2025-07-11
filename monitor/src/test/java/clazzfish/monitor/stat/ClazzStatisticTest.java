@@ -71,16 +71,23 @@ class ClazzStatisticTest {
     void exportCSV() throws IOException {
         File csvFile = new File(recorder.exportCSV());
         assertTrue(csvFile.exists());
-        assertIsSorted(csvFile);
+        List<String> lines = Files.readAllLines(csvFile.toPath());
+        assertIsSorted(lines);
+        assertIsExcluded(lines, ";META-INF.");
     }
 
-    private void assertIsSorted(File csvFile) throws IOException {
-        List<String> lines = Files.readAllLines(csvFile.toPath());
+    private static void assertIsSorted(List<String> lines) {
         for (int i = 2; i < lines.size(); i++) {
             ClazzRecord r1 = ClazzRecord.fromCSV(lines.get(i-1));
             ClazzRecord r2 = ClazzRecord.fromCSV(lines.get(i));
             assertTrue(r1.classname().compareTo(r2.classname()) < 0,
                     i + ": " + r1.classname() + " < " + r2.classname() + '?');
+        }
+    }
+
+    private static void assertIsExcluded(List<String> lines, String excluded) {
+        for (String s : lines) {
+            assertThat(s, not(containsString(excluded)));
         }
     }
 

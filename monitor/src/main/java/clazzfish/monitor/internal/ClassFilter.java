@@ -23,22 +23,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The ResourceFilter was introduced with issue #34. It allows you to exclude
- * resources (and classes) which are of no interest for you.
+ * The ClassFilter was introduced with issue #34. It allows you to exclude
+ * classes which are of no interest for you.
  *
  * @author oboehm
  * @since 2.7 (12.06.25)
  */
-public final class ResourceFilter {
+public final class ClassFilter {
 
-    public static ResourceFilter DEFAULT = new ResourceFilter();
+    public static ClassFilter DEFAULT = new ClassFilter();
     private final Pattern exclude;
 
-    private ResourceFilter() {
+    private ClassFilter() {
         this(Config.DEFAULT.getProperty(Config.PATTERN_EXCLUDE));
     }
 
-    public ResourceFilter(String pattern) {
+    public ClassFilter(String pattern) {
         this.exclude = Pattern.compile(pattern);
     }
 

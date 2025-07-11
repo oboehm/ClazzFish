@@ -313,9 +313,11 @@ public class ClasspathDigger extends AbstractDigger {
 			throws IOException {
         Collection<String> allElements = readElementsFromNestedArchive(archive);
         for(String resource : allElements) {
-            if (resource.endsWith(suffix) && ResourceFilter.DEFAULT.isIncluded(resource)) {
+			if (resource.endsWith(suffix)) {
 				String classname = Converter.resourceToClass(resource);
-				elements.add(Converter.resourceToClass(classname));
+				if (ClassFilter.DEFAULT.isIncluded(classname)) {
+					elements.add(Converter.resourceToClass(classname));
+				}
             }
         }
 	}
@@ -503,7 +505,10 @@ public class ClasspathDigger extends AbstractDigger {
 				List<Class<?>> loadedClasses = getLoadedClassListFrom(agentMBean);
 				Set<String> loadedClassnames = new HashSet<>();
 				for (Class<?> loadedClass : loadedClasses) {
-					loadedClassnames.add(loadedClass.getName());
+					String classname = loadedClass.getName();
+					if (ClassFilter.DEFAULT.isIncluded(classname)) {
+						loadedClassnames.add(classname);
+					}
 				}
 				return loadedClassnames;
 			} catch (JMException ex) {
