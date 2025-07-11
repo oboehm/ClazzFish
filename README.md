@@ -17,10 +17,8 @@ Part of ClassFish are several modules:
 
 ## Upcoming Events
 
-[<img src="https://www.java-forum-stuttgart.de/static/61b0bbc7e54c0a0363d7445042598e64/Banner_JFS2025_Speaker_e_468x60.jpg" alt="JFS 2025 logo">](https://www.java-forum-stuttgart.de/vortraege/dead-classes/)
-
-On July 10, 2025, the 28th [Java Forum Stuttgart](https://www.java-forum-stuttgart.de/) will take place in southern Germany with over 1000 participants.
-On the talk about "[Dead Classes](https://www.java-forum-stuttgart.de/vortraege/dead-classes/)" you can learn 
+In September 2025 the [JUG Saxony Day]() will take place in Eastern Germany.
+On the talk about "[Dead Classes](https://jugsaxony.org/day/programm/details/246)" you can learn 
 
 * the technique behind ClazzFish,
 * how you use it and

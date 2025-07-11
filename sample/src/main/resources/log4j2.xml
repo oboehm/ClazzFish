@@ -4,6 +4,7 @@
   <Appenders>
     <Console name="CONSOLE" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss} %5.5level [%-4.4t|%-27.27C{3}] %msg%n" />
+      <ImmediateFlush>true</ImmediateFlush>
     </Console>
   </Appenders>
 
@@ -12,6 +13,7 @@
     <Logger name="clazzfish.jdbc" level="DEBUG" />
     <Logger name="clazzfish.monitor" level="DEBUG" />
     <Logger name="clazzfish.monitor.internal" level="INFO" />
+    <Logger name="clazzfish.monitor.stat.ClazzStatistic" level="DEBUG" />
     <Logger name="clazzfish.spi.git" level="DEBUG" />
     <!--
       If you want to see the executed SQL statements in the log set the
@@ -22,7 +24,7 @@
       This will slow down your application so use it only for tracing.
     -->
     <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG" />
-    <Root level="INFO">
+    <Root level="DEBUG">
       <AppenderRef ref="CONSOLE" />
     </Root>
   </Loggers>
