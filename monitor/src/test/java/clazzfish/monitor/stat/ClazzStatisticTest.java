@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,8 @@ import patterntesting.runtime.junit.CollectionTester;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -185,6 +188,49 @@ class ClazzStatisticTest {
         SortedSet<ClazzRecord> classes = recorder.getAllClasses();
         ClazzRecord outdatedRecord = ClazzRecord.fromCSV("file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0");
         assertThat(classes, not(hasItems(outdatedRecord)));
+    }
+
+    /**
+     * Unit test for issue #42.
+     */
+    @Test
+    void importTmpFiles() throws IOException {
+        Path normal = Paths.get("src/test/resources/clazzfish/monitor/stat/normal.csv");
+        List<String> lines = Files.readAllLines(normal);
+        Path statistic = createClazzStatistic("ClazzStatistic.csv", lines);
+        ClazzRecord first = ClazzRecord.fromCSV(lines.get(1)).withCount(5);
+        Path tmpStatistic = createClazzStatistic("ClazzStatistic.csv-alice" + System.currentTimeMillis(),
+                List.of(lines.get(0), first.toCSV()));
+        ClazzRecord recBefore = getClazzRecord(first.classname());
+        recorder.importCSV(statistic.toString());
+        ClazzRecord rec = getClazzRecord(first.classname());
+        assertThat(rec.count(), greaterThanOrEqualTo(Math.max(recBefore.count(), first.count())));
+        assertFalse(Files.exists(tmpStatistic));
+    }
+
+    private static Path createClazzStatistic(String filename, List<String> lines) throws IOException {
+        Path dir = createTmpDir();
+        Path statistic = Paths.get(dir.toString(), filename);
+        Files.write(statistic, lines);
+        return statistic;
+    }
+
+    private static Path createTmpDir() throws IOException {
+        Path dir = Paths.get("target", "tmp");
+        if  (!Files.exists(dir)) {
+            Files.createDirectory(dir);
+            log.info("Directory '{}' was created.", dir);
+        }
+        return dir;
+    }
+
+    private ClazzRecord getClazzRecord(String classname) {
+        for (ClazzRecord clazzRecord : recorder.getAllClasses()) {
+            if (clazzRecord.classname().equals(classname)) {
+                return clazzRecord;
+            }
+        }
+        throw new NotFoundException(classname);
     }
 
     private static ClazzStatistic exportStatistic(File csvFile) throws IOException {

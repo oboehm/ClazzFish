@@ -52,6 +52,10 @@ public final class ClazzRecord implements Comparable<ClazzRecord> {
         this.count = count;
     }
 
+    public ClazzRecord withCount(int count) {
+        return new ClazzRecord(this.classpath, this.classname, count);
+    }
+
     public String classname() {
         return classname;
     }

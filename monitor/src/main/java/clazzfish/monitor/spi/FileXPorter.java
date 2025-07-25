@@ -18,7 +18,7 @@
 package clazzfish.monitor.spi;
 
 import clazzfish.monitor.io.ExtendedFile;
-import org.apache.commons.lang3.SystemProperties;
+import clazzfish.monitor.stat.ClazzRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * The class FileXPorter accepts a file URI to import and export CSV data.
@@ -47,7 +47,7 @@ public class FileXPorter implements CsvXPorter {
 
     private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws IOException {
         ExtendedFile.createDir(file.getParentFile());
-        File tmpFile = new File(file + "-" + SystemProperties.getUserName() + System.currentTimeMillis());
+        File tmpFile = new File(file + "-" + System.currentTimeMillis());
         log.trace("Statistic is temporary stored in '{}'.", tmpFile);
         try (PrintWriter writer = new PrintWriter(tmpFile)) {
             writer.println(csvHeadLine);
@@ -62,10 +62,12 @@ public class FileXPorter implements CsvXPorter {
 
     @Override
     public List<String> importCSV(URI uri) throws IOException {
-        return importCSV(new File(uri));
+        File file = new File(uri);
+        List<String> csvLines = importCSV(file);
+        return importTmpFiles(file, csvLines);
     }
 
-    private List<String> importCSV(File file) throws IOException {
+    private static List<String> importCSV(File file) throws IOException {
         List<String> csvLines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while (reader.ready()) {
@@ -73,6 +75,64 @@ public class FileXPorter implements CsvXPorter {
                 csvLines.add(line);
             }
             log.debug("{} lines imported from file '{}'.", csvLines.size(), file);
+        }
+        return csvLines;
+    }
+
+    private static List<String> importTmpFiles(File file, List<String> csvLines) throws IOException {
+        Map<String, ClazzRecord> records = toClazzRecordMap(csvLines);
+        String filename = file.getName();
+        File dir = file.getParentFile();
+        FileFilter filter = new FileFilter() {
+            Pattern pattern = Pattern.compile(filename + "-.*[0-9]{13}$");
+            @Override
+            public boolean accept(File pathname) {
+                return pattern.matcher(pathname.getName()).matches();
+            }
+        };
+        for (File f : dir.listFiles(filter)) {
+            addClazzRecordsTo(records, f);
+            if (f.delete()) {
+                log.info("Temporary file '{}' is deleted after import.", f);
+            }
+        }
+        return toCsvLines(records);
+    }
+
+    private static void addClazzRecordsTo(Map<String, ClazzRecord> records, File file) throws IOException {
+        List<String> csvLines = importCSV(file);
+        Collection<ClazzRecord> newRecords = toClazzRecordMap(csvLines).values();
+        for (ClazzRecord newRec : newRecords) {
+            if (newRec.count() > 0) {
+                ClazzRecord r = records.get(newRec.classname());
+                if (r == null) {
+                    records.put(newRec.classname(), newRec);
+                } else if (r.count() < newRec.count()) {
+                    records.put(newRec.classname(), newRec);
+                }
+            }
+        }
+    }
+
+    private static Map<String, ClazzRecord> toClazzRecordMap(List<String> csvLines) {
+        Map<String, ClazzRecord> records = new HashMap<>();
+        for (String csvLine : csvLines) {
+            try {
+                ClazzRecord rec = ClazzRecord.fromCSV(csvLine);
+                records.put(rec.classname(), rec);
+            } catch (IllegalArgumentException ex) {
+                log.debug("Line '{}' is ignored ({}).", csvLine, ex.getMessage());
+                log.trace("Details:", ex);
+            }
+        }
+        return records;
+    }
+
+    private static List<String> toCsvLines(Map<String, ClazzRecord> records) {
+        List<String> csvLines = new ArrayList<>();
+        csvLines.add(ClazzRecord.toCsvHeadline());
+        for (ClazzRecord rec : records.values()) {
+            csvLines.add(rec.toCSV());
         }
         return csvLines;
     }
