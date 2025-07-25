@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- unwanted classes can be filtered with property `clazzfish.pattern.exclude`
+  ([issue #34](https://github.com/oboehm/ClazzFish/issues/34))
 - temporary ClazzStatistic.csv files are also imported and then deleted
   ([issue #43](https://github.com/oboehm/ClazzFish/issues/43))
 - exported ClazzStatistic.csv is now sorted by classnames and not classpath
