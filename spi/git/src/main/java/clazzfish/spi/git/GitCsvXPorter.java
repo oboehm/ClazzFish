@@ -20,6 +20,7 @@ package clazzfish.spi.git;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
 import clazzfish.monitor.stat.ClazzRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,8 @@ public class GitCsvXPorter implements CsvXPorter {
     private List<String> importCSV(File file) throws IOException {
         log.debug("Importing file {}...", file);
         FileXPorter fileXPorter = new FileXPorter();
-        return fileXPorter.importCSV(file.toURI());
+        List<String> lines = fileXPorter.importCSV(file.toURI());
+        return lines.stream().map(s -> StringUtils.substringAfter(s, ";")).collect(Collectors.toList());
     }
 
     @Override

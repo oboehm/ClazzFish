@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [2.8] (26-Jul-2025)
 
 ### Changed
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - exported ClazzStatistic.csv is now sorted by classnames and not classpath
 
 
-## [2.7.1] (25-Jun-2023)
+## [2.7.1] (25-Jun-2025)
 
 ### Fixed
 - import of file is supported now by clazzfish-spi-git
@@ -26,61 +26,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ([issue #28](https://github.com/oboehm/ClazzFish/issues/28))
 
 
-## [2.7.0] (23-Jun-2023)
+## [2.7.0] (23-Jun-2025)
 
 ### Added
 - import of ClazzStatistic.csv can now be triggered by JMX (e.g. with `jconsole`)
 
 
-## [2.6.5] (22-Jun-2025)
+## [2.6] (Apr-2025)
 
 ### Fixed
-- avoiding Class.forName() calls to create ClazzStatistic
+- **v2.6.5**: avoiding Class.forName() calls to create ClazzStatistic
   ([issue #38](https://github.com/oboehm/ClazzFish/issues/38))
-
-  
-## [2.6.4] (19-Jun-2025)
-
-### Fixed
-- SSH config reworked, dependencies updated
+- **v2.6.4**: SSH config reworked, dependencies updated
   ([issue #37](https://github.com/oboehm/ClazzFish/issues/37))
-
-
-## [2.6.3] (17-Jun-2025)
-
-### Fixed
-- dependency `com.jcraft:jsch` replaced with `com.github.mwiede:jsch`
+- **v2.6.3**: dependency `com.jcraft:jsch` replaced with `com.github.mwiede:jsch`
   ([issue #36](https://github.com/oboehm/ClazzFish/issues/36))
-
-
-## [2.6.2] (11-Jun-2025)
+- **v2.6.2**: 'module-info' is no longer considered as class
+  ([issue #32](https://github.com/oboehm/ClazzFish/issues/32))
+- **v2.6.1**: NPE during startup of clazzfish-spi-git
+  ([issue #27](https://github.com/oboehm/ClazzFish/issues/27))
+- ClasspathMonitor.getIncompatibleClassList()
 
 ### Added
-- generating SBOM with CycloneDX Maven Plugin
+- **v2.6.2**: generating SBOM with CycloneDX Maven Plugin
 
 ### Changed
-- attribute 'ExportFile' of ClazzStatistic changed to 'ExportURI'
-
-### Fixed
-- 'module-info' is no longer considered as class
-  ([issue #32](https://github.com/oboehm/ClazzFish/issues/32))
-
-
-## [2.6.1] (26-Apr-2025)
-
-### FIXED
-- NPE during startup of clazzfish-spi-git
-  ([issue #27](https://github.com/oboehm/ClazzFish/issues/27))
-
-
-## [2.6.0] (21-Apr-2025)
-
-### Added
+- **v2.6.2**: attribute 'ExportFile' of ClazzStatistic changed to 'ExportURI'
 - clazzfish-spi module added
 - clazzfish-spi-git module added to support import/export of statistics using GIT protocol
-
-### Fixed
-- ClasspathMonitor.getIncompatibleClassList()
 
 
 ## [2.5] (Mar-2025)
