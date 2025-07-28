@@ -37,7 +37,7 @@ This is a little checklist for the next release:
 . create a release branch and change to it
 . remove -SNAPSHOT in pom.xml (`mvn versions:set` followed by `mvn versions:commit`)
 . build and deploy all artifacts:
-  `mvn -DskipTests clean install source:jar javadoc:jar gpg:sign -Dgpg.passphrase=xx deploy`
+  `mvn -Psign -DskipTests clean install source:jar javadoc:jar gpg:sign -Dgpg.passphrase=xx deploy`
 . after successful deployment go to https://central.sonatype.com/publishing and _publish_ the deployment
 . build the Javadoc (`mvn javadoc:aggregate`) and transfer `target/reports/apidocs` to http://aosd.de/ClazzFish/
 . checkin the pom.xml (if not already done), label the sources, e.g. with "clazzfish-2.8.0" and push it (`git push --tags`)
