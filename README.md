@@ -17,7 +17,7 @@ Part of ClassFish are several modules:
 
 ## Upcoming Events
 
-In September 2025 the [JUG Saxony Day]() will take place in Eastern Germany.
+In September 2025 the [JUG Saxony Day](https://jugsaxony.org/day) will take place in Eastern Germany.
 On the talk about "[Dead Classes](https://jugsaxony.org/day/programm/details/246)" you can learn 
 
 * the technique behind ClazzFish,
