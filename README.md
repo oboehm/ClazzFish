@@ -8,7 +8,7 @@ Originally it was part of [PatternTesting](http://patterntesting.org) but is now
 
 Part of ClassFish are several modules:
 
-* agent
+* [agent](agent/README.md)
 * [monitor](monitor/README.md)
 * jdbc
 * [sample](sample/README.md)

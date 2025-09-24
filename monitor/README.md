@@ -15,7 +15,7 @@ To start the monitor classes just call the main method in the Starter class:
 
 But before you start your application add clazzfish-agent as Java agent to your VM args, e.g.
 
-     java -javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.2/clazzfish-agent-2.2.jar ...
+     java -javaagent:${user.home}/.m2/repository/de/aosd/clazzfish/clazzfish-agent/2.8/clazzfish-agent-2.8.jar ...
 
 This is the recommend way because it uses the official API to get the internals of class loading.
 If the agent is started and the library loaded you can use the `jconsole` to examine the loaded classes and resources.
