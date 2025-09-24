@@ -18,6 +18,7 @@
     <inceptionYear>2018</inceptionYear>
 
     <modules>
+        <module>core</module>
         <module>agent</module>
         <module>monitor</module>
         <module>jdbc</module>
