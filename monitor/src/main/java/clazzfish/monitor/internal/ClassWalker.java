@@ -33,7 +33,7 @@ import java.util.Collection;
  *
  * @author <a href="boehm@javatux.de">oliver</a>
  */
-public class ClassWalker extends ResourceWalker {
+public class ClassWalker extends clazzfish.core.ResourceWalker {
 
 	/**
 	 * Instantiates a new class walker.
