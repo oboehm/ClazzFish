@@ -26,8 +26,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyArray;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,6 +51,12 @@ public final class ClasspathAgentTest {
         ClasspathAgent.agentmain("test", instrumentation);
         assertEquals(instrumentation, ClasspathAgent.getInstrumentation());
         assertEquals("test", agent.getArgs());
+    }
+
+    @Test
+    public void testGetClasspath() {
+        String[] classpath = agent.getClasspath();
+        assertThat(classpath.length, greaterThan(0));
     }
 
     @Test

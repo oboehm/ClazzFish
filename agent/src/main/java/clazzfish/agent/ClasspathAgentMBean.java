@@ -18,7 +18,11 @@
 
 package clazzfish.agent;
 
-import java.io.*;
+import clazzfish.core.SystemInfo;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * This is the MBean for the {@link ClasspathAgent} to be able to register
@@ -45,11 +49,22 @@ public interface ClasspathAgentMBean extends Serializable{
     String getArgs();
 
     /**
-     * Returns the classes which were loaded by the classloader.
+     * Get the classpath.
      *
+     * @return classpath
+     * @since 3.0
+     */
+    default String[] getClasspath() {
+        return SystemInfo.getClasspath();
+    }
+
+    /**
+     * Returns the classes which were loaded by the classloader.
+     * <p>
      * NOTE: Although the 'jconsole' displays the classes as 'unavailable'
      * do not remove it. It is needed by the ClasspathDigger class in
      * PatternTesting Runtime to get the loaded classes.
+     * </p>
      *
      * @return the classes as string array
      */
@@ -82,9 +97,10 @@ public interface ClasspathAgentMBean extends Serializable{
     /**
      * This operation dumps the loaded classes to a temporary file with the
      * prefix "dumpLoadedClasses" and the extension ".txt".
-     *
+     * <p>
      * To be able to see the name of the temporary file in the 'jconsole' it
      * should be returned as value.
+     * </p>
      *
      * @return the temporary file
      * @throws IOException Signals that an I/O exception has occurred.
