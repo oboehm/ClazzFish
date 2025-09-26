@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.SystemInfo;
+import clazzfish.core.ClasspathInspector;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
@@ -62,7 +62,7 @@ public class ClasspathDigger extends AbstractDigger {
 	};
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
-	private final String[] bootClassPath = SystemInfo.getBootClasspath();
+	private final String[] bootClassPath = ClasspathInspector.getBootClasspath();
 	private static final ObjectInstance agentMBean;
 
 	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
@@ -178,7 +178,7 @@ public class ClasspathDigger extends AbstractDigger {
 		} catch (IllegalArgumentException ex) {
 			LOG.warn("Will fallback to 'java.class.path' because cannot get classpath from {}:", classLoader, ex);
 		}
-        return SystemInfo.getClasspath();
+        return ClasspathInspector.getClasspath();
 	}
 
 	private String[] getNetClasspath() {
@@ -560,7 +560,7 @@ public class ClasspathDigger extends AbstractDigger {
         return classSet;
     }
 
-    private static void addClasses(final Set<String> classSet, final File path) {
+private static void addClasses(final Set<String> classSet, final File path) {
         LOG.trace("Adding classes from {}...", path);
         try {
             if (path.isDirectory()) {

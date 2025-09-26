@@ -23,14 +23,15 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * The class SystemInfo provides some info about the VM.
+ * The class ClasspathInspector inspects the classpath and provides some infos
+ * about it.
  *
  * @author oboehm
  * @since 3.0 (24.09.25)
  */
-public class SystemInfo {
+public class ClasspathInspector {
 
-    private static final Logger log = Logger.getLogger(SystemInfo.class.getName());
+    private static final Logger log = Logger.getLogger(ClasspathInspector.class.getName());
 
     /**
      * To get the boot classpath the sytem property "sun.boot.class.path" is

@@ -28,27 +28,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit tests for {@link SystemInfo}.
+ * Unit tests for {@link ClasspathInspector}.
  *
  * @author oboehm
  * @since 24.09.25
  */
-class SystemInfoTest {
+class ClasspathInspectorTest {
 
     @Test
     void getBootClasspath() {
-        assertNotNull(SystemInfo.getBootClasspath());
+        assertNotNull(ClasspathInspector.getBootClasspath());
     }
 
     @Test
     void getClasspath() {
-        String[] classpath = SystemInfo.getClasspath();
+        String[] classpath = ClasspathInspector.getClasspath();
         assertThat(classpath.length, greaterThan(0));
         assertTrue(new File(classpath[0]).exists());
     }
 
     /**
-     * Test method for {@link SystemInfo#getClasspath()}. But here we
+     * Test method for {@link ClasspathInspector#getClasspath()}. But here we
      * want to see if the classpath contains only real path elements. I.e.
      * pathes which does not exist should not be part of the returned
      * classpath array.
@@ -65,7 +65,7 @@ class SystemInfoTest {
             classpath.append(File.pathSeparator).append(classpathe);
         }
         System.setProperty("test-classpath", classpath.toString());
-        String[] realClasspathes = SystemInfo.getClasspath("test-classpath");
+        String[] realClasspathes = ClasspathInspector.getClasspath("test-classpath");
         assertThat(classpathes, equalTo(realClasspathes));
     }
 

@@ -18,7 +18,7 @@
 
 package clazzfish.agent;
 
-import clazzfish.core.SystemInfo;
+import clazzfish.core.ClasspathInspector;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public interface ClasspathAgentMBean extends Serializable{
      * @since 3.0
      */
     default String[] getClasspath() {
-        return SystemInfo.getClasspath();
+        return ClasspathInspector.getClasspath();
     }
 
     /**
