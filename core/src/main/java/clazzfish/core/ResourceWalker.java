@@ -18,6 +18,7 @@
 package clazzfish.core;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,27 +37,38 @@ import java.util.stream.Stream;
 public class ResourceWalker {
 
     private final Path startDir;
-    private final String suffix;
+    private final FileFilter fileFilter;
 
     /**
+     * Instantiates a new Resource walker for all resources.
+     *
+     * @param dir the start dir
+     */
+    public ResourceWalker(File dir) {
+        this(dir, getAllResourcesFilter());
+    }
+
+   /**
      * Instantiates a new resource walker for resources with the given suffix.
      *
      * @param dir    the start dir
      * @param suffix file suffix, e.g. ".xml"
      */
     public ResourceWalker(File dir, String suffix) {
-        this(dir.toPath(), suffix);
+        this(dir, getFileFilter(suffix));
     }
 
-    /**
-     * Instantiates a new resource walker for resources with the given suffix.
-     *
-     * @param dir    the start dir
-     * @param suffix file suffix, e.g. ".xml"
-     */
-    public ResourceWalker(Path dir, String suffix) {
-        this.startDir = dir.toAbsolutePath();
-        this.suffix = suffix;
+    private ResourceWalker(File dir, FileFilter filter) {
+        this.startDir = dir.toPath();
+        this.fileFilter = filter;
+    }
+
+    private static FileFilter getFileFilter(String suffix) {
+        return file -> file.getName().endsWith(suffix);
+    }
+
+    private static FileFilter getAllResourcesFilter() {
+        return file -> !file.getName().endsWith(".class");
     }
 
     /**
@@ -69,8 +81,8 @@ public class ResourceWalker {
         int startDirnameLength = startDir.toString().length();
         try (Stream<Path> stream = Files.walk(startDir)) {
             return stream.filter(Files::isRegularFile)
+                    .filter(p -> fileFilter.accept(p.toFile()))
                     .map(p -> p.toString().substring(startDirnameLength))
-                    .filter(s -> s.endsWith(suffix))
                     .collect(Collectors.toSet());
         }
     }

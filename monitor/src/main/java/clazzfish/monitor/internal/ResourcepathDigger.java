@@ -18,6 +18,7 @@
 
 package clazzfish.monitor.internal;
 
+import clazzfish.core.ResourceWalker;
 import clazzfish.monitor.exception.ClassloaderException;
 import clazzfish.monitor.util.Converter;
 import org.slf4j.Logger;

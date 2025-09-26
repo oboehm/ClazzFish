@@ -37,7 +37,14 @@ class ResourceWalkerTest {
     private static final File CLASSES_DIR = new File("target", "test-classes");
 
     @Test
-    void getResources() throws IOException {
+    void getAllResources() throws IOException {
+        ResourceWalker walker = new ResourceWalker(CLASSES_DIR);
+        Collection<String> resources = getResourcesFrom(walker);
+        assertThat(resources, hasItem("/logging.properties"));
+    }
+
+    @Test
+    void getPropertiesResources() throws IOException {
         ResourceWalker walker = new ResourceWalker(CLASSES_DIR, ".properties");
         Collection<String> resources = getResourcesFrom(walker);
         assertThat(resources, hasItem("/logging.properties"));
