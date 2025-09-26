@@ -20,6 +20,12 @@
     </description>
     
     <dependencies>
+
+        <dependency>
+            <groupId>de.aosd.clazzfish</groupId>
+            <artifactId>clazzfish-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <!-- commons -->
         <dependency>

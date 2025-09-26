@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,6 +45,28 @@ class SystemInfoTest {
         String[] classpath = SystemInfo.getClasspath();
         assertThat(classpath.length, greaterThan(0));
         assertTrue(new File(classpath[0]).exists());
+    }
+
+    /**
+     * Test method for {@link SystemInfo#getClasspath()}. But here we
+     * want to see if the classpath contains only real path elements. I.e.
+     * pathes which does not exist should not be part of the returned
+     * classpath array.
+     */
+    @Test
+    public void testGetRealClasspath() {
+        String[] classpathes = {
+                "target/classes",
+                "../monitor/src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/classes!",
+                "../monitor/src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar!"
+        };
+        StringBuilder classpath = new StringBuilder("gibts/net");
+        for (String classpathe : classpathes) {
+            classpath.append(File.pathSeparator).append(classpathe);
+        }
+        System.setProperty("test-classpath", classpath.toString());
+        String[] realClasspathes = SystemInfo.getClasspath("test-classpath");
+        assertThat(classpathes, equalTo(realClasspathes));
     }
 
 }

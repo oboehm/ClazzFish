@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.core.SystemInfo;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
@@ -61,7 +62,7 @@ public class ClasspathDigger extends AbstractDigger {
 	};
 	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 	private final ClassLoader classLoader;
-	private final String[] bootClassPath = getClasspath("sun.boot.class.path");
+	private final String[] bootClassPath = SystemInfo.getBootClasspath();
 	private static final ObjectInstance agentMBean;
 
 	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
@@ -177,7 +178,7 @@ public class ClasspathDigger extends AbstractDigger {
 		} catch (IllegalArgumentException ex) {
 			LOG.warn("Will fallback to 'java.class.path' because cannot get classpath from {}:", classLoader, ex);
 		}
-		return getClasspath("java.class.path");
+        return SystemInfo.getClasspath();
 	}
 
 	private String[] getNetClasspath() {
@@ -243,23 +244,6 @@ public class ClasspathDigger extends AbstractDigger {
 		return ExtendedFile.toStringArray(files);
 	}
 
-	/**
-	 * Gets the classpath.
-	 *
-	 * @param key
-	 *            the key
-	 * @return the classpath as String array
-	 */
-	protected static String[] getClasspath(final String key) {
-		String classpath = System.getProperty(key);
-		if (classpath == null) {
-			LOG.trace("{} is not set (not a SunVM or JDK 9+)", key);
-			return new String[0];
-		}
-		String[] cp = splitClasspath(classpath);
-		return validatedClasspath(cp);
-	}
-
 	private static String[] splitClasspath(final String classpath) {
 		String[] cp = StringUtils.split(classpath, File.pathSeparator);
 		for (int i = 0; i < cp.length; i++) {
@@ -268,19 +252,6 @@ public class ClasspathDigger extends AbstractDigger {
 			}
 		}
 		return cp;
-	}
-
-	private static String[] validatedClasspath(String[] classpathes) {
-		List<String> validated = new ArrayList<>();
-		for (String name : classpathes) {
-			File path = new File(name);
-			if (name.contains("!") || path.exists()) {
-				validated.add(name);
-			} else {
-				LOG.debug("'{}' in classpath is ignored because it does not exists.", path);
-			}
-		}
-		return validated.toArray(new String[0]);
 	}
 
 	/**

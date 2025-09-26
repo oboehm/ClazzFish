@@ -52,7 +52,7 @@ public class SystemInfo {
         return getClasspath("java.class.path");
     }
 
-    private static String[] getClasspath(final String key) {
+    static String[] getClasspath(final String key) {
         String classpath = System.getProperty(key);
         if (classpath == null) {
             log.finest(key + "is not set (not a SunVM or JDK 9+)");

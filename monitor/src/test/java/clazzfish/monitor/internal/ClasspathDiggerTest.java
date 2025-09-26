@@ -19,7 +19,6 @@ package clazzfish.monitor.internal;
 
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -29,10 +28,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClasspathDiggerTest extends AbstractDiggerTest {
@@ -130,64 +132,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
             assertTrue(path.exists(), "path does not exist: " + path);
             LOG.info("{}. path: {}", i+1, path);
         }
-    }
-
-    /**
-     * Test method for {@link ClasspathDigger#getClasspath()}. But here we
-     * want to see if the classpath contains only real path elements. I.e.
-     * pathes which does not exist should not be part of the returned
-     * classpath array.
-     */
-    @Test
-    public void testGetRealClasspath() {
-        String[] classpathes = {
-                "target/classes",
-                "src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/classes!",
-                "src/test/resources/patterntesting/runtime/monitor/world.war!/WEB-INF/lib/patterntesting-agent-1.6.3.jar!"
-        };
-        StringBuilder classpath = new StringBuilder("gibts/net");
-        for (String classpathe : classpathes) {
-            classpath.append(File.pathSeparator).append(classpathe);
-        }
-        System.setProperty("test-classpath", classpath.toString());
-        String[] realClasspathes = ClasspathDigger.getClasspath("test-classpath");
-        assertThat(classpathes, equalTo(realClasspathes));
-    }
-
-    /**
-     * It is hard to get the classpath in an application server like WLS
-     * (Weblogic Server) or others. One (hard) way is to use the loaded
-     * packages and look from which jar file or directory each package is
-     * loaded.
-     * <p>
-     * But how can it be tested if this is the correct classpath? I don't know.
-     * So it is not really tested here. It is only manually compared which
-     * parts of the classpath are missing.
-     * </p>
-     */
-    @Test
-    public void testGetClasspathFromPackages() {
-        String[] classpath = digger.getClasspath();
-        String[] packageClasspath = digger.getClasspathFromPackages();
-        Collection<String> missing = findMissingElementsOf(packageClasspath, classpath);
-        for (String unused : missing) {
-            LOG.info("unused: {}", unused);
-        }
-        Collection<String> toomuch = findMissingElementsOf(classpath, packageClasspath);
-        for (String s : toomuch) {
-            LOG.info("not in java.class.path: {}", s);
-        }
-    }
-
-    private static Collection<String> findMissingElementsOf(
-            final String[] unknown, final String[] reference) {
-        Collection<String> missing = new ArrayList<>();
-        for (String s : unknown) {
-            if (!ArrayUtils.contains(reference, s)) {
-                missing.add(s);
-            }
-        }
-        return missing;
     }
 
     /**
