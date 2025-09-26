@@ -8,7 +8,11 @@ The agent can be started with
 The agent provides the information which classes were loaded by the classloader.
 
 
-## Dependencies
+## Design Decisions
 
-To keep the agent small it has no dependencies to other libraries.
-Logging is done with the logging package of the JDK.
+To keep the agent small it was decided to
+
+- use no other dependencies
+- keep the memory foot print small
+
+Because of the use of no other dependencies logging is done with the logging package of the JDK.
