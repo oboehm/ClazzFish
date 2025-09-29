@@ -18,8 +18,6 @@
 package clazzfish.monitor;
 
 import clazzfish.monitor.util.Environment;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +105,7 @@ public final class Config {
      */
     public static String getEnvironment(String key) {
         String value = System.getProperty(key);
-        if (StringUtils.isBlank(value)) {
+        if (value == null) {
             String envKey = key.replace('.', '_').toUpperCase();
             log.debug("System property '{}' is not set, trying environment variable '{}'.", key, envKey);
             value = System.getenv(envKey);
@@ -123,10 +121,10 @@ public final class Config {
      */
     public File getDumpDir() {
         String dirname = properties.getProperty(DUMP_DIR);
-        if (StringUtils.isNotBlank(dirname)) {
+        if (dirname != null) {
             return new File(dirname);
         } else {
-            File dir = new File(SystemUtils.getJavaIoTmpDir(), "ClazzFish");
+            File dir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "ClazzFish");
             return new File(dir, getAppName());
         }
     }
@@ -149,7 +147,7 @@ public final class Config {
      */
     public URI getDumpURI() {
         String dumpUri = properties.getProperty(DUMP_URI);
-        if (StringUtils.isBlank(dumpUri)) {
+        if (dumpUri == null) {
             return getDumpDir().toURI();
         } else {
             return URI.create(dumpUri);
