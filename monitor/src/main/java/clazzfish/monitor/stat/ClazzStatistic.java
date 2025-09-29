@@ -18,7 +18,7 @@
 package clazzfish.monitor.stat;
 
 import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;

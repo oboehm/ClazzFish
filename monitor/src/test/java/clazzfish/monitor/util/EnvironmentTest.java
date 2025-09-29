@@ -17,6 +17,7 @@ package clazzfish.monitor.util;
  * (c)reated 11.03.2018 by oboehm (ob@oasd.de)
  */
 
+import clazzfish.core.Config;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class EnvironmentTest {
     public void testGetName() {
         String name = Environment.getName();
         LOG.info("environment name: " + name);
-        String cloader = Environment.getClassLoader().getClass().getName();
+        String cloader = Config.getClassLoader().getClass().getName();
         assertTrue(cloader.startsWith(name), name + " does not match " + cloader);
         assertFalse(name.indexOf('$') >= 0, name + " has a '$' inside");
     }
@@ -95,28 +96,6 @@ public class EnvironmentTest {
         Properties props = System.getProperties();
         props.remove(name);
         assertFalse(Environment.isPropertyEnabled(name), name + " is not set");
-    }
-
-    /**
-     * Test method for {@link Environment#loadProperties(String)}.
-     * @throws IOException if poperties can't be loaded
-     */
-    @Test
-    public synchronized void testLoadProperties() throws IOException {
-        Environment.loadProperties("test.properties");
-        assertTrue(Environment.isPropertyEnabled("my.little.test.property"), "see test.properties");
-        unsetSystemProperty("my.little.test.property");
-    }
-
-    /**
-     * Test method for {@link Environment#loadProperties(String)}.
-     * @throws IOException if poperties can't be loaded
-     */
-    @Test
-    public synchronized void testLoadPropertiesViaClassloader() throws IOException {
-        Environment.loadProperties("/clazzfish/monitor/util/test.properties");
-        assertTrue(Environment.isPropertyEnabled("my.little.test.property"), "see test.properties");
-        unsetSystemProperty("my.little.test.property");
     }
 
     /**

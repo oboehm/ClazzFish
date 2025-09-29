@@ -18,6 +18,7 @@
 
 package clazzfish.monitor.util;
 
+import clazzfish.core.Config;
 import clazzfish.monitor.io.FileInputStreamReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -31,11 +32,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * This class provides some utilities for the access to the environment (e.g.
@@ -70,26 +68,12 @@ public class Environment {
 	 * @return e.g. "com.google.apphosting" for Google App Enginge
 	 */
 	public static String getName() {
-		String name = getClassLoader().getClass().getName();
+		String name = Config.getClassLoader().getClass().getName();
 		String[] packages = name.split("[.$]", 4);
 		return packages[0] + "." + packages[1] + "." + packages[2];
 	}
 
-	/**
-	 * Gets the class loader.
-	 *
-	 * @return a valid classloader
-	 */
-	public static ClassLoader getClassLoader() {
-		ClassLoader cloader = Thread.currentThread().getContextClassLoader();
-		if (cloader == null) {
-			cloader = Environment.class.getClassLoader();
-			LOG.warn("No ContextClassLoader found - using {}.", cloader);
-		}
-		return cloader;
-	}
-
-	/**
+    /**
 	 * Looks if one of the given properties matches a system property. If one
 	 * system property is found and this system property is not "false" true is
 	 * returned.
@@ -127,64 +111,7 @@ public class Environment {
 		return !FALSE.equalsIgnoreCase(prop);
 	}
 
-	/**
-	 * Loads the properties from the classpath and provides them as system
-	 * properties.
-	 *
-	 * @param resource
-	 *            the name of the classpath resource
-	 * @return the loaded properties
-	 * @throws IOException
-	 *             if properties can't be loaded
-	 * @see #loadProperties(InputStream)
-	 */
-	public static Properties loadProperties(final String resource) throws IOException {
-		ClassLoader cloader = getClassLoader();
-		InputStream istream = cloader.getResourceAsStream(resource);
-		if ((istream == null) && resource.startsWith("/")) {
-			istream = cloader.getResourceAsStream(resource.substring(1));
-		}
-		if (istream == null) {
-			LOG.debug("Using Environment.class to get {}...", resource);
-			istream = Environment.class.getResourceAsStream(resource);
-		}
-		if (istream == null) {
-			LOG.info("Resource '{}' is not available.", resource);
-			return new Properties();
-		} else {
-			Properties props = loadProperties(istream);
-			istream.close();
-			LOG.debug("{} properties loaded from '{}'.", props.size(), resource);
-			return props;
-		}
-	}
-
-	/**
-	 * Loads the properties from the given InputStream and provides them as
-	 * system properties.
-	 * <p>
-	 * Note: Setting it as system property is not guaranteed to run in a cluster
-	 * or cloud. E.g. on Google's App Engine this seems not to work.
-	 * </p>
-	 *
-	 * @param istream
-	 *            from here the properties are loaded
-	 * @return the loaded properties
-	 * @throws IOException
-	 *             if properties can't be loaded
-	 */
-	public static Properties loadProperties(final InputStream istream) throws IOException {
-		Properties props = new Properties();
-		props.load(istream);
-		Properties systemProps = System.getProperties();
-		for (Entry<Object, Object> entry : props.entrySet()) {
-			systemProps.setProperty((String) entry.getKey(), (String) entry.getValue());
-		}
-		LOG.debug("{} properties loaded from {}.", props.size(), istream);
-		return props;
-	}
-
-	/**
+    /**
 	 * In some JEE environment like Google's App Engine (GAE) it is not allowed
 	 * to use multi threading. But you can also disable multi threading by
 	 * setting the system property {@link #DISABLE_THREADS}.

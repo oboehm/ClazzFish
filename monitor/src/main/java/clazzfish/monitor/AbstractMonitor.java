@@ -18,6 +18,7 @@
 
 package clazzfish.monitor;
 
+import clazzfish.core.Config;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ReflectionHelper;
@@ -77,19 +78,19 @@ public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner 
         this.registerMeAsMBean(MBeanFinder.getAsObjectName(this.getClass()));
     }
 
-    /**
-     * With this method you can register the monitor with your own name. This is
-     * e.g. useful if you have an application server with several applications.
-     * <p>
-     * You can only register the monitor only once. If you want to register it
-     * with another name you have to first unregister it.
-     * </p>
-     *
-     * @param name the MBean name (e.g. "my.class.Monitor")
-     */
-    public void registerMeAsMBean(final String name) {
-        this.registerMeAsMBean(MBeanFinder.getAsObjectName(name));
-    }
+//    /**
+//     * With this method you can register the monitor with your own name. This is
+//     * e.g. useful if you have an application server with several applications.
+//     * <p>
+//     * You can only register the monitor only once. If you want to register it
+//     * with another name you have to first unregister it.
+//     * </p>
+//     *
+//     * @param name the MBean name (e.g. "my.class.Monitor")
+//     */
+//    public void registerMeAsMBean(final String name) {
+//        this.registerMeAsMBean(MBeanFinder.getAsObjectName(name));
+//    }
 
     /**
      * With this method you can register the monitor with your own name. This is

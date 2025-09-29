@@ -4,7 +4,7 @@ Classpath;Classname;Count
 /ClazzFish/monitor/target/classes;clazzfish.monitor.ClassloaderType;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.ClasspathMonitor;2
 /ClazzFish/monitor/target/classes;clazzfish.monitor.ClasspathMonitorMBean;2
-/ClazzFish/monitor/target/classes;clazzfish.monitor.Config;1
+/ClazzFish/monitor/target/classes;clazzfish.core.Config;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.ResourcepathMonitor;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.ResourcepathMonitorMBean;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.Starter;1

@@ -17,7 +17,7 @@
  */
 package clazzfish.spi.git;
 
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

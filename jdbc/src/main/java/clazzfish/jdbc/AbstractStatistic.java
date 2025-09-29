@@ -22,7 +22,7 @@ package clazzfish.jdbc;
 import clazzfish.jdbc.monitor.*;
 import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.monitor.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
@@ -274,14 +274,14 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 		return max;
 	}
 
-	/**
-	 * Gets the root monitor.
-	 *
-	 * @return the root monitor
-	 */
-	protected ProfileMonitor getRootMonitor() {
-		return this.factory.getRootMonitor();
-	}
+//	/**
+//	 * Gets the root monitor.
+//	 *
+//	 * @return the root monitor
+//	 */
+//	protected ProfileMonitor getRootMonitor() {
+//		return this.factory.getRootMonitor();
+//	}
 
 	/**
 	 * Gets the max avg.

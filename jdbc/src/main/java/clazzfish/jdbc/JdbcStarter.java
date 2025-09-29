@@ -18,7 +18,7 @@
 package clazzfish.jdbc;
 
 import clazzfish.monitor.Starter;
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

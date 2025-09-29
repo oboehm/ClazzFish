@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
  *
  * (c)reated 05.12.24 by oboehm
  */
-package clazzfish.monitor;
-
-import clazzfish.monitor.util.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package clazzfish.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * All config stuff is encapsulated in this class.
@@ -36,7 +34,7 @@ import java.util.Properties;
  */
 public final class Config {
 
-    private static final Logger log = LoggerFactory.getLogger(Config.class);
+    private static final Logger log = Logger.getLogger(Config.class.getName());
     /** Property name of the directory where the class statistic is dumped to. */
     public static final String DUMP_DIR = "clazzfish.dump.dir";
     /** Property name of URI where the class statistic is dumped to. */
@@ -49,7 +47,7 @@ public final class Config {
 
     private Config(Properties properties) {
         this.properties = properties;
-        log.debug("Config with {} is created.", properties);
+        log.fine(String.format("Config with %s is created.", properties));
     }
 
     public static Config of(String... resources) {
@@ -67,7 +65,7 @@ public final class Config {
 
     private static Properties readProperties(String resource) {
         try {
-            Properties props = Environment.loadProperties(resource);
+            Properties props = loadProperties(resource);
             Properties sysProps = readProperties();
             props.putAll(sysProps);
             return props;
@@ -85,13 +83,13 @@ public final class Config {
                 props.setProperty(key, entry.getValue());
             }
         }
-        log.trace("{} properties loaded from environment.", props.size());
+        log.finer(props.size() + " properties loaded from environment.");
         for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
             if (entry.getKey().toString().startsWith("clazzfish.")) {
                 props.setProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
-        log.trace("{} properties loaded from environment and system properties.", props.size());
+        log.finer(props.size() + " properties loaded from environment and system properties.");
         return props;
     }
 
@@ -107,11 +105,82 @@ public final class Config {
         String value = System.getProperty(key);
         if (value == null) {
             String envKey = key.replace('.', '_').toUpperCase();
-            log.debug("System property '{}' is not set, trying environment variable '{}'.", key, envKey);
+            log.finer(String.format("System property '%s' is not set, trying environment variable '%s'.", key, envKey));
             value = System.getenv(envKey);
         }
         return value;
     }
+
+    /**
+     * Loads the properties from the classpath and provides them as system
+     * properties.
+     *
+     * @param resource
+     *            the name of the classpath resource
+     * @return the loaded properties
+     * @throws IOException
+     *             if properties can't be loaded
+     * @see #loadProperties(InputStream)
+     */
+    public static Properties loadProperties(final String resource) throws IOException {
+        ClassLoader cloader = getClassLoader();
+        InputStream istream = cloader.getResourceAsStream(resource);
+        if ((istream == null) && resource.startsWith("/")) {
+            istream = cloader.getResourceAsStream(resource.substring(1));
+        }
+        if (istream == null) {
+            log.fine(String.format("Using Config.class to get %s...", resource));
+            istream = Config.class.getResourceAsStream(resource);
+        }
+        if (istream == null) {
+            log.info(String.format("Resource '%s' is not available, using internal defaults.", resource));
+            return new Properties();
+        } else {
+            Properties props = loadProperties(istream);
+            istream.close();
+            log.fine(String.format("%d properties loaded from '%s'.", props.size(), resource));
+            return props;
+        }
+    }
+
+    /**
+     * Gets the class loader.
+     *
+     * @return a valid classloader
+     */
+    public static ClassLoader getClassLoader() {
+        ClassLoader cloader = Thread.currentThread().getContextClassLoader();
+        if (cloader == null) {
+            cloader = getClassLoader();
+            log.warning(String.format("No ContextClassLoader found - using %s.", cloader));
+        }
+        return cloader;
+    }
+
+    /**
+	 * Loads the properties from the given InputStream and provides them as
+	 * system properties.
+	 * <p>
+	 * Note: Setting it as system property is not guaranteed to run in a cluster
+	 * or cloud. E.g. on Google's App Engine this seems not to work.
+	 * </p>
+	 *
+	 * @param istream
+	 *            from here the properties are loaded
+	 * @return the loaded properties
+	 * @throws IOException
+	 *             if properties can't be loaded
+	 */
+	public static Properties loadProperties(final InputStream istream) throws IOException {
+		Properties props = new Properties();
+		props.load(istream);
+		Properties systemProps = System.getProperties();
+		for (Map.Entry<Object, Object> entry : props.entrySet()) {
+			systemProps.setProperty((String) entry.getKey(), (String) entry.getValue());
+		}
+		log.fine(String.format("%d properties loaded from %s.", props.size(), istream));
+		return props;
+	}
 
     /**
      * Get the directory where the collected dates and statistics are dumped
@@ -163,7 +232,7 @@ public final class Config {
     public void setDumpURI(URI uri) {
         if (!Objects.equals(uri, this.getDumpURI())) {
             properties.setProperty(DUMP_URI, uri.toString());
-            log.info("Dump-URI is set to '{}'.", uri);
+            log.info(String.format("Dump-URI is set to '%s'.", uri));
         }
     }
 
@@ -197,12 +266,12 @@ public final class Config {
         for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
             for (String k : keys) {
                 if (k.equals(entry.getKey().toString().toLowerCase())) {
-                    log.debug("Using {} for name of CSV file.", entry);
+                    log.fine(String.format("Using %s for name of CSV file.", entry));
                     return entry.getValue().toString();
                 }
             }
         }
-        log.trace("Using main class as application name.");
+        log.fine("Using main class as application name.");
         return getStartClassname();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024, 2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,15 @@
  *
  * (c)reated 19.12.24 by oboehm
  */
-package clazzfish.monitor;
+package clazzfish.core;
 
+import clazzfish.monitor.util.Environment;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,42 +35,65 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ConfigTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigTest.class);
-
     @Test
     void getDumpDir() {
         File dir = Config.DEFAULT.getDumpDir();
         assertNotEquals("unknown", dir.getName());
-        log.info("dumpDir = '{}'", dir);
     }
 
     @Test
     void getDumpURI() {
         URI uri = Config.DEFAULT.getDumpURI();
         assertNotNull(uri);
-        log.info("dumpURI = '{}'", uri);
     }
 
     @Test
     void getPatternExclude() {
-        String pattern = Config.DEFAULT.getProperty(clazzfish.monitor.Config.PATTERN_EXCLUDE);
+        String pattern = Config.DEFAULT.getProperty(Config.PATTERN_EXCLUDE);
         assertNotNull(pattern);
-        log.info("pattern = '{}'", pattern);
     }
 
     @Test
     void ofResource() {
-        Config config = Config.of("clazzfish/monitor/util/test.properties");
+        Config config = Config.of("clazzfish/core/test.properties");
         assertFalse(config.getProperties().isEmpty());
-        log.info("config = {}", config);
     }
 
     @Test
     void clazzfishProperties() {
-        String defaultResource = "clazzfish/monitor/util/test.properties";
+        String defaultResource = "clazzfish/core/test.properties";
         Config config = Config.of(defaultResource);
         Config defaultConfig = Config.of("clazzfish-default.properties", defaultResource);
         assertEquals(defaultConfig,  config);
+    }
+
+    /**
+     * Test method for {@link Config#loadProperties(String)}.
+     * @throws IOException if poperties can't be loaded
+     */
+    @Test
+    void loadProperties() throws IOException {
+        Config.loadProperties("test.properties");
+        assertTrue(Environment.isPropertyEnabled("my.little.test.property"), "see test.properties");
+        unsetSystemProperty("my.little.test.property");
+    }
+
+    /**
+     * Test method for {@link Config#loadProperties(String)}.
+     *
+     * @throws IOException if poperties can't be loaded
+     */
+    @Test
+    void loadPropertiesViaClassloader() throws IOException {
+        Config.loadProperties("/clazzfish/core/test.properties");
+        assertTrue(Environment.isPropertyEnabled("my.little.test.property"), "see test.properties");
+        unsetSystemProperty("my.little.test.property");
+    }
+
+    private static void unsetSystemProperty(final String name) {
+        Properties props = System.getProperties();
+        props.remove(name);
+        assertFalse(Environment.isPropertyEnabled(name), name + " is not set");
     }
 
 }

@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

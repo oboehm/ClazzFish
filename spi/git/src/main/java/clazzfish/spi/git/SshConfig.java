@@ -17,7 +17,7 @@
  */
 package clazzfish.spi.git;
 
-import clazzfish.monitor.Config;
+import clazzfish.core.Config;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
