@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Oliver Boehm
+ * Copyright (c) 2018-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
@@ -326,98 +324,6 @@ public class ConverterTest {
         String filename = file.toString();
         assertTrue(filename.startsWith("C:")
                                 || filename.startsWith("/C:"), file + " does not start with 'C:'");
-    }
-
-    /**
-     * Tests the toDate() implementation.
-     */
-    @Test
-    public void testToDate() {
-        checkDate("26-Nov-2009", "dd-MMM-yyyy");
-    }
-
-    /**
-     * Now we want to be able to set date <em>and</em> time.
-     */
-    @Test
-    public void testToDateTime() {
-        checkDate("01-Apr-2011", "dd-MMM-yyyy");
-        checkDate("01-Apr-2011 17:55", "dd-MMM-yyyy H:m");
-    }
-
-    /**
-     * Here we want to test the date with time and seconds.
-     */
-    @Test
-    public void testToDateSeconds() {
-        checkDate("08-12-2015 22:44:55", "dd-MM-yyyy H:m:s");
-    }
-
-    /**
-     * Tests the toDate() implementation.
-     */
-    @Test
-    public void testToDateUS() {
-        checkDate("2009-11-26", "yyyy-MM-dd");
-    }
-
-    /**
-     * Tests the toDate() implementation.
-     */
-    @Test
-    public void testToDateWithBlanks() {
-        checkDate("Nov 26 2009", "MMM dd yyyy");
-    }
-
-    /**
-     * There was a problem with "30-May-2010" as date string.
-     * It seems that "30-Mai-2010" is expected on a Mac with German (de) set as
-     * default.
-     */
-    @Test
-    public void testToDateMay() {
-        if (Locale.getDefault().getLanguage().equals("de")) {
-            checkDate("30-Mai-2010", "dd-MMM-yyyy", new Locale("de"));
-        }
-        checkDate("30-May-2010", "dd-MMM-yyyy", new Locale("en"));
-    }
-
-    private static void checkDate(final String s, final String pattern) {
-        Date date = Converter.toDate(s);
-        assertEquals(s, Converter.toString(date, pattern));
-    }
-
-    private static void checkDate(final String s, final String pattern, final Locale locale) {
-        Date date = Converter.toDate(s);
-        assertEquals(s, Converter.toString(date, pattern, locale));
-    }
-
-    /**
-     * There is a problem with the default formatting of a {@link Date}. It
-     * seems that it is not correct recognized (see also
-     * http://stackoverflow.com/questions/999172/how-to-parse-a-date)
-     */
-    @Test
-    public void testToDateDefaultFormat() {
-        Date now = new Date();
-        Date converted = Converter.toDate(now.toString());
-        assertEquals(now.toString(), converted.toString());
-    }
-
-    /**
-     * Test method for {@link Converter#toTime(String)}.
-     */
-    @Test
-    public void testToTime() {
-        String s = "11:55";
-        Time time = Converter.toTime(s);
-        assertEquals(s, Converter.toShortString(time));
-    }
-
-    @Test
-    public void testToStringLocalDate() {
-        LocalDate date = LocalDate.of(2022, 1, 7);
-        assertEquals("07-Jan-2022", Converter.toString(date, "dd-MMM-yyyy"));
     }
 
     /**

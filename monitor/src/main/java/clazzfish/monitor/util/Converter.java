@@ -20,7 +20,6 @@ package clazzfish.monitor.util;
 import clazzfish.core.ResourceWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +48,6 @@ import java.util.*;
 public final class Converter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Converter.class);
-
-	/** The different date patterns (date only) which are used by toDate(). */
-	private static final String[] datePatterns = { "dd-MMM-yyyy", "dd-MM-yyyy", "yyyy-MMM-dd", "yyyy-MM-dd",
-			"MMM-dd-yyyy", "dd MMM yyyy", "dd MM yyyy", "yyyy MMM dd", "yyyy MM dd", "MMM dd yyyy", "dd.MMM.yyyy",
-			"dd.MM.yyyy", "yyyy.MMM.dd", "MMM.dd.yyyy" };
-
-	/** The different date patterns including the time. */
-	private static final String[] dateTimePatterns = getDateTimePatterns();
 
 	/**
 	 * To avoid that this class is instantiated.
@@ -582,23 +573,6 @@ public final class Converter {
 	}
 
 	/**
-	 * Each object inside the Set is converted into its toString()
-	 * representation.
-	 *
-	 * @param set
-	 *            the set
-	 *
-	 * @return the given Set as array
-	 *
-	 * @since 27-Jul-2009
-	 */
-	public static String[] toStringArray(final Set<Object> set) {
-		Object[] objects = new Object[set.size()];
-		objects = set.toArray(objects);
-		return toStringArray(objects);
-	}
-
-	/**
 	 * Converts a date to string using the default locale.
 	 *
 	 * @param date    a valid date
@@ -661,95 +635,6 @@ public final class Converter {
 	 */
 	public static Object[] toArray(final Object... objects) {
 		return objects;
-	}
-
-	/**
-	 * Converts a string to a date by trying different date patterns. If the
-	 * string can't be converted an IllegalArgumentException will be thrown.
-	 *
-	 * @param s
-	 *            e.g. "28-Nov-2009" or "Thu Nov 26 14:30:25 CET 2009"
-	 * @return a valid date or NULL_DATE (if an empty string is given)
-	 */
-	public static Date toDate(final String s) {
-		try {
-			return toDate(s, false);
-		} catch (IllegalArgumentException iae) {
-			LOG.trace("Cannot convert '" + s + "' to Date with lenient=false:", iae);
-			return toDate(s, true);
-		}
-	}
-
-	/**
-	 * Converts a string to a date by trying different date patterns. To speed
-	 * up this method we look first if the string is long enough to hold a date
-	 * <em>and</em> time value. If not only the datePatterns are probed. This
-	 * speeds up this method about a factor of 5 (from about 10 ms to 2 ms on a
-	 * MacBook Pro with 2 GHz).
-	 *
-	 * @param s
-	 *            e.g. "28-Nov-2009"
-	 * @param lenient
-	 *            the lenient
-	 * @return the date
-	 */
-	private static Date toDate(final String s, final boolean lenient) {
-		if (StringUtils.isEmpty(s)) {
-			return new Date(0L);
-		}
-		String[] patterns = dateTimePatterns;
-		if (s.length() < 12) {
-			patterns = datePatterns;
-		}
-		for (String pattern : patterns) {
-			try {
-				return toDate(s, pattern, lenient);
-			} catch (IllegalArgumentException iae) {
-				if (LOG.isTraceEnabled()) {
-					LOG.trace("Cannot convert '" + s + "' to Date with pattern " + pattern + ":", iae);
-				}
-			}
-		}
-		throw new IllegalArgumentException("can't convert \"" + s + "\" to date");
-	}
-
-	/**
-	 * Here we combine date and time patterns. If it takes too long, cache the
-	 * result!
-	 * <p>
-	 * The default time pattern which is used by the {@link Date#toString()}
-	 * method is "EEE MMM d HH:mm:ss zzz yyyy". This pattern is added ad first
-	 * pattern.
-	 * </p>
-	 *
-	 * @since 1.1
-	 * @return combined date and time patterns
-	 */
-	private static String[] getDateTimePatterns() {
-		String[] timePatterns = { "H:m:s", "H:m", "h:m", "K:m", "k:m" };
-		List<String> patterns = new ArrayList<>(datePatterns.length * (timePatterns.length + 1) + 1);
-		patterns.add("EEE MMM d HH:mm:ss zzz yyyy");
-		for (String datePattern : datePatterns) {
-			for (String timePattern : timePatterns) {
-				patterns.add(datePattern + " " + timePattern);
-			}
-		}
-		patterns.addAll(Arrays.asList(datePatterns));
-		return patterns.toArray(new String[0]);
-	}
-
-	/**
-	 * Converts a time string to a {@link Time} value. In contradiction to
-	 * {@link Time#valueOf(String)} it works also if the time string is given in
-	 * the format "hh:mm".
-	 *
-	 * @param s
-	 *            e.g. "12:00" for high noon
-	 * @return the time
-	 */
-	public static Time toTime(final String s) {
-		String withSeconds = (StringUtils.countMatches(s, ":") == 2) ? s : s + ":00";
-		return Time.valueOf(withSeconds);
 	}
 
 	/**
