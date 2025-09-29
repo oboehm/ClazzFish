@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 by Oliver Boehm
+ * Copyright (c) 2009-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
  * (c)reated 14.04.2009 by oliver (ob@aosd.de)
  */
 package clazzfish.monitor.internal;
-
-import clazzfish.monitor.util.Converter;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,25 +45,19 @@ public class ClassWalker extends clazzfish.core.ResourceWalker {
 	/**
 	 * Walk thru the directories and return all class files as classname, e.g. a
 	 * file java/lang/String.class should be returned as "java.lang.String".
-	 * <p>
-	 * See also <a href=
-	 * "http://commons.apache.org/io/api-release/org/apache/commons/io/DirectoryWalker.html">
-	 * DirectoryWalker</a>.
-	 * </p>
 	 *
 	 * @return a collection of classnames
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public Collection<String> getClasses() throws IOException {
-		Collection<String> resources = this.getResources();
-		Collection<String> classes = new ArrayList<>(resources.size());
-		for (String res : resources) {
-			String classname = Converter.resourceToClass(res);
-			if (ClassFilter.DEFAULT.isIncluded(classname)) {
-				classes.add(classname);
-			}
-		}
-		return classes;
-	}
+    public Collection<String> getClasses() throws IOException {
+        Collection<String> allClasses = super.getClasses();
+        Collection<String> classes = new ArrayList<>(allClasses.size());
+        for (String classname : allClasses) {
+            if (ClassFilter.DEFAULT.isIncluded(classname)) {
+                classes.add(classname);
+            }
+        }
+        return classes;
+    }
 
 }

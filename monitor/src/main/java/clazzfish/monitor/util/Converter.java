@@ -1,7 +1,5 @@
 /*
- * $Id: Converter.java,v 1.50 2016/12/18 20:19:36 oboehm Exp $
- *
- * Copyright (c) 2008-2018 by Oliver Boehm
+ * Copyright (c) 2008-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +17,7 @@
  */
 package clazzfish.monitor.util;
 
+import clazzfish.core.ResourceWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -199,19 +198,7 @@ public final class Converter {
 	 * @return e.g. "java.lang.String"
 	 */
 	public static String resourceToClass(final String name) {
-		if (name == null) {
-			return null;
-		}
-		if (name.endsWith(".class")) {
-			int lastdot = name.lastIndexOf('.');
-			String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
-			if (classname.startsWith(".")) {
-				classname = classname.substring(1);
-			}
-			return classname;
-		} else {
-			return name;
-		}
+        return ResourceWalker.resourceToClass(name);
 	}
 
 	/**
@@ -595,27 +582,6 @@ public final class Converter {
 	}
 
 	/**
-	 * Each object inside the array is converted into its toString()
-	 * representation.
-	 * <p>
-	 * Since 1.5 a null object is converted into an empty string ("").
-	 * </p>
-	 *
-	 * @param array
-	 *            e.g. an int array {1, 2, 3}
-	 * @return e.g. {"1", "2", "3"}
-	 * @since 27-Jul-2009
-	 */
-	@SuppressWarnings("deprecation")
-	public static String[] toStringArray(final Object[] array) {
-		String[] strings = new String[array.length];
-		for (int i = 0; i < strings.length; i++) {
-			strings[i] = ObjectUtils.toString(array[i]);
-		}
-		return strings;
-	}
-
-	/**
 	 * Each object inside the Set is converted into its toString()
 	 * representation.
 	 *
@@ -773,39 +739,6 @@ public final class Converter {
 	}
 
 	/**
-	 * Converts a string to a date with the help of the given pattern. If the
-	 * string can't be converted an IllegalArgumentException will be thrown.
-	 *
-	 * @param s
-	 *            e.g. "28-Nov-2009"
-	 * @param pattern
-	 *            e.g. "dd-MMM-yyyy"
-	 * @return a valid date or NULL_DATE (if an empty string is given)
-	 */
-	public static Date toDate(final String s, final String pattern) {
-		return toDate(s, pattern, true);
-	}
-
-	private static Date toDate(final String s, final String pattern, final boolean lenient) {
-		DateFormat df = new SimpleDateFormat(pattern);
-		df.setLenient(lenient);
-		try {
-			return df.parse(s);
-		} catch (ParseException e1) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("trying to match " + s + " with locale \"en\"...");
-			}
-			df = new SimpleDateFormat(pattern, new Locale("en"));
-			df.setLenient(lenient);
-			try {
-				return df.parse(s);
-			} catch (ParseException e2) {
-				throw new IllegalArgumentException("\"" + s + "\" does not match pattern " + pattern, e2);
-			}
-		}
-	}
-
-	/**
 	 * Converts a time string to a {@link Time} value. In contradiction to
 	 * {@link Time#valueOf(String)} it works also if the time string is given in
 	 * the format "hh:mm".
@@ -817,23 +750,6 @@ public final class Converter {
 	public static Time toTime(final String s) {
 		String withSeconds = (StringUtils.countMatches(s, ":") == 2) ? s : s + ":00";
 		return Time.valueOf(withSeconds);
-	}
-
-	/**
-	 * Converts an Enumeration into a SortedSet.
-	 *
-	 * @param enumeration
-	 *            the Enumeration
-	 * @return the SortedSet
-	 * @since 1.0
-	 */
-	public static SortedSet<Object> toSortedSet(final Enumeration<?> enumeration) {
-		SortedSet<Object> set = new TreeSet<>();
-		while (enumeration.hasMoreElements()) {
-			Object element = enumeration.nextElement();
-			set.add(element);
-		}
-		return set;
 	}
 
 	/**

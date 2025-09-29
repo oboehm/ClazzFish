@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit tests for {@link ResourceWalker}.
@@ -57,6 +58,15 @@ class ResourceWalkerTest {
             assertThat(rsc, not(endsWith(".class")));
         }
         return resources;
+    }
+
+    @Test
+    void getClasses() throws IOException {
+        ResourceWalker classWalker = new ResourceWalker(CLASSES_DIR);
+        Collection<String> classes = classWalker.getClasses();
+        assertFalse(classes.isEmpty(), "no classes found");
+        String firstClass = classes.iterator().next();
+        assertFalse(firstClass.startsWith("."), firstClass + " is not a classname");
     }
 
 }

@@ -22,6 +22,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -78,12 +79,56 @@ public class ResourceWalker {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<String> getResources() throws IOException {
+        return getResources(fileFilter);
+    }
+
+    /**
+     * Walk thru the directories and return all class files as classname, e.g. a
+     * file java/lang/String.class is returned as "java.lang.String".
+     *
+     * @return a collection of classnames
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public Collection<String> getClasses() throws IOException {
+        Collection<String> resources = this.getResources(getFileFilter(".class"));
+        Collection<String> classes = new ArrayList<>(resources.size());
+        for (String res : resources) {
+            classes.add(resourceToClass(res));
+        }
+        return classes;
+    }
+
+    private Collection<String> getResources(FileFilter filter) throws IOException {
         int startDirnameLength = startDir.toString().length();
         try (Stream<Path> stream = Files.walk(startDir)) {
             return stream.filter(Files::isRegularFile)
-                    .filter(p -> fileFilter.accept(p.toFile()))
+                    .filter(p -> filter.accept(p.toFile()))
                     .map(p -> p.toString().substring(startDirnameLength))
                     .collect(Collectors.toSet());
+        }
+    }
+
+    /**
+     * Converts a resource (e.g. "/java/lang/String.class") into its classname
+     * ("java.lang.String").
+     *
+     * @param name e.g. "/java/lang/String.class"
+     *
+     * @return e.g. "java.lang.String"
+     */
+    public static String resourceToClass(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.endsWith(".class")) {
+            int lastdot = name.lastIndexOf('.');
+            String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
+            if (classname.startsWith(".")) {
+                classname = classname.substring(1);
+            }
+            return classname;
+        } else {
+            return name;
         }
     }
 
