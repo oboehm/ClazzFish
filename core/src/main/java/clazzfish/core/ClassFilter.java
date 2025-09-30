@@ -15,9 +15,7 @@
  *
  * (c)reated 12.06.25 by oboehm
  */
-package clazzfish.monitor.internal;
-
-import clazzfish.core.Config;
+package clazzfish.core;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

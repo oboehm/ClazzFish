@@ -17,7 +17,9 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.core.ClassFilter;
 import clazzfish.core.ClasspathInspector;
+import clazzfish.core.ResourceWalker;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
@@ -574,7 +576,7 @@ private static void addClasses(final Set<String> classSet, final File path) {
     }
 
     private static void addClassesFromDir(final Set<String> classSet, final File dir) throws IOException {
-        ClassWalker classWalker = new ClassWalker(dir);
+        ResourceWalker classWalker = new ResourceWalker(dir);
         Collection<String> classes = classWalker.getClasses();
         classSet.addAll(classes);
     }

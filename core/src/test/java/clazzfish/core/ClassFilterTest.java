@@ -15,7 +15,7 @@
  *
  * (c)reated 16.06.25 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.core;
 
 import org.junit.jupiter.api.Test;
 

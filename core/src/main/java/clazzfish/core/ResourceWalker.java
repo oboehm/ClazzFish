@@ -93,7 +93,9 @@ public class ResourceWalker {
         Collection<String> resources = this.getResources(getFileFilter(".class"));
         Collection<String> classes = new ArrayList<>(resources.size());
         for (String res : resources) {
-            classes.add(resourceToClass(res));
+            if (ClassFilter.DEFAULT.isIncluded(res)) {
+                classes.add(resourceToClass(res));
+            }
         }
         return classes;
     }

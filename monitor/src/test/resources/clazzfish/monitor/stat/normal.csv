@@ -13,7 +13,7 @@ Classpath;Classname;Count
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.AbstractDigger;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.BoringClassLoader;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.ClassDiagnostic;1
-/ClazzFish/monitor/target/classes;clazzfish.monitor.internal.ClassFilter;1
+/ClazzFish/monitor/target/classes;clazzfish.core.ClassFilter;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.ClassWalker;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.ClasspathDigger;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.internal.ClasspathDigger$1;1
