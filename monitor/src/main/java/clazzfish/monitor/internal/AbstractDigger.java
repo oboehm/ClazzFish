@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 by Oliver Boehm
+ * Copyright (c) 2009-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package clazzfish.monitor.internal;
 
 import clazzfish.monitor.util.NestedZipFile;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +72,14 @@ public abstract class AbstractDigger {
         String archiveDir = "";
         if (!path.toLowerCase().matches(".*\\.[jwe]ar")) {
             archiveDir = StringUtils.substringAfterLast(path, "!");
-            archiveDir = FilenameUtils.separatorsToUnix(archiveDir);
+            archiveDir = getSeparatorsToUnix(archiveDir);
             path = StringUtils.substringBeforeLast(path, "!");
         }
         return readElementsFromArchive(new File(path), archiveDir);
+    }
+
+    private static String getSeparatorsToUnix(String filename) {
+        return filename.replace('\\', '/');
     }
 
     private static Collection<String> readElementsFromArchive(File archive, String archiveDir)

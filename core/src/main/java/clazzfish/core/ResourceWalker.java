@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * his class scans a sub directory for a given suffix. It is a re-implentation
- * of the ResourceWalker in the monitor package but with dependencies to
+ * of the ResourceWalker in the monitor package but without dependencies to
  * commons-io.
  *
  * @author oboehm
