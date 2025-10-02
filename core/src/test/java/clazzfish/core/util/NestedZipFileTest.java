@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Oliver Boehm
+ * Copyright (c) 2017-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  *
  * (c)reated 24.01.2017 by oboehm (ob@oasd.de)
  */
-package clazzfish.monitor.util;
+package clazzfish.core.util;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,33 +31,28 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
- * Unit tests for {@link NestedZipFile} class.
+ * Unit tests for {@link clazzfish.core.util.NestedZipFile} class.
  *
  * @author oboehm
  */
 public class NestedZipFileTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NestedZipFileTest.class);
-    private static final File WORLD_WAR = new File("src/test/resources/clazzfish/monitor/util/world.war");
-    private static final File WORLD_EAR = new File("src/test/resources/clazzfish/monitor/util/world.ear");
+    private static final File WORLD_WAR = new File("../monitor/src/test/resources/clazzfish/monitor/util/world.war");
+    private static final File WORLD_EAR = new File("../monitor/src/test/resources/clazzfish/monitor/util/world.ear");
 
     /**
-     * Test method for {@link NestedZipFile#toString()}.
+     * Test method for {@link clazzfish.core.util.NestedZipFile#toString()}.
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testToString() throws IOException {
-        try (NestedZipFile zipFile = new NestedZipFile("src/test/resources/clazzfish/monitor/util/world.war")) {
+        try (clazzfish.core.util.NestedZipFile zipFile = new clazzfish.core.util.NestedZipFile("../monitor/src/test/resources/clazzfish/monitor/util/world.war")) {
             String s = zipFile.toString();
             LOG.info("s = \"{}\"", s);
-            assertThat(s, containsString(zipFile.getName()));
+            MatcherAssert.assertThat(s, Matchers.containsString(zipFile.getName()));
         }
     }
 
@@ -96,17 +94,17 @@ public class NestedZipFileTest {
      */
     @Test
     public void testNestedZipNotExisting() {
-        assertThrows(FileNotFoundException.class, () -> {
+        Assertions.assertThrows(FileNotFoundException.class, () -> {
             File notExistingZip = new File(WORLD_WAR, "!/not/existing.zip");
             listContentOf(notExistingZip);
         });
     }
 
     private static void listContentOf(File zipFile) throws IOException {
-        try (NestedZipFile nested = new NestedZipFile(zipFile)) {
+        try (clazzfish.core.util.NestedZipFile nested = new clazzfish.core.util.NestedZipFile(zipFile)) {
             LOG.info("Reading {}...", nested);
             Enumeration<? extends ZipEntry> entries = nested.entries();
-            assertTrue(entries.hasMoreElements(), "entries in " + nested + " expected");
+            Assertions.assertTrue(entries.hasMoreElements(), "entries in " + nested + " expected");
             while(entries.hasMoreElements()) {
                 LOG.info("ZipFile has entry {}.", entries.nextElement());
             }
@@ -115,15 +113,15 @@ public class NestedZipFileTest {
     }
 
     /**
-     * This method for {@link NestedZipFile#NestedZipFile(File, int)}.
+     * This method for {@link clazzfish.core.util.NestedZipFile#NestedZipFile(File, int)}.
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
     public void testNestedZipFileMode() throws IOException {
         File warFile = new File(WORLD_EAR, "!/world.war");
-        try (NestedZipFile nestedWarFile = new NestedZipFile(warFile, ZipFile.OPEN_READ)) {
-            assertTrue(nestedWarFile.entries().hasMoreElements(), "entries in " + nestedWarFile + " expected");
+        try (clazzfish.core.util.NestedZipFile nestedWarFile = new NestedZipFile(warFile, ZipFile.OPEN_READ)) {
+            Assertions.assertTrue(nestedWarFile.entries().hasMoreElements(), "entries in " + nestedWarFile + " expected");
         }
     }
 

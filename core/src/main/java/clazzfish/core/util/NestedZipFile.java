@@ -16,14 +16,13 @@
  * (c)reated 24.01.2017 by oboehm (ob@oasd.de)
  */
 
-package clazzfish.monitor.util;
-
-import org.slf4j.LoggerFactory;
+package clazzfish.core.util;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -40,7 +39,7 @@ import java.util.zip.ZipFile;
  */
 public final class NestedZipFile extends ZipFile {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(NestedZipFile.class);
+    private static final Logger log = Logger.getLogger(NestedZipFile.class.getName());
 
     /**
      * Instantiates a new detailed zip file.
@@ -145,7 +144,7 @@ public final class NestedZipFile extends ZipFile {
             File tmpZipFile = File.createTempFile(zipEntry.getName(), ".zip");
             tmpZipFile.deleteOnExit();
             copy(istream, tmpZipFile);
-            LOG.debug("File {} created with '{}' from file '{}'.", tmpZipFile, zipEntry, zipFile.getName());
+            log.fine(String.format("File %s created with '%s' from file '%s'.", tmpZipFile, zipEntry, zipFile.getName()));
             return tmpZipFile;
         }
     }

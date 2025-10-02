@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.monitor.util.NestedZipFile;
+import clazzfish.core.util.NestedZipFile;
 
 import java.io.File;
 import java.io.IOException;

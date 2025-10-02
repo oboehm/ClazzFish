@@ -1,7 +1,5 @@
 /*
- * $Id: ArchivEntry.java,v 1.26 2017/11/09 20:34:51 oboehm Exp $
- *
- * Copyright (c) 2008 by Oliver Boehm
+ * Copyright (c) 2008-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +17,7 @@
  */
 package clazzfish.monitor.util;
 
+import clazzfish.core.util.NestedZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +63,7 @@ public final class ArchivEntry {
 	 *
 	 * @param file the file
 	 */
-	protected ArchivEntry(final File file) {
+	public ArchivEntry(final File file) {
 		this(file.toURI());
 	}
 
@@ -196,15 +195,6 @@ public final class ArchivEntry {
 	}
 
 	/**
-	 * Gets the zip entry.
-	 *
-	 * @return the zip entry
-	 */
-	public ZipEntry getZipEntry() {
-		return new ZipEntry(this.getEntry());
-	}
-
-	/**
 	 * Gets the size.
 	 *
 	 * @return the size
@@ -238,12 +228,8 @@ public final class ArchivEntry {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public byte[] getBytes() throws IOException {
-		InputStream istream = this.uri.toURL().openStream();
-		assert istream != null;
-		try {
+		try (InputStream istream = this.uri.toURL().openStream()) {
 			return IOUtils.toByteArray(istream);
-		} finally {
-			istream.close();
 		}
 	}
 
