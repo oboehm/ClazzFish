@@ -18,8 +18,6 @@
 package clazzfish.monitor.internal;
 
 import clazzfish.monitor.util.NestedZipFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +25,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -47,7 +47,7 @@ import java.util.zip.ZipFile;
  */
 public abstract class AbstractDigger {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDigger.class);
+    private static final Logger log = Logger.getLogger(AbstractDigger.class.getName());
 
     /**
      * Gets the resources of the given name. Normally that would only be one
@@ -66,7 +66,7 @@ public abstract class AbstractDigger {
      * @return the digged resources
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected static Collection<String> readElementsFromNestedArchive(File archive) throws IOException {
+    public static Collection<String> readElementsFromNestedArchive(File archive) throws IOException {
         String path = stripPath(archive);
         String archiveDir = "";
         if (!path.toLowerCase().matches(".*\\.[jwe]ar")) {
@@ -109,10 +109,10 @@ public abstract class AbstractDigger {
                 }
             }
         } catch (RuntimeException ex) {
-            LOG.warn("Could not read all entries in {} ({}).", archive, ex.getMessage());
-            LOG.debug("Details:", ex);
+            log.warning(String.format("Could not read all entries in %s (%s).", archive, ex.getMessage()));
+            log.log(Level.FINE, "Details:", ex);
         }
-        LOG.trace("{} element(s) read from {}.", elements.size(), archive);
+        log.finer(String.format("%d element(s) read from %s.", elements.size(), archive));
         return elements;
     }
 
