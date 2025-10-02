@@ -18,7 +18,6 @@
 package clazzfish.monitor.internal;
 
 import clazzfish.monitor.util.NestedZipFile;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,18 +67,32 @@ public abstract class AbstractDigger {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     protected static Collection<String> readElementsFromNestedArchive(File archive) throws IOException {
-        String path = StringUtils.removeEnd(archive.getPath(), "!");
+        String path = stripPath(archive);
         String archiveDir = "";
         if (!path.toLowerCase().matches(".*\\.[jwe]ar")) {
-            archiveDir = StringUtils.substringAfterLast(path, "!");
-            archiveDir = getSeparatorsToUnix(archiveDir);
-            path = StringUtils.substringBeforeLast(path, "!");
+            archiveDir = getArchiveDir(path);
+            path = getArchivePath(path);
         }
         return readElementsFromArchive(new File(path), archiveDir);
     }
 
-    private static String getSeparatorsToUnix(String filename) {
-        return filename.replace('\\', '/');
+    private static String stripPath(File archive) {
+        String filename = archive.getPath();
+        if (filename.endsWith("!")) {
+            return filename.substring(0, filename.length() - 1);
+        }
+        return filename;
+    }
+
+    private static String getArchiveDir(String path) {
+        int i = path.lastIndexOf('!');
+        String dir = path.substring(i+1);
+        return dir.replace('\\', '/');
+    }
+
+    private static String getArchivePath(String path) {
+        int i = path.lastIndexOf('!');
+        return path.substring(0,i);
     }
 
     private static Collection<String> readElementsFromArchive(File archive, String archiveDir)
