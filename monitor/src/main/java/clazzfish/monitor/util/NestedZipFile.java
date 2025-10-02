@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Oliver Boehm
+ * Copyright (c) 2017-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 package clazzfish.monitor.util;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
@@ -129,7 +127,7 @@ public final class NestedZipFile extends ZipFile {
     }
 
     private static File getEmbbededZipFile(File file, String name) throws IOException {
-        String normalizedName = FilenameUtils.separatorsToUnix(name.substring(1));
+        String normalizedName = name.substring(1).replace('\\', '/');
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -146,11 +144,19 @@ public final class NestedZipFile extends ZipFile {
         try (InputStream istream = zipFile.getInputStream(zipEntry)) {
             File tmpZipFile = File.createTempFile(zipEntry.getName(), ".zip");
             tmpZipFile.deleteOnExit();
-            OutputStream ostream = new FileOutputStream(tmpZipFile);
-            IOUtils.copy(istream, ostream);
-            ostream.close();
+            copy(istream, tmpZipFile);
             LOG.debug("File {} created with '{}' from file '{}'.", tmpZipFile, zipEntry, zipFile.getName());
             return tmpZipFile;
+        }
+    }
+
+    private static void copy(InputStream istream, File file) throws IOException {
+        try (OutputStream ostream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[8192]; // 8 KB Puffer
+            int bytesRead;
+            while ((bytesRead = istream.read(buffer)) != -1) {
+                ostream.write(buffer, 0, bytesRead);
+            }
         }
     }
 
