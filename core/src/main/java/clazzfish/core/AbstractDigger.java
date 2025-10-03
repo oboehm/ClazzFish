@@ -15,7 +15,7 @@
  *
  * (c)reated 31.05.2017 by oliver (ob@aosd.de)
  */
-package clazzfish.monitor.internal;
+package clazzfish.core;
 
 import clazzfish.core.util.NestedZipFile;
 
