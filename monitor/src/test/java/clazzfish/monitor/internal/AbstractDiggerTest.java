@@ -1,5 +1,6 @@
 package clazzfish.monitor.internal;
 
+import clazzfish.core.AbstractDigger;
 import clazzfish.monitor.util.Converter;
 import org.junit.jupiter.api.Test;
 

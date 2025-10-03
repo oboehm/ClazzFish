@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Oliver Boehm
+ * Copyright (c) 2018-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.core.AbstractDigger;
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
 import org.hamcrest.Matchers;
