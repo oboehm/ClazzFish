@@ -17,7 +17,6 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.Digger;
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
 import clazzfish.monitor.util.Converter;
@@ -45,16 +44,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(ClasspathDiggerTest.class);
     private final ClasspathDigger digger = ClasspathDigger.DEFAULT;
-
-    /**
-     * Returns the {@link ClasspathDigger} for testing.
-     *
-     * @return digger
-     */
-    @Override
-    protected Digger getDigger() {
-        return digger;
-    }
 
     /**
      * We use the String class as resource for testing. But with this class it

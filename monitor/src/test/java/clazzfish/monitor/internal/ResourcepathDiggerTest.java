@@ -17,7 +17,6 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.Digger;
 import clazzfish.monitor.util.Converter;
 import org.junit.jupiter.api.Test;
 
@@ -37,16 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit tests for {@link ResourcepathDigger}.
  */
 public class ResourcepathDiggerTest extends AbstractDiggerTest {
-
-    /**
-     * Returns a {@link ResourcepathDigger} for testing.
-     *
-     * @return digger
-     */
-    @Override
-    protected Digger getDigger() {
-        return ResourcepathDigger.DEFAULT;
-    }
 
     /**
      * Here we test the digging of a classpath inside a WAR.

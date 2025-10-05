@@ -1,7 +1,5 @@
 package clazzfish.monitor.internal;
 
-import clazzfish.core.Digger;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,12 +35,5 @@ public abstract class AbstractDiggerTest {
         when(mockedClassLoader.getURLs()).thenReturn(webclasspath);
         return mockedClassLoader;
     }
-
-    /**
-     * Should return the digger for testing.
-     *
-     * @return digger
-     */
-    protected abstract Digger getDigger();
 
 }
