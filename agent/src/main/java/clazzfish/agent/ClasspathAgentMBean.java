@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 by Oliver Boehm
+ * Copyright (c) 2012-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package clazzfish.agent;
 
 import clazzfish.core.ClasspathInspector;
+import clazzfish.core.Digger;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,6 +117,16 @@ public interface ClasspathAgentMBean extends Serializable{
      * @since 1.5
      */
     void dumpLoadedClasses(final String filename) throws IOException;
+
+    /**
+     * Gets all classes which are available thru the classpath
+     *
+     * @return all classes of the classpath
+     * @since 3.0
+     */
+    default String[] getAllClasses() {
+        return new Digger().getClasses().toArray(new String[0]);
+    }
 
 }
 

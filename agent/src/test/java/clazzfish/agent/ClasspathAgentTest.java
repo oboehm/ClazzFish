@@ -95,4 +95,10 @@ public final class ClasspathAgentTest {
         agent.logLoadedClasses();
     }
 
+    @Test
+    public void testGetAllClasses() {
+        String[] classes = agent.getAllClasses();
+        assertThat(classes, hasItemInArray(getClass().getName()));
+    }
+
 }
