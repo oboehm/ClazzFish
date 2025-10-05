@@ -22,22 +22,33 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Unit tests for {@link AbstractDigger}.
+ * Unit tests for {@link Digger}.
  *
  * @author oboehm
  * @since 03.10.25
  */
-class AbstractDiggerTest {
+class DiggerTest {
+
+    private final Digger digger = new Digger();
 
     @Test
     void readElementsFromNestedArchive() throws IOException {
         File file = new File("../monitor/src/test/resources/clazzfish/monitor/util/world.ear");
-        Collection<String> elements = AbstractDigger.readElementsFromNestedArchive(file);
+        Collection<String> elements = Digger.readElementsFromNestedArchive(file);
         assertFalse(elements.isEmpty());
+    }
+
+    @Test
+    public void testGetClasses() {
+        Set<String> classes = digger.getClasses();
+        assertThat(classes, hasItem(this.getClass().getName()));
     }
 
 }

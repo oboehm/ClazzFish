@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.AbstractDigger;
+import clazzfish.core.Digger;
 import clazzfish.monitor.util.Converter;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ public class ResourcepathDiggerTest extends AbstractDiggerTest {
      * @return digger
      */
     @Override
-    protected AbstractDigger getDigger() {
+    protected Digger getDigger() {
         return ResourcepathDigger.DEFAULT;
     }
 
@@ -129,7 +129,6 @@ public class ResourcepathDiggerTest extends AbstractDiggerTest {
      * where the doublet appears. Since 2.0 doublets in the same classpath are
      * not regarded as doublet.
      */
-    @Override
     @Test
     public void testGetResources() {
         ResourcepathDigger digger = ResourcepathDigger.DEFAULT;

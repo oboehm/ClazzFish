@@ -1,18 +1,12 @@
 package clazzfish.monitor.internal;
 
-import clazzfish.core.AbstractDigger;
-import clazzfish.monitor.util.Converter;
-import org.junit.jupiter.api.Test;
+import clazzfish.core.Digger;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,26 +43,6 @@ public abstract class AbstractDiggerTest {
      *
      * @return digger
      */
-    protected abstract AbstractDigger getDigger();
-
-    /**
-     * We use the String class as resource for testing. But with this class it
-     * happened that it appeared 2 times in the classpath, e.g. if you call the
-     * test inside your favorite IDE. In most cases this was the same classpath
-     * where the doublet appears. Since 2.0 doublets in the same classpath are
-     * not regarded as doublet.
-     */
-    @Test
-    public void testGetResources() {
-        AbstractDigger digger = getDigger();
-        String rsc = Converter.toResource(String.class);
-        Enumeration<URI> resources = digger.getResources(rsc);
-        URI r1 = resources.nextElement();
-        if (resources.hasMoreElements()) {
-            URI r2 = resources.nextElement();
-            assertThat(r1, not(r2));
-        }
-    }
-
+    protected abstract Digger getDigger();
 
 }

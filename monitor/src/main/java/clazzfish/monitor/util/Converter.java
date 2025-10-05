@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor.util;
 
-import clazzfish.core.ResourceWalker;
+import clazzfish.core.Digger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -189,7 +189,7 @@ public final class Converter {
 	 * @return e.g. "java.lang.String"
 	 */
 	public static String resourceToClass(final String name) {
-        return ResourceWalker.resourceToClass(name);
+        return Digger.resourceToClass(name);
 	}
 
 	/**

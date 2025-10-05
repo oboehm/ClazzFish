@@ -17,9 +17,10 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.AbstractDigger;
+import clazzfish.core.Digger;
 import clazzfish.monitor.loader.CompoundClassLoader;
 import clazzfish.monitor.loader.WebappClassLoader;
+import clazzfish.monitor.util.Converter;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,8 +29,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 
@@ -49,8 +52,26 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
      * @return digger
      */
     @Override
-    protected AbstractDigger getDigger() {
+    protected Digger getDigger() {
         return digger;
+    }
+
+    /**
+     * We use the String class as resource for testing. But with this class it
+     * happened that it appeared 2 times in the classpath, e.g. if you call the
+     * test inside your favorite IDE. In most cases this was the same classpath
+     * where the doublet appears. Since 2.0 doublets in the same classpath are
+     * not regarded as doublet.
+     */
+    @Test
+    public void testGetResources() {
+        String rsc = Converter.toResource(String.class);
+        Enumeration<URI> resources = digger.getResources(rsc);
+        URI r1 = resources.nextElement();
+        if (resources.hasMoreElements()) {
+            URI r2 = resources.nextElement();
+            assertThat(r1, not(r2));
+        }
     }
 
     /**
@@ -196,15 +217,6 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         assertThat(loadedResources, hasItem("/log4j2.xml"));
         assertThat(loadedResources, not(hasItem("/clazzfish")));
         assertThat(loadedResources, not(hasItem("/clazzfish/monitor/ClassloaderType.class")));
-    }
-
-    /**
-     * Test method for {@link ClasspathDigger#getClasses()}.
-     */
-    @Test
-    public void testGetClasses() {
-        Set<String> classes = digger.getClasses();
-        assertThat(classes, hasItem(this.getClass().getName()));
     }
 
     /**

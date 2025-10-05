@@ -17,10 +17,9 @@
  */
 package clazzfish.monitor.internal;
 
-import clazzfish.core.AbstractDigger;
 import clazzfish.core.ClassFilter;
 import clazzfish.core.ClasspathInspector;
-import clazzfish.core.ResourceWalker;
+import clazzfish.core.Digger;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
@@ -56,7 +55,7 @@ import java.util.*;
  *
  * @author <a href="boehm@javatux.de">oliver</a>
  */
-public class ClasspathDigger extends AbstractDigger {
+public class ClasspathDigger extends Digger {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
 	private static final String[] AGENT_MBEAN_NAMES = new String[]{
@@ -162,6 +161,7 @@ public class ClasspathDigger extends AbstractDigger {
 	 *
 	 * @return the classpath as String array
 	 */
+    @Override
 	public String[] getClasspath() {
 		try {
 			switch (ClassloaderType.toClassloaderType(this.classLoader)) {
@@ -281,19 +281,6 @@ public class ClasspathDigger extends AbstractDigger {
 			packages.add(Converter.packageToResource(name) + '/');
 		}
 		return packages;
-	}
-
-	private static void addElementsFromArchive(Collection<String> elements, File archive, String suffix)
-			throws IOException {
-        Collection<String> allElements = readElementsFromNestedArchive(archive);
-        for(String resource : allElements) {
-			if (resource.endsWith(suffix)) {
-				String classname = Converter.resourceToClass(resource);
-				if (ClassFilter.DEFAULT.isIncluded(classname)) {
-					elements.add(Converter.resourceToClass(classname));
-				}
-            }
-        }
 	}
 
 	/**
@@ -544,42 +531,5 @@ public class ClasspathDigger extends AbstractDigger {
 	private static boolean isNormalResource(String resource) {
 		return resource.contains(".") && !resource.endsWith(".class");
 	}
-	
-	/**
-	 * Digs into the classpath and returns the found classes.
-	 * <p>
-	 * NOTE: This logic was formerly part of the createClasspathSet(..) method
-	 * of the ClasspathMonitor class.
-	 * </p>
-	 * 
-	 * @return classes of the classpath
-	 * @since 1.7.2
-	 */
-    public Set<String> getClasses() {
-        Set<String> classSet = new TreeSet<>();
-        for (String path : getClasspath()) {
-            addClasses(classSet, new File(path));
-        }
-        return classSet;
-    }
-
-private static void addClasses(final Set<String> classSet, final File path) {
-        LOG.trace("Adding classes from {}...", path);
-        try {
-            if (path.isDirectory()) {
-                addClassesFromDir(classSet, path);
-            } else {
-                addElementsFromArchive(classSet, path, ".class");
-            }
-        } catch (IOException ioe) {
-            LOG.warn("Cannot add classes from " + path.getAbsolutePath() + ":", ioe);
-        }
-    }
-
-    private static void addClassesFromDir(final Set<String> classSet, final File dir) throws IOException {
-        ResourceWalker classWalker = new ResourceWalker(dir);
-        Collection<String> classes = classWalker.getClasses();
-        classSet.addAll(classes);
-    }
 
 }

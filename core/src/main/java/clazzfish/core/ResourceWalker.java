@@ -94,7 +94,7 @@ public class ResourceWalker {
         Collection<String> classes = new ArrayList<>(resources.size());
         for (String res : resources) {
             if (ClassFilter.DEFAULT.isIncluded(res)) {
-                classes.add(resourceToClass(res));
+                classes.add(Digger.resourceToClass(res));
             }
         }
         return classes;
@@ -107,30 +107,6 @@ public class ResourceWalker {
                     .filter(p -> filter.accept(p.toFile()))
                     .map(p -> p.toString().substring(startDirnameLength))
                     .collect(Collectors.toSet());
-        }
-    }
-
-    /**
-     * Converts a resource (e.g. "/java/lang/String.class") into its classname
-     * ("java.lang.String").
-     *
-     * @param name e.g. "/java/lang/String.class"
-     *
-     * @return e.g. "java.lang.String"
-     */
-    public static String resourceToClass(String name) {
-        if (name == null) {
-            return null;
-        }
-        if (name.endsWith(".class")) {
-            int lastdot = name.lastIndexOf('.');
-            String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
-            if (classname.startsWith(".")) {
-                classname = classname.substring(1);
-            }
-            return classname;
-        } else {
-            return name;
         }
     }
 

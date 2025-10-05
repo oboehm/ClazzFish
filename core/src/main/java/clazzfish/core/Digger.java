@@ -21,17 +21,14 @@ import clazzfish.core.util.NestedZipFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * The Class AbstractDigger was extracted from ClasspathDigger and
+ * The Class Digger was extracted from ClasspathDigger and
  * ResourcepathDigger. It is intended to pull up common code of both
  * classes into this class to avoid code duplicates.
  * <p>
@@ -45,19 +42,91 @@ import java.util.zip.ZipFile;
  *
  * @author oboehm
  */
-public abstract class AbstractDigger {
+public class Digger {
 
-    private static final Logger log = Logger.getLogger(AbstractDigger.class.getName());
+    private static final Logger log = Logger.getLogger(Digger.class.getName());
 
     /**
-     * Gets the resources of the given name. Normally that would only be one
-     * element but some resources (like the MANIFEST.MF file) can appear
-     * several times in the classpath.
+     * Converts a resource (e.g. "/java/lang/String.class") into its classname
+     * ("java.lang.String").
      *
-     * @param name the name of the resource
-     * @return all resources with the given name
+     * @param name e.g. "/java/lang/String.class"
+     *
+     * @return e.g. "java.lang.String"
      */
-    public abstract Enumeration<URI> getResources(final String name);
+    public static String resourceToClass(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.endsWith(".class")) {
+            int lastdot = name.lastIndexOf('.');
+            String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
+            if (classname.startsWith(".")) {
+                classname = classname.substring(1);
+            }
+            return classname;
+        } else {
+            return name;
+        }
+    }
+
+    /**
+     * Gets the classpath using the {@link ClasspathInspector}.
+     *
+     * @return the classpath
+     */
+    public String[] getClasspath() {
+        return ClasspathInspector.getClasspath();
+    }
+
+    /**
+     * Digs into the classpath and returns the found classes.
+     * <p>
+     * NOTE: This logic was formerly part of ClasspathDigger in the
+     * monitor module.
+     * </p>
+     *
+     * @return classes of the classpath
+     */
+    public Set<String> getClasses() {
+        Set<String> classSet = new TreeSet<>();
+        for (String path : getClasspath()) {
+            addClasses(classSet, new File(path));
+        }
+        return classSet;
+    }
+
+    private static void addClasses(final Set<String> classSet, final File path) {
+        log.finer(String.format("Adding classes from %s...", path));
+        try {
+            if (path.isDirectory()) {
+                addClassesFromDir(classSet, path);
+            } else {
+                addElementsFromArchive(classSet, path, ".class");
+            }
+        } catch (IOException ioe) {
+            log.log(Level.FINER, String.format("Cannot add classes from %s:", path.getAbsolutePath()), ioe);
+        }
+    }
+
+    private static void addClassesFromDir(final Set<String> classSet, final File dir) throws IOException {
+        ResourceWalker classWalker = new ResourceWalker(dir);
+        Collection<String> classes = classWalker.getClasses();
+        classSet.addAll(classes);
+    }
+
+    private static void addElementsFromArchive(Collection<String> elements, File archive, String suffix)
+            throws IOException {
+        Collection<String> allElements = readElementsFromNestedArchive(archive);
+        for(String resource : allElements) {
+            if (resource.endsWith(suffix)) {
+                String classname = resourceToClass(resource);
+                if (ClassFilter.DEFAULT.isIncluded(classname)) {
+                    elements.add(resourceToClass(classname));
+                }
+            }
+        }
+    }
 
     /**
      * Read elements from nested archive.
