@@ -603,12 +603,6 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     @Test
-    public void testGetClassList() {
-        Collection<Class<? extends Logger>> classList = cpMon.getClassList("org.slf4j.impl", Logger.class);
-        assertNotNull(classList);
-    }
-
-    @Test
     public void testGetClassnames() {
         List<String> classnames = cpMon.getLoadedClassnames();
         assertFalse(classnames.isEmpty());

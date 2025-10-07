@@ -31,7 +31,6 @@ import javax.management.ObjectName;
 import java.io.*;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -799,88 +798,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 			}
 		}
 		return classlist;
-	}
-
-	/**
-	 * Gets the classes of the given type.
-	 *
-	 * @param <T>
-	 *            the generic type
-	 * @param packageName
-	 *            the package name
-	 * @param type
-	 *            the type
-	 * @return the classes
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> Collection<Class<? extends T>> getClassList(final String packageName, final Class<T> type) {
-		Collection<Class<? extends T>> classes = new ArrayList<>();
-		Collection<Class<?>> concreteClasses = getConcreteClassList(packageName);
-		for (Class<?> clazz : concreteClasses) {
-			if (type.isAssignableFrom(clazz)) {
-				classes.add((Class<T>) clazz);
-				LOG.trace("subclass of {} found: {}", type, clazz);
-			}
-		}
-		return classes;
-	}
-
-	/**
-	 * Gets a list of concrete classes. These are classes which can be
-	 * instantiated, i.e. they are not abstract and have a default constructor.
-	 * <p>
-	 * TODO: Will be removed in 2.5
-	 * </p>
-	 *
-	 * @param packageName
-	 *            the package name
-	 * @return the concrete class list
-	 * @deprecated dead classes may be loaded
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated(since = "2.3", forRemoval = true)
-	public Collection<Class<?>> getConcreteClassList(final String packageName) {
-		assert packageName != null;
-		Collection<String> classList = this.getClasspathClassList(packageName);
-		Collection<Class<?>> classes = new ArrayList<>(classList.size());
-		for (String classname : classList) {
-			try {
-				Class<Object> clazz = (Class<Object>) Class.forName(classname);
-				if (!canBeInstantiated(clazz)) {
-					LOG.trace("{} will be ignored (can't be instantiated).", clazz);
-					continue;
-				}
-				classes.add(clazz);
-			} catch (ClassNotFoundException e) {
-				LOG.debug("Class '{}' is ignored because it was not found:", classname, e);
-			} catch (NoClassDefFoundError e) {
-				LOG.debug("Class '{}' is ignored because definition was not found:", classname, e);
-			} catch (ExceptionInInitializerError ex) {
-				LOG.debug("Class '{}' is ignored because it cannot be initialized:", classname, ex);
-			}
-		}
-		return classes;
-	}
-
-	private static boolean canBeInstantiated(final Class<?> clazz) {
-		if (clazz.isInterface()) {
-			return false;
-		}
-		int mod = clazz.getModifiers();
-		if (Modifier.isAbstract(mod)) {
-			return false;
-		}
-		try {
-			clazz.getConstructor();
-			return true;
-		} catch (SecurityException ex) {
-			LOG.info("Cannot access default ctor {}:", clazz, ex);
-			return false;
-		} catch (NoSuchMethodException ex) {
-			LOG.trace("Cannot get default ctor of {}:", clazz, ex);
-			LOG.debug("{} has no default constructor.", clazz);
-			return false;
-		}
 	}
 
 	private String[] getClasspathClassArray() {
