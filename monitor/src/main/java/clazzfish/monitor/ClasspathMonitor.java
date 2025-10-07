@@ -884,8 +884,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	private String[] getClasspathClassArray() {
-        Set<String> classSet = this.classpathDigger.getClasses();
-		return classSet.toArray(new String[0]);
+        return this.classpathDigger.getClasses();
 	}
 
 	/**

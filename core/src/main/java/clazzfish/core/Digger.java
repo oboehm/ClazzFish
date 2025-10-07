@@ -22,6 +22,9 @@ import clazzfish.core.util.NestedZipFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -45,6 +48,17 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
+    private static final FutureTask<String[]> allClasspathClasses;
+
+    static {
+        allClasspathClasses = new FutureTask<>(Digger::getClasspathClassArray);
+        Executors.newCachedThreadPool().execute(allClasspathClasses);
+    }
+
+    private static String[] getClasspathClassArray() {
+        Set<String> classSet = getAllClasses();
+        return classSet.toArray(new String[0]);
+    }
 
     /**
      * Converts a resource (e.g. "/java/lang/String.class") into its classname
@@ -88,9 +102,21 @@ public class Digger {
      *
      * @return classes of the classpath
      */
-    public Set<String> getClasses() {
+    public String[] getClasses() {
+        try {
+            return allClasspathClasses.get();
+        } catch (InterruptedException e) {
+            log.log(Level.WARNING, String.format("Was interrupted before got result from %s:", allClasspathClasses), e);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.log(Level.WARNING, String.format("Cannot execute get of %s:", allClasspathClasses), e);
+        }
+        return getClasspathClassArray();
+    }
+
+    private static Set<String> getAllClasses() {
         Set<String> classSet = new TreeSet<>();
-        for (String path : getClasspath()) {
+        for (String path : ClasspathInspector.getClasspath()) {
             addClasses(classSet, new File(path));
         }
         return classSet;

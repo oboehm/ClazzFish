@@ -18,6 +18,8 @@
 
 package clazzfish.agent;
 
+import clazzfish.core.Digger;
+
 import javax.management.*;
 import java.io.*;
 import java.lang.instrument.Instrumentation;
@@ -49,6 +51,7 @@ public class ClasspathAgent implements ClasspathAgentMBean {
     private static final ClasspathAgent INSTANCE = new ClasspathAgent();
     private static Instrumentation instrumentation;
     private static String args;
+    private static final Digger digger = new Digger();
 
     private ClasspathAgent() {
         setUpLogging();
@@ -274,6 +277,11 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         writer.write("=== Summary: " + numberClasses + " Classes / " + numberInterfaces + " Interfaces ===");
         writer.newLine();
         writer.flush();
+    }
+
+    @Override
+    public String[] getAllClasses() {
+        return digger.getClasses();
     }
 
 }

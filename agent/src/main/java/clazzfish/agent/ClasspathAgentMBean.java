@@ -19,7 +19,6 @@
 package clazzfish.agent;
 
 import clazzfish.core.ClasspathInspector;
-import clazzfish.core.Digger;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,9 +123,7 @@ public interface ClasspathAgentMBean extends Serializable{
      * @return all classes of the classpath
      * @since 3.0
      */
-    default String[] getAllClasses() {
-        return new Digger().getClasses().toArray(new String[0]);
-    }
+    String[] getAllClasses();
 
 }
 

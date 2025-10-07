@@ -36,8 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClasspathDiggerTest extends AbstractDiggerTest {
@@ -282,8 +281,8 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
     }
 
     private void checkGetClasses(ClasspathDigger warDigger, String classname) {
-        Set<String> classes = warDigger.getClasses();
-        assertThat(classes, hasItem(classname));
+        String[] classes = warDigger.getClasses();
+        assertThat(classes, hasItemInArray(classname));
     }
 
     private static ClasspathDigger createClasspathDigger(File jar, String path) throws MalformedURLException {
