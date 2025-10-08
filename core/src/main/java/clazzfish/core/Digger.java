@@ -48,14 +48,14 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
-    private static final FutureTask<String[]> allClasspathClasses;
+    private final FutureTask<String[]> allClasspathClasses;
 
-    static {
-        allClasspathClasses = new FutureTask<>(Digger::getClasspathClassArray);
+    {
+        allClasspathClasses = new FutureTask<>(this::getClasspathClassArray);
         Executors.newCachedThreadPool().execute(allClasspathClasses);
     }
 
-    private static String[] getClasspathClassArray() {
+    private String[] getClasspathClassArray() {
         Set<String> classSet = getAllClasses();
         return classSet.toArray(new String[0]);
     }
@@ -114,9 +114,9 @@ public class Digger {
         return getClasspathClassArray();
     }
 
-    private static Set<String> getAllClasses() {
+    private Set<String> getAllClasses() {
         Set<String> classSet = new TreeSet<>();
-        for (String path : ClasspathInspector.getClasspath()) {
+        for (String path : getClasspath()) {
             addClasses(classSet, new File(path));
         }
         return classSet;
