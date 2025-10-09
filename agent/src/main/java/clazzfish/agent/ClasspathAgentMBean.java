@@ -125,5 +125,14 @@ public interface ClasspathAgentMBean extends Serializable{
      */
     String[] getAllClasses();
 
+    /**
+     * Gets unused classes. If you want to find dead classed look at the
+     * unused classes.
+     *
+     * @return all unused classes of the classpath
+     * @since 3.0
+     */
+    String[] getUnusedClasses();
+
 }
 

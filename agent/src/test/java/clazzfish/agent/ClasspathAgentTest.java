@@ -101,4 +101,29 @@ public final class ClasspathAgentTest {
         assertThat(classes, hasItemInArray(getClass().getName()));
     }
 
+    @Test
+    public void testGetUnusedClasses() {
+        String[] allClasses = agent.getAllClasses();
+        String[] loadedClasses = agent.getLoadedClassnames();
+        String[] unusedClasses = agent.getUnusedClasses();
+        for (String classname : unusedClasses) {
+            assertFalse(containsClass(loadedClasses, classname), "is loaded: " + classname);
+            assertTrue(containsClass(allClasses, classname), "is not in allClasses: " + classname);
+        }
+        for (String classname : loadedClasses) {
+            assertFalse(containsClass(unusedClasses, classname), "is used: " + classname);
+            assertTrue(containsClass(allClasses, classname), "is not in allClasses: " + classname);
+        }
+        assertEquals(allClasses.length - loadedClasses.length, unusedClasses.length);
+    }
+
+    private boolean containsClass(String[] classes, String classname) {
+        for (String clazz : classes) {
+            if (clazz.equals(classname)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

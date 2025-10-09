@@ -24,11 +24,14 @@ import javax.management.*;
 import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This is a simple Java agent to be able to watch the classpath. We need it
@@ -151,10 +154,9 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         Class<?>[] classes = this.getLoadedClasses();
         SortedSet<String> classnames = new TreeSet<>();
         for (Class<?> aClass : classes) {
-            classnames.add(aClass == null ? "-" : aClass.toString());
+            classnames.add(aClass == null ? "-" : aClass.getName());
         }
-        int size = classnames.size();
-        return classnames.toArray(new String[size]);
+        return classnames.toArray(new String[0]);
     }
 
     /**
@@ -279,9 +281,30 @@ public class ClasspathAgent implements ClasspathAgentMBean {
         writer.flush();
     }
 
+    /**
+     * Gets all classes which are available thru the classpath
+     *
+     * @return all classes of the classpath
+     * @since 3.0
+     */
     @Override
     public String[] getAllClasses() {
         return digger.getClasses();
+    }
+
+
+    /**
+     * Gets unused classes.
+     *
+     * @return all unused classes of the classpath
+     * @since 3.0
+     */
+    public String[] getUnusedClasses() {
+        Set<String> unusedClasses = Arrays.stream(getAllClasses()).collect(Collectors.toSet());
+        for (String classname : getLoadedClassnames()) {
+            unusedClasses.remove(classname);
+        }
+        return unusedClasses.toArray(new String[0]);
     }
 
 }

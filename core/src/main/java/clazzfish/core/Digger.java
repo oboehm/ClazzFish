@@ -21,6 +21,7 @@ import clazzfish.core.util.NestedZipFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -57,6 +58,7 @@ public class Digger {
 
     private String[] getClasspathClassArray() {
         Set<String> classSet = getAllClasses();
+        classSet.add(Instrumentation.class.getName());
         return classSet.toArray(new String[0]);
     }
 
