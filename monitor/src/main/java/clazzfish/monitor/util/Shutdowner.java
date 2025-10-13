@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.util;
 
+import clazzfish.core.util.Shutdownable;
 import clazzfish.monitor.ClassloaderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

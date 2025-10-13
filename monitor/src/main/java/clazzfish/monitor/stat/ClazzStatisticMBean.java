@@ -17,8 +17,8 @@
  */
 package clazzfish.monitor.stat;
 
-import clazzfish.monitor.jmx.Description;
-import clazzfish.monitor.util.Shutdownable;
+import clazzfish.core.jmx.Description;
+import clazzfish.core.util.Shutdownable;
 
 import java.io.IOException;
 import java.net.URI;

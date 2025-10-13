@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 by Oliver Boehm
+ * Copyright (c) 2009-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

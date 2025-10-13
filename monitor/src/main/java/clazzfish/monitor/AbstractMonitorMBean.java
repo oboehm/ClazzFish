@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 by Oliver Boehm
+ * Copyright (c) 2016-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 
 package clazzfish.monitor;
 
-import clazzfish.monitor.jmx.Description;
-import clazzfish.monitor.util.Shutdownable;
+import clazzfish.core.jmx.Description;
+import clazzfish.core.util.Shutdownable;
 
 import java.io.File;
 import java.io.IOException;

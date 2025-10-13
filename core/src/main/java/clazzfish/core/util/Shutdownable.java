@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  *
  * (c)reated 29.11.24 by oboehm
  */
-package clazzfish.monitor.util;
+package clazzfish.core.util;
 
-import clazzfish.monitor.jmx.Description;
+import clazzfish.core.jmx.Description;
 
 /**
- * With Shutownable this class can be marked which can be registered as
- * shutdonw hook.
+ * With Shutownable a class can be for registration as
+ * shutdown hook.
  *
  * @author oboehm
  * @since 2.3 (28.11.24)

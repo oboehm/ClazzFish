@@ -20,7 +20,7 @@
 
 package clazzfish.jdbc;
 
-import clazzfish.monitor.jmx.Description;
+import clazzfish.core.jmx.Description;
 
 /**
  * The Interface SqlStatisticMBean.

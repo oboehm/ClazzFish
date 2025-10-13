@@ -17,7 +17,7 @@
  */
 package clazzfish.jdbc;
 
-import clazzfish.monitor.jmx.Description;
+import clazzfish.core.jmx.Description;
 import clazzfish.monitor.jmx.Unit;
 
 import javax.management.openmbean.TabularData;

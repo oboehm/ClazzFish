@@ -20,7 +20,7 @@
 
 package clazzfish.monitor;
 
-import clazzfish.monitor.util.Shutdownable;
+import clazzfish.core.util.Shutdownable;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

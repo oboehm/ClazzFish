@@ -1,7 +1,7 @@
 package clazzfish.jdbc;
 
 import clazzfish.monitor.AbstractMonitorMBean;
-import clazzfish.monitor.jmx.Description;
+import clazzfish.core.jmx.Description;
 
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.TabularData;
