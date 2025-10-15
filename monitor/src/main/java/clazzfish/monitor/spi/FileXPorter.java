@@ -18,7 +18,7 @@
 package clazzfish.monitor.spi;
 
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.stat.ClazzRecord;
+import clazzfish.core.stat.ClazzRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

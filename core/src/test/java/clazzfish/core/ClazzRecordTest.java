@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  *
  * (c)reated 26.11.24 by oliver
  */
-package clazzfish.monitor.stat;
+package clazzfish.core;
 
+import clazzfish.core.stat.ClazzRecord;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -30,22 +31,22 @@ class ClazzRecordTest {
 
     @Test
     void compareTo() {
-        ClazzRecord a = new ClazzRecord(URI.create("file:c.jar"), "hello");
-        ClazzRecord b = new ClazzRecord(URI.create("file:b.jar"), "world");
+        clazzfish.core.stat.ClazzRecord a = new clazzfish.core.stat.ClazzRecord(URI.create("file:c.jar"), "hello");
+        clazzfish.core.stat.ClazzRecord b = new clazzfish.core.stat.ClazzRecord(URI.create("file:b.jar"), "world");
         assertThat(a.compareTo(b),  lessThan(0));
     }
 
     @Test
     void compareToNoClasspath() {
-        ClazzRecord a = new ClazzRecord(null, "hello");
-        ClazzRecord b = new ClazzRecord(null, "hello");
+        clazzfish.core.stat.ClazzRecord a = new clazzfish.core.stat.ClazzRecord(null, "hello");
+        clazzfish.core.stat.ClazzRecord b = new clazzfish.core.stat.ClazzRecord(null, "hello");
         assertEquals(0, a.compareTo(b));
     }
 
     @Test
     void testEquals() {
-        ClazzRecord r0 = new ClazzRecord(URI.create("file:a.jar"), "hello");
-        ClazzRecord r1 = new ClazzRecord(URI.create("file:a.jar"), "hello", 1);
+        clazzfish.core.stat.ClazzRecord r0 = new ClazzRecord(URI.create("file:a.jar"), "hello");
+        clazzfish.core.stat.ClazzRecord r1 = new clazzfish.core.stat.ClazzRecord(URI.create("file:a.jar"), "hello", 1);
         assertEquals(r0, r1);
         assertEquals(r0.hashCode(), r1.hashCode());
         assertEquals(0, r0.compareTo(r1));
@@ -53,7 +54,7 @@ class ClazzRecordTest {
 
     @Test
     void testFromCSV() {
-        ClazzRecord r = ClazzRecord.fromCSV("file:/tmp/classes;clazzfish.monitor.Starter;1");
+        clazzfish.core.stat.ClazzRecord r = clazzfish.core.stat.ClazzRecord.fromCSV("file:/tmp/classes;clazzfish.monitor.Starter;1");
         assertEquals(URI.create("file:/tmp/classes"), r.classpath());
         assertEquals("clazzfish.monitor.Starter", r.classname());
         assertEquals(1, r.count());
@@ -61,7 +62,7 @@ class ClazzRecordTest {
 
     @Test
     void testFromCSVwithoutClasspath() {
-        ClazzRecord r = ClazzRecord.fromCSV("clazzfish.monitor.Starter;1");
+        clazzfish.core.stat.ClazzRecord r = clazzfish.core.stat.ClazzRecord.fromCSV("clazzfish.monitor.Starter;1");
         assertNull(r.classpath());
         assertEquals("clazzfish.monitor.Starter", r.classname());
         assertEquals(1, r.count());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
@@ -65,7 +66,7 @@ class ClazzStatisticTest {
 
     @Test
     void getStatistics() {
-        Set<ClazzRecord> classes = recorder.getStatistics();
+        Set<clazzfish.core.stat.ClazzRecord> classes = recorder.getStatistics();
         assertFalse(classes.isEmpty());
         checkClasses(classes, this.getClass().getName(), 1);
     }
@@ -81,8 +82,8 @@ class ClazzStatisticTest {
 
     private static void assertIsSorted(List<String> lines) {
         for (int i = 2; i < lines.size(); i++) {
-            ClazzRecord r1 = ClazzRecord.fromCSV(lines.get(i-1));
-            ClazzRecord r2 = ClazzRecord.fromCSV(lines.get(i));
+            clazzfish.core.stat.ClazzRecord r1 = clazzfish.core.stat.ClazzRecord.fromCSV(lines.get(i-1));
+            clazzfish.core.stat.ClazzRecord r2 = clazzfish.core.stat.ClazzRecord.fromCSV(lines.get(i));
             assertTrue(r1.classname().compareTo(r2.classname()) < 0,
                     i + ": " + r1.classname() + " < " + r2.classname() + '?');
         }
@@ -111,7 +112,8 @@ class ClazzStatisticTest {
      */
     @Test
     void importExport() throws IOException {
-        ClazzRecord loaded = new ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
+        clazzfish.core.stat.ClazzRecord
+                loaded = new clazzfish.core.stat.ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
         File csvFile = createImportCSV(loaded);
         ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
@@ -120,7 +122,7 @@ class ClazzStatisticTest {
         assertThat(content, containsString(loaded.classname()));
     }
 
-    private static File createImportCSV(ClazzRecord clazzRecord) throws IOException {
+    private static File createImportCSV(clazzfish.core.stat.ClazzRecord clazzRecord) throws IOException {
         File csvFile = new File("target/statistics", "import_export.csv");
         File dir = csvFile.getParentFile();
         if (dir.mkdirs()) {
@@ -185,8 +187,8 @@ class ClazzStatisticTest {
     void importOutdatedCSV() {
         File outdated = new File("src/test/resources/clazzfish/monitor/stat/outdated.csv");
         recorder.importCSV(outdated.toURI());
-        SortedSet<ClazzRecord> classes = recorder.getAllClasses();
-        ClazzRecord outdatedRecord = ClazzRecord.fromCSV("file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0");
+        SortedSet<clazzfish.core.stat.ClazzRecord> classes = recorder.getAllClasses();
+        clazzfish.core.stat.ClazzRecord outdatedRecord = clazzfish.core.stat.ClazzRecord.fromCSV("file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0");
         assertThat(classes, not(hasItems(outdatedRecord)));
     }
 
@@ -198,12 +200,12 @@ class ClazzStatisticTest {
         Path normal = Paths.get("src/test/resources/clazzfish/monitor/stat/normal.csv");
         List<String> lines = Files.readAllLines(normal);
         Path statistic = createClazzStatistic("ClazzStatistic.csv", lines);
-        ClazzRecord first = ClazzRecord.fromCSV(lines.get(1)).withCount(5);
+        ClazzRecord first = clazzfish.core.stat.ClazzRecord.fromCSV(lines.get(1)).withCount(5);
         Path tmpStatistic = createClazzStatistic("ClazzStatistic.csv-alice" + System.currentTimeMillis(),
                 List.of(lines.get(0), first.toCSV()));
-        ClazzRecord recBefore = getClazzRecord(first.classname());
+        clazzfish.core.stat.ClazzRecord recBefore = getClazzRecord(first.classname());
         recorder.importCSV(statistic.toString());
-        ClazzRecord rec = getClazzRecord(first.classname());
+        clazzfish.core.stat.ClazzRecord rec = getClazzRecord(first.classname());
         assertThat(rec.count(), greaterThanOrEqualTo(Math.max(recBefore.count(), first.count())));
         assertFalse(Files.exists(tmpStatistic));
     }
@@ -224,8 +226,8 @@ class ClazzStatisticTest {
         return dir;
     }
 
-    private ClazzRecord getClazzRecord(String classname) {
-        for (ClazzRecord clazzRecord : recorder.getAllClasses()) {
+    private clazzfish.core.stat.ClazzRecord getClazzRecord(String classname) {
+        for (clazzfish.core.stat.ClazzRecord clazzRecord : recorder.getAllClasses()) {
             if (clazzRecord.classname().equals(classname)) {
                 return clazzRecord;
             }
@@ -253,8 +255,8 @@ class ClazzStatisticTest {
         return updated;
     }
 
-    private static void checkClasses(Set<ClazzRecord> classes, String classname, int n) {
-        for (ClazzRecord record : classes) {
+    private static void checkClasses(Set<clazzfish.core.stat.ClazzRecord> classes, String classname, int n) {
+        for (clazzfish.core.stat.ClazzRecord record : classes) {
             if (classname.equals(record.classname())) {
                 assertEquals(n, record.count());
                 return;

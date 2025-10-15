@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.core.Config;
 import clazzfish.monitor.jmx.MBeanFinder;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.stat;
+package clazzfish.core.stat;
 
 import java.net.URI;
 
