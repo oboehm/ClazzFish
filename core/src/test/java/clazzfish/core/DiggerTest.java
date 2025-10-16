@@ -22,11 +22,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.util.Collection;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItemInArray;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -50,12 +52,14 @@ class DiggerTest {
     public void testGetClasses() {
         String[] classes = digger.getClasses();
         assertThat(classes, hasItemInArray(this.getClass().getName()));
+        assertThat(classes, hasItemInArray(Instrumentation.class.getName()));
     }
 
-   @Test
+    @Test
     public void testGetClassRecords() {
        Set<ClazzRecord> clazzRecords = digger.getClassRecords();
        assertFalse(clazzRecords.isEmpty());
+       assertEquals(clazzRecords.size(), digger.getClasses().length);
     }
 
 }

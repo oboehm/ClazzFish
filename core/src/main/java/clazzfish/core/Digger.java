@@ -51,20 +51,11 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
-    private final FutureTask<String[]> allClasspathClasses;
     private final FutureTask<Set<ClazzRecord>> allClazzRecords;
 
     {
-        allClasspathClasses = new FutureTask<>(this::getClasspathClassArray);
-        Executors.newCachedThreadPool().execute(allClasspathClasses);
         allClazzRecords = new FutureTask<>(this::getAllClazzRecords);
         Executors.newCachedThreadPool().execute(allClazzRecords);
-    }
-
-    private String[] getClasspathClassArray() {
-        Set<String> classSet = getAllClasses();
-        classSet.add(Instrumentation.class.getName());
-        return classSet.toArray(new String[0]);
     }
 
     private Set<ClazzRecord> getAllClazzRecords() {
@@ -77,6 +68,7 @@ public class Digger {
                 clazzRecords.add(new ClazzRecord(uri, className));
             }
         }
+        clazzRecords.add(new ClazzRecord(URI.create("jrt:/java.instrument"), Instrumentation.class.getName()));
         return clazzRecords;
     }
 
@@ -123,15 +115,14 @@ public class Digger {
      * @return classes of the classpath
      */
     public String[] getClasses() {
-        try {
-            return allClasspathClasses.get();
-        } catch (InterruptedException e) {
-            log.log(Level.WARNING, String.format("Was interrupted before got result from %s:", allClasspathClasses), e);
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            log.log(Level.WARNING, String.format("Cannot execute get of %s:", allClasspathClasses), e);
+        Set<ClazzRecord>  clazzRecords = getAllClazzRecords();
+        String[] classes = new String[clazzRecords.size()];
+        int i = 0;
+        for (ClazzRecord cr : clazzRecords) {
+            classes[i] = cr.classname();
+            i++;
         }
-        return getClasspathClassArray();
+        return classes;
     }
 
     /**
@@ -150,14 +141,6 @@ public class Digger {
             log.log(Level.WARNING, String.format("Cannot execute get of %s:", allClazzRecords), e);
         }
         return getAllClazzRecords();
-    }
-
-    private Set<String> getAllClasses() {
-        Set<String> classSet = new TreeSet<>();
-        for (String path : getClasspath()) {
-            addClasses(classSet, new File(path));
-        }
-        return classSet;
     }
 
     private Set<String> getAllClasses(File path) {
