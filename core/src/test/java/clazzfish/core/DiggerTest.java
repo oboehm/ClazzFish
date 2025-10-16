@@ -17,11 +17,13 @@
  */
 package clazzfish.core;
 
+import clazzfish.core.stat.ClazzRecord;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItemInArray;
@@ -48,6 +50,12 @@ class DiggerTest {
     public void testGetClasses() {
         String[] classes = digger.getClasses();
         assertThat(classes, hasItemInArray(this.getClass().getName()));
+    }
+
+   @Test
+    public void testGetClassRecords() {
+       Set<ClazzRecord> clazzRecords = digger.getClassRecords();
+       assertFalse(clazzRecords.isEmpty());
     }
 
 }

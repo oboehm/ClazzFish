@@ -17,11 +17,13 @@
  */
 package clazzfish.core;
 
+import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.NestedZipFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -50,16 +52,32 @@ public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
     private final FutureTask<String[]> allClasspathClasses;
+    private final FutureTask<Set<ClazzRecord>> allClazzRecords;
 
     {
         allClasspathClasses = new FutureTask<>(this::getClasspathClassArray);
         Executors.newCachedThreadPool().execute(allClasspathClasses);
+        allClazzRecords = new FutureTask<>(this::getAllClazzRecords);
+        Executors.newCachedThreadPool().execute(allClazzRecords);
     }
 
     private String[] getClasspathClassArray() {
         Set<String> classSet = getAllClasses();
         classSet.add(Instrumentation.class.getName());
         return classSet.toArray(new String[0]);
+    }
+
+    private Set<ClazzRecord> getAllClazzRecords() {
+        Set<ClazzRecord> clazzRecords = new TreeSet<>();
+        for (String path : getClasspath()) {
+            File f = new File(path);
+            Set<String> classes = getAllClasses(f);
+            URI uri = f.toURI();
+            for (String className : classes) {
+                clazzRecords.add(new ClazzRecord(uri, className));
+            }
+        }
+        return clazzRecords;
     }
 
     /**
@@ -116,11 +134,35 @@ public class Digger {
         return getClasspathClassArray();
     }
 
+    /**
+     * Digs into the classpath and returns the found classes together with
+     * the URI of the classpath where the class belongs to.
+     *
+     * @return all classes of the classpath
+     */
+    public Set<ClazzRecord> getClassRecords() {
+        try {
+            return allClazzRecords.get();
+        } catch (InterruptedException e) {
+            log.log(Level.WARNING, String.format("Was interrupted before got result from %s:", allClazzRecords), e);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.log(Level.WARNING, String.format("Cannot execute get of %s:", allClazzRecords), e);
+        }
+        return getAllClazzRecords();
+    }
+
     private Set<String> getAllClasses() {
         Set<String> classSet = new TreeSet<>();
         for (String path : getClasspath()) {
             addClasses(classSet, new File(path));
         }
+        return classSet;
+    }
+
+    private Set<String> getAllClasses(File path) {
+        Set<String> classSet = new HashSet<>();
+        addClasses(classSet, path);
         return classSet;
     }
 
