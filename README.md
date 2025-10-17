@@ -4,7 +4,7 @@
 # ClazzFish <img src="src/doc/images/clazzfish-128x64.png" width="64">
 
 ClazzFish is a collection of different modules, which help you to dive into the classpath of your application and to monitor it.
-Originally it was part of [PatternTesting](http://patterntesting.org) but is now extracted to a separate project.
+Originally it was part of [PatternTesting](https://github.com/oboehm/PatternTesting2) but is now extracted to a separate project.
 
 Part of ClassFish are several modules:
 
