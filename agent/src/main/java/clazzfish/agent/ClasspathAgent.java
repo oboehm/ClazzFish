@@ -52,20 +52,21 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
 
     private static final long serialVersionUID = 20180517L;
     private static final Logger LOG = Logger.getLogger(ClasspathAgent.class.getName());
-    private static final ClasspathAgent INSTANCE = new ClasspathAgent();
+    private static final ClasspathAgent INSTANCE;
     private static Instrumentation instrumentation;
     private static String args;
     private static final Digger digger = new Digger();
 
-    private ClasspathAgent() {
+    static {
         setUpLogging();
+        INSTANCE = new ClasspathAgent();
         try {
-            this.registerAsMBean();
-            LOG.info("ClasspathAgent is ready and registered as MBean \"" + MBEAN_NAME + "\".");
+            INSTANCE.registerAsMBean();
+            LOG.log(Level.INFO, "ClasspathAgent is ready and registered as MBean \"{0}\".", MBEAN_NAME);
         } catch (MBeanRegistrationException | OperationsException ex) {
-            LOG.info("ClasspathAgent is ready but not registered as MBean \"" + MBEAN_NAME
-                    + "\" because of " + ex);
+            LOG.log(Level.INFO, "ClasspathAgent is ready but not registered as MBean \"" + MBEAN_NAME + "\":", ex);
         }
+        INSTANCE.addMeAsShutdownHook();
     }
 
     /**
@@ -306,6 +307,11 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
             unusedClasses.remove(classname);
         }
         return unusedClasses.toArray(new String[0]);
+    }
+
+    @Override
+    public void run() {
+        LOG.info("Dump of loaded classes in not yet implemented.");
     }
 
 }
