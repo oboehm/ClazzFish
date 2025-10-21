@@ -126,4 +126,9 @@ public final class ClasspathAgentTest {
         return false;
     }
 
+    @Test
+    public void testShuthdownHook() {
+        assertTrue(agent.isShutdownHook());
+    }
+
 }

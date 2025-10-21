@@ -19,6 +19,7 @@
 package clazzfish.agent;
 
 import clazzfish.core.Digger;
+import clazzfish.core.util.ShutdownHook;
 
 import javax.management.*;
 import java.io.*;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
  * @author oboehm
  * @since 0.8
  */
-public class ClasspathAgent implements ClasspathAgentMBean {
+public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean {
 
     /** The Constant MBEAN_NAME for the registered name in JMX. */
     public static final String MBEAN_NAME = "clazzfish:type=agent,agent=ClasspathAgent";

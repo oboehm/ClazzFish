@@ -23,7 +23,7 @@ import clazzfish.core.Digger;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;

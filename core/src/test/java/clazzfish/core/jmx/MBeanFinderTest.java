@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  *
  * (c)reated 28.12.24 by oboehm
  */
-package clazzfish.monitor.jmx;
+package clazzfish.core.jmx;
 
-import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.monitor.stat.ClazzStatistic;
+import clazzfish.core.Config;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit tests for {@link MBeanFinder} ...
+ * Unit tests for {@link clazzfish.core.jmx.MBeanFinder} ...
  *
  * @author oboehm
  * @since 28.12.24
@@ -33,14 +32,14 @@ class MBeanFinderTest {
 
     @Test
     void getMBeanName() {
-        String mbeanName = MBeanFinder.getMBeanName(ClasspathMonitor.class);
-        assertEquals("clazzfish:type=monitor,name=ClasspathMonitor", mbeanName);
+        String mbeanName = MBeanFinder.getMBeanName(Config.class);
+        assertEquals("clazzfish:type=core,name=Config", mbeanName);
     }
 
     @Test
     void getMBeanNameLevel1() {
-        String mbeanName = MBeanFinder.getMBeanName(ClazzStatistic.class);
-        assertEquals("clazzfish:type=monitor,monitor=stat,name=ClazzStatistic", mbeanName);
+        String mbeanName = clazzfish.core.jmx.MBeanFinder.getMBeanName(MBeanFinder.class);
+        assertEquals("clazzfish:type=core,core=jmx,name=MBeanFinder", mbeanName);
     }
 
 }

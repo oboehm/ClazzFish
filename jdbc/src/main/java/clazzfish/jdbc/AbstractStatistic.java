@@ -24,7 +24,7 @@ import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.core.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

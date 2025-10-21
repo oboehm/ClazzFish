@@ -17,7 +17,7 @@
  */
 package clazzfish.monitor;
 
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

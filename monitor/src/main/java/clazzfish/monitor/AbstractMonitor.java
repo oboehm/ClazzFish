@@ -20,7 +20,7 @@ package clazzfish.monitor;
 
 import clazzfish.core.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

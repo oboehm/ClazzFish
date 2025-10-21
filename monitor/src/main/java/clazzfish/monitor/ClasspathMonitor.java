@@ -22,7 +22,7 @@ import clazzfish.monitor.internal.BoringClassLoader;
 import clazzfish.monitor.internal.ClasspathDigger;
 import clazzfish.monitor.internal.DoubletDigger;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

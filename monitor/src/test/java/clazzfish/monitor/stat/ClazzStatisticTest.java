@@ -19,7 +19,7 @@ package clazzfish.monitor.stat;
 
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

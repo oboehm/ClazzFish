@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 by Oliver Boehm
+ * Copyright (c) 2024,2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,7 @@
  *
  * (c)reated 28.12.24 by oboehm
  */
-package clazzfish.monitor.jmx;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package clazzfish.core.jmx;
 
 import javax.management.*;
 import javax.management.openmbean.CompositeType;
@@ -28,6 +24,8 @@ import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class simplifies the use of JMX and MBeans a little bit.
@@ -38,8 +36,8 @@ import java.util.Arrays;
  */
 public class MBeanFinder {
 
-	private static final Logger log = LoggerFactory.getLogger(MBeanFinder.class);
-	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
+    private static final Logger log = Logger.getLogger(MBeanFinder.class.getName());
+    private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
 
     /** Utility class - no need to instantiate it */
 	private MBeanFinder() {
@@ -48,9 +46,7 @@ public class MBeanFinder {
 	/**
 	 * Gets an MBean name for the given object.
 	 *
-	 * @param mbean
-	 *            the mbean
-	 *
+	 * @param mbean the mbean
 	 * @return the name of the MBean
 	 */
 	public static String getMBeanName(final Object mbean) {
@@ -58,7 +54,7 @@ public class MBeanFinder {
 	}
 
 	/**
-	 * Converts the class name into a MBean name. For a hierachical structure of
+	 * Converts the class name into a MBean name. For a hierarchical structure of
 	 * the registered MBeans take a look at <a href=
 	 * "http://www.oracle.com/technetwork/java/javase/tech/best-practices-jsp-136021.html"
 	 * >Java Management Extensions (JMX) - Best Practices</a>.
@@ -112,8 +108,7 @@ public class MBeanFinder {
 	 * untouched.
 	 * </p>
 	 *
-	 * @param name
-	 *            e.g. "one.two.For"
+	 * @param name e.g. "one.two.For"
 	 * @return e.g. "one:type=two,name=For"
 	 * @since 1.6
 	 */
@@ -122,15 +117,17 @@ public class MBeanFinder {
 			return name;
 		}
 		if (name.contains(".")) {
-			String packageName = StringUtils.substringBeforeLast(name, ".");
-			return getAsMBeanType(1, packageName) + ",name=" + StringUtils.substringAfterLast(name, ".");
+            int lastDotIndex = name.lastIndexOf('.');
+            String packageName = name.substring(0, lastDotIndex);
+            String classname = name.substring(lastDotIndex + 1);
+            return getAsMBeanType(1, packageName) + ",name=" + classname;
 		} else {
 			return ":name=" + name;
 		}
 	}
 
 	private static String getAsMBeanType(final int level, final String packageName) {
-		String[] names = StringUtils.split(packageName, ".");
+        String[] names = packageName.split("\\.");
 		int n = (level >= names.length) ? names.length - 1 : level;
 		StringBuilder domain = new StringBuilder(names[0]);
 		for (int i = 1; i < n; i++) {
@@ -150,8 +147,7 @@ public class MBeanFinder {
 	/**
 	 * Gets a class as {@link ObjectName}.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 * @return name as object name
 	 * @since 1.6
 	 */
@@ -166,8 +162,7 @@ public class MBeanFinder {
 	/**
 	 * Gets a class as {@link ObjectName}.
 	 *
-	 * @param mbeanClass
-	 *            the mbean class
+	 * @param mbeanClass the mbean class
 	 * @return class as object name
 	 * @since 1.6
 	 */
@@ -193,65 +188,58 @@ public class MBeanFinder {
 	/**
 	 * Register the given object as MBean.
 	 *
-	 * @param mbeanName
-	 *            the mbean name
-	 * @param mbean
-	 *            the mbean
+	 * @param mbeanName the mbean name
+	 * @param mbean     the mbean
 	 */
 	public static synchronized void registerMBean(final String mbeanName, final Object mbean) {
 		try {
 			ObjectName name = new ObjectName(mbeanName);
 			registerMBean(name, mbean);
 		} catch (MalformedObjectNameException ex) {
-			log.info("Cannot register '{}' as MBean:", mbean, ex);
+			log.log(Level.INFO, "Cannot register '{0}' as MBean ({1}).", new Object[] { mbean, ex.getMessage()});
+            log.log(Level.FINE, "Details:", ex);
 		}
 	}
 
 	/**
 	 * Register m bean.
 	 *
-	 * @param name
-	 *            the name
-	 * @param mbean
-	 *            the mbean
+	 * @param name  the name
+	 * @param mbean the mbean
 	 */
 	public static synchronized void registerMBean(final ObjectName name, final Object mbean) {
 		try {
-			log.trace("Registering '{}'...", name);
+			log.log(Level.FINER, "Registering '{0}'...", name);
 			MBEAN_SERVER.registerMBean(mbean, name);
-			log.debug("'{}' successful registered as MBean", name);
+			log.log(Level.FINE, "'{0}' successful registered as MBean", name);
 		} catch (InstanceAlreadyExistsException ex) {
-			log.debug("'{}' is already registered.", name);
-			log.trace("Details:", ex);
-		} catch (MBeanRegistrationException ex) {
-			log.info("Cannot register <{}> as MBean:", mbean, ex);
-		} catch (NotCompliantMBeanException ex) {
-			log.info("<{}> is not a compliant MBean:", mbean, ex);
+            log.log(Level.FINE, "'{}' is already registered.", name);
+            log.log(Level.FINER, "Details:", ex);
+        } catch (JMException ex) {
+            log.log(Level.INFO, "Cannot register <{0}> as MBean ({1}).", new Object[] {mbean, ex.getMessage()});
+            log.log(Level.FINE, "Details:", ex);
 		}
 	}
 
 	/**
 	 * Unregister an MBean.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 */
 	public static synchronized void unregisterMBean(final ObjectName name) {
 		try {
 			MBEAN_SERVER.unregisterMBean(name);
-			log.debug("MBean " + name + " successful unregistered");
-		} catch (MBeanRegistrationException ex) {
-			log.info("Cannot unregister '" + name + "':", ex);
-		} catch (InstanceNotFoundException ex) {
-			log.info("'" + name + "' not found:", ex);
+			log.log(Level.FINE, "MBean {0} successful unregistered", name);
+		} catch (JMException ex) {
+            log.log(Level.INFO, "Cannot unregister <{0}> ({1}).", new Object[] {name, ex.getMessage()});
+            log.log(Level.FINE, "Details:", ex);
 		}
 	}
 
 	/**
 	 * Checks if is registered.
 	 *
-	 * @param mbeanName
-	 *            the mbean name
+	 * @param mbeanName the mbean name
 	 * @return true, if is registered
 	 */
 	public static boolean isRegistered(final String mbeanName) {
@@ -262,8 +250,7 @@ public class MBeanFinder {
 	/**
 	 * Checks if is registered.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 * @return true, if is registered
 	 * @since 1.6
 	 */
@@ -272,7 +259,8 @@ public class MBeanFinder {
 			ObjectInstance mbean = MBEAN_SERVER.getObjectInstance(name);
 			return (mbean != null);
 		} catch (InstanceNotFoundException ex) {
-			log.trace("'" + name + "' not found:", ex);
+            log.log(Level.FINER, "'{0}' not found ({1})'", new Object[] {name, ex.getMessage()});
+            log.log(Level.FINEST, "Details:", ex);
 			return false;
 		}
 	}
@@ -305,11 +293,11 @@ public class MBeanFinder {
 				ObjectName objectName = new ObjectName(name);
 				return MBEAN_SERVER.getObjectInstance(objectName);
 			} catch (InstanceNotFoundException | MalformedObjectNameException ex) {
-				log.debug("'{}' is not registered as MBean ({}).", name, ex.getMessage());
-				log.trace("Details:", ex);
+                log.log(Level.FINE, "'{0}' is not registered as MBean ({1})'", new Object[] {name, ex.getMessage()});
+                log.log(Level.FINER, "Details:", ex);
 			}
 		}
-		log.debug("No MBean \"{}\" found.", Arrays.toString(mbeanNames));
+		log.log(Level.FINE, "No MBean \"{0}\" found.", Arrays.toString(mbeanNames));
 		return null;
 	}
 

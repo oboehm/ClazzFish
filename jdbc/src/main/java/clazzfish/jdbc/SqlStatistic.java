@@ -24,7 +24,7 @@ import clazzfish.jdbc.internal.PasswordFilter;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import clazzfish.jdbc.monitor.ProfileMonitor;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;

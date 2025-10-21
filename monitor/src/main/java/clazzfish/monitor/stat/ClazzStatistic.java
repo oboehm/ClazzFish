@@ -20,7 +20,7 @@ package clazzfish.monitor.stat;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.core.Config;
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;

@@ -20,7 +20,7 @@
 
 package clazzfish.jdbc;
 
-import clazzfish.monitor.jmx.MBeanFinder;
+import clazzfish.core.jmx.MBeanFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

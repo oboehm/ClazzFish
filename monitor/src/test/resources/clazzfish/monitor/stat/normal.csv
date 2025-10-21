@@ -25,7 +25,7 @@ Classpath;Classname;Count
 /ClazzFish/monitor/target/classes;clazzfish.monitor.io.ExtendedFile;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.io.FileInputStreamReader;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.jmx.Description;1
-/ClazzFish/monitor/target/classes;clazzfish.monitor.jmx.MBeanFinder;1
+/ClazzFish/monitor/target/classes;clazzfish.core.jmx.MBeanFinder;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.jmx.MBeanHelper;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.jmx.Unit;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.log.LogWatch;1
