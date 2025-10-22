@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.spi.CsvXPorter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 

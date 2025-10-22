@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.spi.CsvXPorter;
+
 /**
  * Die Klasse FileXPorterProvider ...
  *

@@ -17,7 +17,7 @@
  */
 package clazzfish.spi.git;
 
-import clazzfish.monitor.spi.CsvXPorter;
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.spi.FileXPorter;
 import clazzfish.core.stat.ClazzRecord;
 import org.apache.commons.lang3.StringUtils;

@@ -17,7 +17,7 @@
  */
 package clazzfish.sample.spi;
 
-import clazzfish.monitor.spi.CsvXPorter;
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.stat.ClazzRecord;
 
 import java.net.URI;

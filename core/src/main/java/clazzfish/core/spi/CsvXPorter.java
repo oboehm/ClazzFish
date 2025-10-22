@@ -15,15 +15,14 @@
  *
  * (c)reated 18.02.25 by oboehm
  */
-package clazzfish.monitor.spi;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package clazzfish.core.spi;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The interface CsvXPorter contains the needed methods to import and export
@@ -34,7 +33,7 @@ import java.util.List;
  */
 public interface CsvXPorter {
 
-    Logger log = LoggerFactory.getLogger(CsvXPorter.class);
+    Logger log = Logger.getLogger(CsvXPorter.class.getName());
 
     /**
      * Interface for exporting CSV.
@@ -56,7 +55,7 @@ public interface CsvXPorter {
      * @throws IOException in case of I/O problems
      */
     default List<String> importCSV(URI uri) throws IOException {
-        log.info("Return empty list because 'importCSV({})' is not supported.", uri);
+        log.log(Level.INFO, "Return empty list because 'importCSV({0})' is not supported.", uri);
         return Collections.EMPTY_LIST;
     }
 

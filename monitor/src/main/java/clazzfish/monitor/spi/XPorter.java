@@ -17,6 +17,8 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.spi.CsvXPorter;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,7 @@ public class XPorter {
     }
 
     /**
-     * Creates a CsvXPorter object which can be used for improts and
+     * Creates a CsvXPorter object which can be used for imports and
      * exports of CSV data.
      *
      * @param protocol e.g. "file"

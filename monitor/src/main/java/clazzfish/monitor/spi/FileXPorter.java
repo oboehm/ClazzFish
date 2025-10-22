@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.core.stat.ClazzRecord;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class FileXPorter implements CsvXPorter {
         String filename = file.getName();
         File dir = file.getParentFile();
         FileFilter filter = new FileFilter() {
-            Pattern pattern = Pattern.compile(filename + "-.*[0-9]{13}$");
+            final Pattern pattern = Pattern.compile(filename + "-.*[0-9]{13}$");
             @Override
             public boolean accept(File pathname) {
                 return pattern.matcher(pathname.getName()).matches();

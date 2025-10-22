@@ -22,7 +22,7 @@ import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
 import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.monitor.spi.CsvXPorter;
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;
 import org.apache.commons.lang3.StringUtils;
