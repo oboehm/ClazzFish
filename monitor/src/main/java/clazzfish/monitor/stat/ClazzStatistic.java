@@ -17,14 +17,14 @@
  */
 package clazzfish.monitor.stat;
 
-import clazzfish.core.stat.ClazzRecord;
-import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.core.Config;
 import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.core.stat.ClazzRecord;
+import clazzfish.core.util.ShutdownHook;
+import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;
-import clazzfish.monitor.util.Shutdowner;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ import java.util.concurrent.FutureTask;
  * @author oboehm
  * @since 2.3 (25.11.24)
  */
-public class ClazzStatistic extends Shutdowner implements ClazzStatisticMBean {
+public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean {
 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();

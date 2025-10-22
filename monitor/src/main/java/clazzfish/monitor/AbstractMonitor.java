@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 by Oliver Boehm
+ * Copyright (c) 2016-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,6 +19,7 @@
 package clazzfish.monitor;
 
 import clazzfish.core.Config;
+import clazzfish.core.util.ShutdownHook;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.ReflectionHelper;
@@ -43,7 +44,7 @@ import java.util.Arrays;
  *
  * @author oliver
  */
-public abstract class AbstractMonitor extends clazzfish.monitor.util.Shutdowner implements AbstractMonitorMBean {
+public abstract class AbstractMonitor extends ShutdownHook implements AbstractMonitorMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitor.class);
     private ObjectName mbeanName = MBeanFinder.getAsObjectName(this.getClass());
