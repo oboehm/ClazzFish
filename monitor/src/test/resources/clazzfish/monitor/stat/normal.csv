@@ -31,7 +31,7 @@ Classpath;Classname;Count
 /ClazzFish/monitor/target/classes;clazzfish.monitor.log.LogWatch;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.spi.CsvXPorter;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.spi.CsvXPorterProvider;1
-/ClazzFish/monitor/target/classes;clazzfish.monitor.spi.FileXPorter;1
+/ClazzFish/monitor/target/classes;clazzfish.core.spi.FileXPorter;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.spi.FileXPorterProvider;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.spi.XPorter;1
 /ClazzFish/monitor/target/classes;clazzfish.monitor.stat.ClazzRecord;1

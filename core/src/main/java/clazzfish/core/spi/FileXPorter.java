@@ -15,19 +15,17 @@
  *
  * (c)reated 18.02.25 by oboehm
  */
-package clazzfish.monitor.spi;
+package clazzfish.core.spi;
 
-import clazzfish.core.spi.CsvXPorter;
-import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.core.stat.ClazzRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -38,18 +36,18 @@ import java.util.regex.Pattern;
  */
 public class FileXPorter implements CsvXPorter {
 
-    private static final Logger log = LoggerFactory.getLogger(FileXPorter.class);
+    private static final Logger log = Logger.getLogger(FileXPorter.class.getName());
 
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
         writeCSV(new File(uri), csvHeadLine, csvLines);
-        log.debug("Statistic exported with {} lines to '{}'.", csvLines.size(), uri);
+        log.log(Level.FINE, "Statistic exported with {0} lines to '{0}'.", new Object[] { csvLines.size(), uri});
     }
 
     private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws IOException {
-        ExtendedFile.createDir(file.getParentFile());
+        createDir(file.getParentFile());
         File tmpFile = new File(file + "-" + System.currentTimeMillis());
-        log.trace("Statistic is temporary stored in '{}'.", tmpFile);
+        log.log(Level.FINER, "Statistic is temporary stored in '{0}'.", tmpFile);
         try (PrintWriter writer = new PrintWriter(tmpFile)) {
             writer.println(csvHeadLine);
             for (String line : csvLines) {
@@ -58,7 +56,17 @@ public class FileXPorter implements CsvXPorter {
             writer.flush();
         }
         Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        log.trace("New {} is renamed to {}.", tmpFile, file);
+        log.log(Level.FINER, "New {0} is renamed to {1}.", new Object[] { tmpFile, file });
+    }
+
+    private static void createDir(File dir) {
+        if (!dir.exists()) {
+            if (dir.mkdirs()) {
+                log.log(Level.FINE, "Directory '{0}' successful created.", dir);
+            } else {
+                log.log(Level.WARNING, "Cannot create dir '{0}' and will give up.", dir);
+            }
+        }
     }
 
     @Override
@@ -75,7 +83,7 @@ public class FileXPorter implements CsvXPorter {
                 String line = reader.readLine();
                 csvLines.add(line);
             }
-            log.debug("{} lines imported from file '{}'.", csvLines.size(), file);
+            log.log(Level.FINE, "{0} lines imported from file '{1}'.", new Object[] { csvLines.size(), file });
         }
         return csvLines;
     }
@@ -94,7 +102,7 @@ public class FileXPorter implements CsvXPorter {
         for (File f : dir.listFiles(filter)) {
             addClazzRecordsTo(records, f);
             if (f.delete()) {
-                log.info("Temporary file '{}' is deleted after import.", f);
+                log.log(Level.INFO, "Temporary file '{0}' is deleted after import.", f);
             }
         }
         return toCsvLines(records);
@@ -122,8 +130,8 @@ public class FileXPorter implements CsvXPorter {
                 ClazzRecord rec = ClazzRecord.fromCSV(csvLine);
                 records.put(rec.classname(), rec);
             } catch (IllegalArgumentException ex) {
-                log.debug("Line '{}' is ignored ({}).", csvLine, ex.getMessage());
-                log.trace("Details:", ex);
+                log.log(Level.FINE, "Line '{0}' is ignored ({1}).", new Object[] { csvLine, ex.getMessage() });
+                log.log(Level.FINER, "Details:", ex);
             }
         }
         return records;

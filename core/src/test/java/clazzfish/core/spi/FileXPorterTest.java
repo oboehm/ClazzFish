@@ -15,9 +15,8 @@
  *
  * (c)reated 18.02.25 by oboehm
  */
-package clazzfish.monitor.spi;
+package clazzfish.core.spi;
 
-import clazzfish.core.spi.CsvXPorter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +54,7 @@ class FileXPorterTest {
 
     @Test
     void importCSV() throws IOException {
-        File file = new File("src/test/resources/clazzfish/monitor/stat/corrupt.csv");
+        File file = new File("../monitor/src/test/resources/clazzfish/monitor/stat/corrupt.csv");
         List<String> cvsLines = xPorter.importCSV(file.toURI());
         assertFalse(cvsLines.isEmpty());
     }
