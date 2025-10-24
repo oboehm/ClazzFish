@@ -73,7 +73,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private static final ClazzStatistic INSTANCE = new ClazzStatistic();
     private final ClasspathMonitor classpathMonitor;
-    private final FutureTask<SortedSet<ClazzRecord>> allClasses;
+    private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
     private final CsvXPorter xPorter;
 
@@ -102,14 +102,14 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
     }
 
-    private static FutureTask<SortedSet<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
-        FutureTask<SortedSet<ClazzRecord>> classes = new FutureTask<>(() -> collectClasses(cpmon));
+    private static FutureTask<Set<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
+        FutureTask<Set<ClazzRecord>> classes = new FutureTask<>(() -> collectClasses(cpmon));
         EXECUTOR.execute(classes);
         return classes;
     }
 
-    private static SortedSet<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
-        SortedSet<ClazzRecord> classes = new TreeSet<>();
+    private static Set<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
+        Set<ClazzRecord> classes = new TreeSet<>();
         for (String classname : cpmon.getClasspathClasses()) {
             URI uri = getUri(cpmon, classname);
             classes.add(new ClazzRecord(uri, classname, 0));
@@ -135,7 +135,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         MBeanFinder.registerMBean(this);
     }
 
-    public SortedSet<ClazzRecord> getAllClasses() {
+    public Set<ClazzRecord> getAllClasses() {
         try {
             return allClasses.get();
         } catch (ExecutionException | InterruptedException ex) {

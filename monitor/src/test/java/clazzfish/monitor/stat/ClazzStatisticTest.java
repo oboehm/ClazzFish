@@ -17,9 +17,9 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
-import clazzfish.core.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -187,7 +186,7 @@ class ClazzStatisticTest {
     void importOutdatedCSV() {
         File outdated = new File("src/test/resources/clazzfish/monitor/stat/outdated.csv");
         recorder.importCSV(outdated.toURI());
-        SortedSet<clazzfish.core.stat.ClazzRecord> classes = recorder.getAllClasses();
+        Set<clazzfish.core.stat.ClazzRecord> classes = recorder.getAllClasses();
         clazzfish.core.stat.ClazzRecord outdatedRecord = clazzfish.core.stat.ClazzRecord.fromCSV("file:/ClazzFish/monitor/target/classes;out.dated.Clazz;0");
         assertThat(classes, not(hasItems(outdatedRecord)));
     }
