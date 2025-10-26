@@ -51,24 +51,31 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
-    private final FutureTask<Set<ClazzRecord>> allClazzRecords;
+    private final FutureTask<AllClazzRecords> allClazzRecords;
 
     {
         allClazzRecords = new FutureTask<>(this::getAllClazzRecords);
         Executors.newCachedThreadPool().execute(allClazzRecords);
     }
 
-    private Set<ClazzRecord> getAllClazzRecords() {
-        Set<ClazzRecord> clazzRecords = new TreeSet<>();
+    private AllClazzRecords getAllClazzRecords() {
+        AllClazzRecords clazzRecords = new AllClazzRecords();
+        Set<String> uniqueClassnames = new HashSet<>();
         for (String path : getClasspath()) {
             File f = new File(path);
             Set<String> classes = getAllClasses(f);
             URI uri = f.toURI();
             for (String className : classes) {
-                clazzRecords.add(new ClazzRecord(uri, className));
+                ClazzRecord cr = new ClazzRecord(uri, className);
+                if (uniqueClassnames.contains(className)) {
+                    clazzRecords.shadedRecords.add(cr);
+                } else {
+                    uniqueClassnames.add(className);
+                    clazzRecords.clazzRecords.add(cr);
+                }
             }
         }
-        clazzRecords.add(new ClazzRecord(URI.create("jrt:/java.instrument"), Instrumentation.class.getName()));
+        clazzRecords.clazzRecords.add(new ClazzRecord(URI.create("jrt:/java.instrument"), Instrumentation.class.getName()));
         return clazzRecords;
     }
 
@@ -115,7 +122,7 @@ public class Digger {
      * @return classes of the classpath
      */
     public String[] getClasses() {
-        Set<ClazzRecord>  clazzRecords = getAllClazzRecords();
+        Set<ClazzRecord> clazzRecords = getAllClazzRecords().clazzRecords;
         String[] classes = new String[clazzRecords.size()];
         int i = 0;
         for (ClazzRecord cr : clazzRecords) {
@@ -127,11 +134,28 @@ public class Digger {
 
     /**
      * Digs into the classpath and returns the found classes together with
-     * the URI of the classpath where the class belongs to.
+     * the URI of the classpath where the class belongs to. Shaded classes
+     * (see {@link #getShadedRecords()}) are not part of the returned set.
      *
-     * @return all classes of the classpath
+     * @return classes of the classpath (without shadowed classes)
      */
     public Set<ClazzRecord> getClassRecords() {
+        return accessAllClassRecords().clazzRecords;
+    }
+
+    /**
+     * Shadowed classes are classes which are more than once in the classpath
+     * and which are shadowed by another class. I.e. these are classes which
+     * are on position 2 (or higher) in the classpath which will be never
+     * loaded by the classloader.
+     *
+     * @return set of shadowed classes
+     */
+    public Set<ClazzRecord> getShadedRecords() {
+        return accessAllClassRecords().shadedRecords;
+    }
+
+    private AllClazzRecords accessAllClassRecords() {
         try {
             return allClazzRecords.get();
         } catch (InterruptedException e) {
@@ -236,6 +260,12 @@ public class Digger {
         }
         log.finer(String.format("%d element(s) read from %s.", elements.size(), archive));
         return elements;
+    }
+
+
+    private static class AllClazzRecords {
+        public Set<ClazzRecord> clazzRecords = new TreeSet<>();
+        public Set<ClazzRecord> shadedRecords = new TreeSet<>();
     }
 
 }

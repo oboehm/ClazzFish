@@ -24,12 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItemInArray;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link Digger}.
@@ -49,17 +49,33 @@ class DiggerTest {
     }
 
     @Test
-    public void testGetClasses() {
+    void testGetClasses() {
         String[] classes = digger.getClasses();
         assertThat(classes, hasItemInArray(this.getClass().getName()));
         assertThat(classes, hasItemInArray(Instrumentation.class.getName()));
     }
 
     @Test
-    public void testGetClassRecords() {
+    void testGetClassRecords() {
        Set<ClazzRecord> clazzRecords = digger.getClassRecords();
        assertFalse(clazzRecords.isEmpty());
        assertEquals(clazzRecords.size(), digger.getClasses().length);
+       assertIsUnique(clazzRecords);
+    }
+
+    private void assertIsUnique(Set<ClazzRecord> clazzRecords) {
+        Set<String> classnames = new HashSet<>();
+        for (ClazzRecord cr : clazzRecords) {
+            assertFalse(classnames.contains(cr.classname()), "not unique class: " + cr);
+            classnames.add(cr.classname());
+        }
+        assertEquals(clazzRecords.size(), classnames.size());
+    }
+
+    @Test
+    void testGetShadedRecords() {
+        Set<ClazzRecord> clazzRecords = digger.getShadedRecords();
+        assertNotNull(clazzRecords);
     }
 
 }
