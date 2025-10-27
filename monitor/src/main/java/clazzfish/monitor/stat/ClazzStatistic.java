@@ -18,13 +18,13 @@
 package clazzfish.monitor.stat;
 
 import clazzfish.core.Config;
+import clazzfish.core.Digger;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
 import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;
-import clazzfish.monitor.util.Converter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +73,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private static final ClazzStatistic INSTANCE = new ClazzStatistic();
     private final ClasspathMonitor classpathMonitor;
+    private final Digger classpathDigger = new Digger();
     private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
     private final CsvXPorter xPorter;
@@ -96,39 +97,16 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     private ClazzStatistic(URI csvURI, ClasspathMonitor classpathMonitor) {
         this.classpathMonitor = classpathMonitor;
-        this.allClasses = collectFutureClasses(classpathMonitor);
+        this.allClasses = collectFutureClasses(classpathDigger);
         this.csvURI = csvURI;
         this.xPorter = XPorter.createCsvXPorter(csvURI);
         log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
     }
 
-    private static FutureTask<Set<ClazzRecord>> collectFutureClasses(ClasspathMonitor cpmon) {
-        FutureTask<Set<ClazzRecord>> classes = new FutureTask<>(() -> collectClasses(cpmon));
+    private static FutureTask<Set<ClazzRecord>> collectFutureClasses(Digger digger) {
+        FutureTask<Set<ClazzRecord>> classes = new FutureTask<>(digger::getClassRecords);
         EXECUTOR.execute(classes);
         return classes;
-    }
-
-    private static Set<ClazzRecord> collectClasses(ClasspathMonitor cpmon) {
-        Set<ClazzRecord> classes = new TreeSet<>();
-        for (String classname : cpmon.getClasspathClasses()) {
-            URI uri = getUri(cpmon, classname);
-            classes.add(new ClazzRecord(uri, classname, 0));
-        }
-        return classes;
-    }
-
-    private static URI getUri(ClasspathMonitor cpmon, String classname) {
-        URI uri = cpmon.whichClass(classname);
-        String s = Objects.toString(uri, "");
-        String resource = Converter.classToResource(classname);
-        if (s.endsWith(resource)) {
-            s = s.substring(0, s.length() - resource.length() - 1);
-            if (s.endsWith("!")) {
-                s = s.substring(0, s.length() - 1);
-            }
-            uri = URI.create(s);
-        }
-        return uri;
     }
 
     public void registerMeAsMBean() {
@@ -141,7 +119,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         } catch (ExecutionException | InterruptedException ex) {
             log.info("Cannot get all classes ({}).", ex.getMessage());
             log.debug("Details:", ex);
-            return collectClasses(classpathMonitor);
+            return classpathDigger.getClassRecords();
         }
     }
 
