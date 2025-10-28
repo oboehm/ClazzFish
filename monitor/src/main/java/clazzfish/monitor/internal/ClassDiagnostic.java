@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.core.ClassLoading;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import java.util.Set;
  * @author oboehm
  * @since 2.3 (15.12.24)
  */
-public final class ClassDiagnostic {
+public final class ClassDiagnostic implements ClassLoading {
 
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
     private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
@@ -45,19 +46,19 @@ public final class ClassDiagnostic {
     /**
      * This is a shortcut for the call of the preferred method.
      *
-     * @return a set of loaded classes
+     * @return an array of loaded classes
      */
-    public static Set<Class<?>> getLoadedClasses() {
-        return getLoadedClassesFromVmClassHierarchy();
+    public Class<?>[] getLoadedClasses() {
+        return getLoadedClassesFromVmClassHierarchy().toArray(new Class<?>[0]);
     }
 
     /**
      * This is a shortcut for the call of the preferred method.
      *
-     * @return a set of loaded classnames
+     * @return an array of loaded classnames
      */
-    public static Set<String> getLoadedClassnames() {
-        return getLoadedClassnamesFromVmClassHierarchy();
+    public String[] getLoadedClassnames() {
+        return getLoadedClassnamesFromVmClassHierarchy().toArray(new String[0]);
     }
 
     /**
@@ -106,9 +107,9 @@ public final class ClassDiagnostic {
         return classes;
     }
 
-    public static Set<Class<?>> getLoadedClassesFromVmClassHierarchy() {
+    public Set<Class<?>> getLoadedClassesFromVmClassHierarchy() {
         Set<Class<?>> classes = new HashSet<>();
-        Set<String> loadedClassesNames = getLoadedClassnames();
+        String[] loadedClassesNames = getLoadedClassnames();
         for (String className : loadedClassesNames) {
             try {
                 log.trace("Try to get class '{}'...", className);

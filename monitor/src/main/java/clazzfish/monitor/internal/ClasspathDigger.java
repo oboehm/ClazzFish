@@ -437,7 +437,7 @@ public class ClasspathDigger extends Digger {
             } catch (JMException ex) {
 				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
 				LOG.trace("Details:", ex);
-				return ClassDiagnostic.getLoadedClasses();
+				return Set.of(new ClassDiagnostic().getLoadedClasses());
             }
         }
 		if (loadedClasses.isEmpty()) {
@@ -477,7 +477,7 @@ public class ClasspathDigger extends Digger {
 				LOG.trace("Details:", ex);
             }
         }
-		return ClassDiagnostic.getLoadedClassnames();
+		return Set.of(new ClassDiagnostic().getLoadedClassnames());
 	}
 
 	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {

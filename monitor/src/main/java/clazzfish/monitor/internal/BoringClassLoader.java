@@ -98,7 +98,7 @@ public class BoringClassLoader extends ClassLoader {
      * @return all loaded classes
      */
     public Set<Class<?>> getLoadedClasses() {
-        return ClassDiagnostic.getLoadedClasses();
+        return Set.of(new ClassDiagnostic().getLoadedClasses());
     }
 
     @Override

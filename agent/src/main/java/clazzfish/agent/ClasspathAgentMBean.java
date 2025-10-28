@@ -18,7 +18,7 @@
 
 package clazzfish.agent;
 
-import clazzfish.core.ClasspathInspector;
+import clazzfish.core.ClassLoading;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.io.Serializable;
  *
  * @author oliver
  */
-public interface ClasspathAgentMBean extends Serializable{
+public interface ClasspathAgentMBean extends ClassLoading, Serializable {
 
     /**
      * Checks if agent is active. This is true if this class here was started
@@ -47,37 +47,6 @@ public interface ClasspathAgentMBean extends Serializable{
      * @return the args
      */
     String getArgs();
-
-    /**
-     * Get the classpath.
-     *
-     * @return classpath
-     * @since 3.0
-     */
-    default String[] getClasspath() {
-        return ClasspathInspector.getClasspath();
-    }
-
-    /**
-     * Returns the classes which were loaded by the classloader.
-     * <p>
-     * NOTE: Although the 'jconsole' displays the classes as 'unavailable'
-     * do not remove it. It is needed by the ClasspathDigger class in
-     * PatternTesting Runtime to get the loaded classes.
-     * </p>
-     *
-     * @return the classes as string array
-     */
-    Class<?>[] getLoadedClasses();
-
-    /**
-     * Returns the classes which were loaded by the classloader.
-     * The loaded packages are returned as string array so that it can
-     * be displayed by the 'jconsole'.
-     *
-     * @return the classnames as string array
-     */
-    String[] getLoadedClassnames();
 
     /**
      * Gets the loaded classes.
