@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *
  * (c)reated 16.12.24 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.core.jmx;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit-Test for {@link ClassDiagnostic}.
+ * Unit-Test for {@link clazzfish.core.jmx.ClassDiagnostic}.
  *
  * @author oboehm
  * @since 16.12.24
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class ClassDiagnosticTest {
 
     private static final Logger log = LoggerFactory.getLogger(ClassDiagnosticTest.class);
-    private final ClassDiagnostic classDiagnostic = new ClassDiagnostic();
+    private final clazzfish.core.jmx.ClassDiagnostic classDiagnostic = new ClassDiagnostic();
 
     @Test
     void getLoadedClassesFromVmClassHierarchy() {

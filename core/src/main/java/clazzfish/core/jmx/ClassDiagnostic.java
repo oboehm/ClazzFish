@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  *
  * (c)reated 15.12.24 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.core.jmx;
 
 import clazzfish.core.ClassLoading;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.management.JMException;
 import javax.management.ObjectName;
@@ -28,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The ClassDiagnostic is a little wrapper around Sun's MBean for
@@ -39,7 +39,7 @@ import java.util.Set;
  */
 public final class ClassDiagnostic implements ClassLoading {
 
-    private static final Logger log = LoggerFactory.getLogger(ClassDiagnostic.class);
+    private static final Logger log = Logger.getLogger(ClassDiagnostic.class.getName());
     private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
 
     /**
@@ -80,7 +80,7 @@ public final class ClassDiagnostic implements ClassLoading {
                     new String[]{"[Ljava.lang.String;"});
             return parseClassHistogramm(classHistogram.toString());
         } catch (JMException ex) {
-            log.warn("Cannot call 'gcClassHistogram(..)' from MBean \"{}\"", DIAGNOSTIC_COMMAND, ex);
+            log.log(Level.WARNING, "Cannot call 'gcClassHistogram(..)' from MBean \"" + DIAGNOSTIC_COMMAND + "\":", ex);
             return new ArrayList<>();
         }
     }
@@ -92,15 +92,15 @@ public final class ClassDiagnostic implements ClassLoading {
             String[] parts = lines[i].trim().split("\\s+");
             String className = parts[3];
             if (isNotRealClass(className)) {
-                log.trace("'{}' is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "'{0}' is ignored because it is not a real class name.", classes);
                 continue;
             }
             try {
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException ex) {
-                log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
-                log.trace("Details:", ex);
+                log.log(Level.FINE, "Class '{0}' could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
+                log.log(Level.FINER, "Details:", ex);
             }
         }
         return classes;
@@ -111,12 +111,12 @@ public final class ClassDiagnostic implements ClassLoading {
         String[] loadedClassesNames = getLoadedClassnames();
         for (String className : loadedClassesNames) {
             try {
-                log.trace("Try to get class '{}'...", className);
+                log.log(Level.FINER, "Try to get class '{0}'...", className);
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException | Error ex) {
-                log.debug("Class '{}' could not be loaded ({}).", className, ex.getMessage());
-                log.trace("Details:", ex);
+                log.log(Level.FINE, "Class '{0}' could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
+                log.log(Level.FINER, "Details:", ex);
             }
         }
         return classes;
@@ -131,7 +131,7 @@ public final class ClassDiagnostic implements ClassLoading {
                     new String[]{"[Ljava.lang.String;"});
             return parseClassnamesHierarchy(classHierarchy.toString());
         } catch (JMException ex) {
-            log.warn("Cannot call 'vmClassHierarchy(..)' from MBean \"{}\"", DIAGNOSTIC_COMMAND, ex);
+            log.log(Level.WARNING, "Cannot call 'vmClassHierarchy(..)' from MBean \"" + DIAGNOSTIC_COMMAND + "\":", ex);
             return new HashSet<>();
         }
     }
@@ -145,7 +145,7 @@ public final class ClassDiagnostic implements ClassLoading {
                 className = getSubstringAfterLast(className, "|--");
             }
             if (isNotRealClass(className)) {
-                log.trace("'{}' is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "'{0}' is ignored because it is not a real class name.", classes);
             } else {
                 classes.add(className);
             }

@@ -20,6 +20,7 @@ package clazzfish.monitor.internal;
 import clazzfish.core.ClassFilter;
 import clazzfish.core.ClasspathInspector;
 import clazzfish.core.Digger;
+import clazzfish.core.jmx.ClassDiagnostic;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
@@ -457,7 +458,7 @@ public class ClasspathDigger extends Digger {
 	 * Asks the clazzfish agent for the loaded classnames. If agent was not
 	 * started it asks the {@link ClassDiagnostic} class for help.
 	 *
-	 * @return a set of classnames
+	 * @return an array of classnames
 	 * @since 2.7
 	 */
 	public String[] getLoadedClassnames() {

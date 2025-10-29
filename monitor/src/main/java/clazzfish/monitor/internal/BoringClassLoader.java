@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.internal;
 
+import clazzfish.core.jmx.ClassDiagnostic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
