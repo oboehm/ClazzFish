@@ -56,6 +56,12 @@ class DiggerTest {
     }
 
     @Test
+    void testGetLoadedClassnames() {
+        String[] classes = digger.getLoadedClassnames();
+        assertThat(classes, hasItemInArray(this.getClass().getName()));
+    }
+
+    @Test
     void testGetClassRecords() {
        Set<ClazzRecord> clazzRecords = digger.getClassRecords();
        assertFalse(clazzRecords.isEmpty());

@@ -17,6 +17,7 @@
  */
 package clazzfish.core;
 
+import clazzfish.core.jmx.ClassDiagnostic;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.NestedZipFile;
 
@@ -51,11 +52,20 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
+    private final ClassLoading classLoading;
     private final FutureTask<AllClazzRecords> allClazzRecords;
 
     {
         allClazzRecords = new FutureTask<>(this::getAllClazzRecords);
         Executors.newCachedThreadPool().execute(allClazzRecords);
+    }
+
+    public Digger() {
+        this(new ClassDiagnostic());
+    }
+
+    public Digger(ClassLoading classLoading) {
+        this.classLoading = classLoading;
     }
 
     private AllClazzRecords getAllClazzRecords() {
@@ -110,6 +120,10 @@ public class Digger {
      */
     public String[] getClasspath() {
         return ClasspathInspector.getClasspath();
+    }
+
+    public String[] getLoadedClassnames() {
+        return classLoading.getLoadedClassnames();
     }
 
     /**

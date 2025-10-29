@@ -20,10 +20,9 @@ package clazzfish.monitor.stat;
 import clazzfish.core.Config;
 import clazzfish.core.Digger;
 import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
-import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.spi.XPorter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -72,7 +71,6 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private static final ClazzStatistic INSTANCE = new ClazzStatistic();
-    private final ClasspathMonitor classpathMonitor;
     private final Digger classpathDigger = new Digger();
     private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
@@ -92,11 +90,6 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     ClazzStatistic(URI csvURI) {
-        this(csvURI, ClasspathMonitor.getInstance());
-    }
-
-    private ClazzStatistic(URI csvURI, ClasspathMonitor classpathMonitor) {
-        this.classpathMonitor = classpathMonitor;
         this.allClasses = collectFutureClasses(classpathDigger);
         this.csvURI = csvURI;
         this.xPorter = XPorter.createCsvXPorter(csvURI);
@@ -125,7 +118,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
-        Set<String> loaded = new HashSet<>(classpathMonitor.getLoadedClasslist());
+        Set<String> loaded = Set.of(classpathDigger.getLoadedClassnames());
         for (ClazzRecord record : getAllClasses()) {
             if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));
