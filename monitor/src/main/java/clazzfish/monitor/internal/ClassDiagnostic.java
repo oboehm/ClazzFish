@@ -18,7 +18,6 @@
 package clazzfish.monitor.internal;
 
 import clazzfish.core.ClassLoading;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,9 +140,9 @@ public final class ClassDiagnostic implements ClassLoading {
         Set<String> classes = new HashSet<>();
         String[] lines = hierarchy.split("\n");
         for(String l : lines) {
-            String className = StringUtils.substringBefore(l.trim(), '/').trim();
+            String className = substringBefore(l, '/');
             if (className.startsWith("|")) {
-                className = StringUtils.substringAfterLast(className, "|--");
+                className = getSubstringAfterLast(className, "|--");
             }
             if (isNotRealClass(className)) {
                 log.trace("'{}' is ignored because it is not a real class name.", classes);
@@ -152,6 +151,16 @@ public final class ClassDiagnostic implements ClassLoading {
             }
         }
         return classes;
+    }
+
+    private static String substringBefore(String s, char c) {
+        int i = s.indexOf(c);
+        return s.substring(0,i).trim();
+    }
+
+    private static String getSubstringAfterLast(String s, String separator) {
+        int i = s.lastIndexOf(separator);
+        return s.substring(i+separator.length()).trim();
     }
 
     private static boolean isNotRealClass(String className) {
