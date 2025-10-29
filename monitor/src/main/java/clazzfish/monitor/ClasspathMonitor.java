@@ -666,8 +666,8 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return list of classnames
 	 * @since 2.7
 	 */
-	public List<String> getLoadedClassnames() {
-        return new ArrayList<>(this.classpathDigger.getLoadedClassnames());
+	public List<String> getLoadedClasslist() {
+        return List.of(this.classpathDigger.getLoadedClassnames());
 	}
 
 	/**
@@ -677,8 +677,8 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the classes as sorted string array
 	 */
 	@Override
-	public String[] getLoadedClasses() {
-		List<String> classnames = getLoadedClassnames();
+	public String[] getLoadedClassnames() {
+		List<String> classnames = getLoadedClasslist();
 		if (classnames.size() != loadedClasses.length) {
 			loadedClasses = new String[classnames.size()];
 			for (int i = 0; i < loadedClasses.length; i++) {
@@ -724,7 +724,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @return unused classes
 	 *
-	 * @see #getLoadedClasses()
+	 * @see #getLoadedClassnames()
 	 * @see #getClasspathClasses()
 	 */
 	@Override

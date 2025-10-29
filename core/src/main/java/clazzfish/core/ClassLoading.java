@@ -17,6 +17,8 @@
  */
 package clazzfish.core;
 
+import clazzfish.core.jmx.Description;
+
 /**
  * This interface identifies the methods which are necessary to get the
  * loaded classes.
@@ -54,6 +56,7 @@ public interface ClassLoading {
      *
      * @return the classnames as string array
      */
+    @Description("returns an array of all loaded classes")
     String[] getLoadedClassnames();
 
 }

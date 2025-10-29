@@ -604,7 +604,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
 
     @Test
     public void testGetClassnames() {
-        List<String> classnames = cpMon.getLoadedClassnames();
+        List<String> classnames = cpMon.getLoadedClasslist();
         assertFalse(classnames.isEmpty());
     }
 
@@ -642,7 +642,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
 
     @Test
     void suppressClassnameArrays() {
-        for (String classname : cpMon.getLoadedClassnames()) {
+        for (String classname : cpMon.getLoadedClasslist()) {
             if (classname.contains("[")) {
                 fail("should be suppressed: " + classname);
             }

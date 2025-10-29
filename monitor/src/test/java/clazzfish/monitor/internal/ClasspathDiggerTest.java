@@ -89,10 +89,10 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
 
     @Test
     public void testGetLoadedClassnames() {
-        Set<String> classnames = digger.getLoadedClassnames();
-        assertFalse(classnames.isEmpty());
-        LOG.info("{} classes loaded.", classnames.size());
-        assertThat(classnames, hasItem(this.getClass().getName()));
+        String[] classnames = digger.getLoadedClassnames();
+        assertNotNull(classnames);
+        LOG.info("{} classes loaded.", classnames.length);
+        assertThat(classnames, hasItemInArray(this.getClass().getName()));
         for (String clname : classnames) {
             if ("clazzfish.monitor.internal.DeadClass".equals(clname)) {
                 fail(clname + " should be not loaded!");

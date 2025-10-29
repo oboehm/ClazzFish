@@ -125,7 +125,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     public SortedSet<ClazzRecord> getStatistics() {
         SortedSet<ClazzRecord> statistics = new TreeSet<>();
-        Set<String> loaded = new HashSet<>(classpathMonitor.getLoadedClassnames());
+        Set<String> loaded = new HashSet<>(classpathMonitor.getLoadedClasslist());
         for (ClazzRecord record : getAllClasses()) {
             if (loaded.contains(record.classname())) {
                 statistics.add(new ClazzRecord(record.classpath(), record.classname(), record.count()+1));

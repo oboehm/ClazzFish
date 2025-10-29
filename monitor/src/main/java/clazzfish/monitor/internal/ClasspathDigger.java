@@ -460,24 +460,24 @@ public class ClasspathDigger extends Digger {
 	 * @return a set of classnames
 	 * @since 2.7
 	 */
-	public Set<String> getLoadedClassnames() {
+	public String[] getLoadedClassnames() {
 		if (agentMBean != null) {
             try {
 				List<Class<?>> loadedClasses = getLoadedClassListFrom(agentMBean);
-				Set<String> loadedClassnames = new HashSet<>();
+				Set<String> loadedClassnames = new TreeSet<>();
 				for (Class<?> loadedClass : loadedClasses) {
 					String classname = loadedClass.getName();
 					if (ClassFilter.DEFAULT.isIncluded(classname)) {
 						loadedClassnames.add(classname);
 					}
 				}
-				return loadedClassnames;
+				return loadedClassnames.toArray(new String[0]);
 			} catch (JMException ex) {
 				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
 				LOG.trace("Details:", ex);
             }
         }
-		return Set.of(new ClassDiagnostic().getLoadedClassnames());
+		return new ClassDiagnostic().getLoadedClassnames();
 	}
 
 	private static List<Class<?>> getLoadedClassesFrom(ClassLoader classLoader) {
