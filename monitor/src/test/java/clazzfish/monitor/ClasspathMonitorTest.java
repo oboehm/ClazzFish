@@ -597,12 +597,6 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
     }
 
     @Test
-    public void testGetLoadedPackagesAsString() {
-        String s = cpMon.getLoadedClassesAsString();
-        assertThat(s, not(emptyString()));
-    }
-
-    @Test
     public void testGetClassnames() {
         List<String> classnames = cpMon.getLoadedClasslist();
         assertFalse(classnames.isEmpty());

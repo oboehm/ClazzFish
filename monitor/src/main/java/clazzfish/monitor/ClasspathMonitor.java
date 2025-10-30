@@ -630,22 +630,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	}
 
 	/**
-	 * If you want to dump all packages you can use this method. The output will
-	 * be sorted.
-	 *
-	 * @return each package in a single line
-	 */
-	public String getLoadedPackagesAsString() {
-		String[] packages = getLoadedPackages();
-		StringBuilder sbuf = new StringBuilder();
-		for (String pkg : packages) {
-			sbuf.append(pkg);
-			sbuf.append('\n');
-		}
-		return sbuf.toString().trim();
-	}
-
-	/**
 	 * Returns a list of classes which were loaded by the classloader.
 	 *
 	 * @return list of classes
@@ -779,25 +763,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	private Set<String> getClasspathClassSet() {
 		String[] classes = getClasspathClasses();
 		return new TreeSet<>(Arrays.asList(classes));
-	}
-
-	/**
-	 * Gets the classes of a given package name as collection.
-	 *
-	 * @param packageName
-	 *            the package name
-	 * @return the classpath class list
-	 */
-	public Collection<String> getClasspathClassList(final String packageName) {
-		Collection<String> classlist = new ArrayList<>();
-		String[] classes = this.getClasspathClasses();
-		String prefix = packageName.endsWith(".") ? packageName : packageName + ".";
-		for (String aClass : classes) {
-			if (aClass.startsWith(prefix)) {
-				classlist.add(aClass);
-			}
-		}
-		return classlist;
 	}
 
 	private String[] getClasspathClassArray() {
