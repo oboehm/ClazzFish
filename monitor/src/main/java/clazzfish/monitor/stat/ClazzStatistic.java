@@ -24,7 +24,6 @@ import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
 import clazzfish.monitor.spi.XPorter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +326,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     private static URI getCsvURI() {
         String filename = Config.getEnvironment("clazzfish.statistics.file");
-        if (StringUtils.isNotBlank(filename)) {
+        if ((filename != null) && !filename.isBlank()) {
             return new File(filename).toURI();
         } else {
             URI dumpURI = Config.DEFAULT.getDumpURI();
