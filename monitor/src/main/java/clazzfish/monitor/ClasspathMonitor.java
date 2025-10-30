@@ -677,7 +677,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 * @return the classes as sorted string array
 	 */
 	@Override
-	public String[] getLoadedClassnames() {
+	public String[] getLoadedClasses() {
 		List<String> classnames = getLoadedClasslist();
 		if (classnames.size() != loadedClasses.length) {
 			loadedClasses = new String[classnames.size()];
@@ -724,7 +724,7 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	 *
 	 * @return unused classes
 	 *
-	 * @see #getLoadedClassnames()
+	 * @see #getLoadedClasses()
 	 * @see #getClasspathClasses()
 	 */
 	@Override

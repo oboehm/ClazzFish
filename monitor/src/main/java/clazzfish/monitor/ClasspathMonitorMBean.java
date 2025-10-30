@@ -130,7 +130,7 @@ public interface ClasspathMonitorMBean extends AbstractMonitorMBean {
 	 * @return the classes as string array
 	 */
 	@Description("returns an array of all loaded classes")
-	String[] getLoadedClassnames();
+	String[] getLoadedClasses();
 
 	/**
 	 * Is the given classname already loaded?.
