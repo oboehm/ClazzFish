@@ -215,9 +215,13 @@ public final class Config {
      * @return directory or URI for export
      */
     public URI getDumpURI() {
-        String dumpUri = properties.getProperty(DUMP_URI);
+        String filename = getEnvironment("clazzfish.statistics.file");
+        if ((filename != null) && !filename.isBlank()) {
+            return new File(filename).toURI();
+        }
+        String dumpUri = getEnvironment(DUMP_URI);
         if (dumpUri == null) {
-            return getDumpDir().toURI();
+            return new File(getDumpDir(), "ClazzStatistic.csv").toURI();
         } else {
             return URI.create(dumpUri);
         }

@@ -85,13 +85,17 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     private ClazzStatistic() {
-        this(getCsvURI());
+        this(Config.DEFAULT.getDumpURI());
     }
 
     ClazzStatistic(URI csvURI) {
+        this(csvURI, XPorter.createCsvXPorter(csvURI));
+    }
+
+    private ClazzStatistic(URI csvURI, CsvXPorter xPorter) {
+        this.xPorter = xPorter;
         this.allClasses = collectFutureClasses(classpathDigger);
         this.csvURI = csvURI;
-        this.xPorter = XPorter.createCsvXPorter(csvURI);
         log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
     }
 
@@ -322,16 +326,6 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "-" + csvURI;
-    }
-
-    private static URI getCsvURI() {
-        String filename = Config.getEnvironment("clazzfish.statistics.file");
-        if ((filename != null) && !filename.isBlank()) {
-            return new File(filename).toURI();
-        } else {
-            URI dumpURI = Config.DEFAULT.getDumpURI();
-            return URI.create(dumpURI + "/ClazzStatistic.csv");
-        }
     }
 
 }

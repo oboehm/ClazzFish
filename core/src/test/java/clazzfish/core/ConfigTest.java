@@ -41,10 +41,19 @@ class ConfigTest {
         assertNotEquals("unknown", dir.getName());
     }
 
+    /**
+     * If you want to test the behaviour with a set environment variable add e.g.
+     * 'CLAZZFISH_STATISTICS_FILE=/tmp/test.csv'
+     * to your environment.
+     */
     @Test
     void getDumpURI() {
         URI uri = Config.DEFAULT.getDumpURI();
         assertNotNull(uri);
+        String filename = Config.getEnvironment("clazzfish.statistics.file");
+        if ((filename != null) && !filename.isBlank()) {
+            assertEquals(new File(filename).toURI(), uri);
+        }
     }
 
     @Test
