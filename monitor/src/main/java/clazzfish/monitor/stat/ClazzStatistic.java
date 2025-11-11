@@ -34,10 +34,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * The ClazzStatistic collects classes and resources to find classes which are
@@ -69,27 +66,28 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
-    private static final ClazzStatistic INSTANCE = new ClazzStatistic();
+    private static final Map<URI, ClazzStatistic> INSTANCES = new ConcurrentHashMap<>();
     private final Digger classpathDigger = new Digger();
     private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
     private final CsvXPorter xPorter;
 
-    static {
-        log.trace("{} will be registered as shudown hook.", INSTANCE);
-        INSTANCE.addMeAsShutdownHook();
-    }
-
     public static ClazzStatistic getInstance() {
-        return INSTANCE;
+        URI dumpURI = Config.DEFAULT.getDumpURI();
+        ClazzStatistic statistic = ClazzStatistic.of(dumpURI);
+        log.debug("Instance {} will be used.",  statistic);
+        return statistic;
     }
 
-    private ClazzStatistic() {
-        this(Config.DEFAULT.getDumpURI());
+    public static ClazzStatistic of(URI csvURI) {
+        return INSTANCES.computeIfAbsent(csvURI, uri -> of(uri, XPorter.createCsvXPorter(uri)));
     }
 
-    ClazzStatistic(URI csvURI) {
-        this(csvURI, XPorter.createCsvXPorter(csvURI));
+    private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {
+        ClazzStatistic statistic = new ClazzStatistic(csvURI, xPorter);
+        statistic.registerMeAsMBean();
+        log.trace("{} is registered as MBean.", statistic);
+        return statistic;
     }
 
     private ClazzStatistic(URI csvURI, CsvXPorter xPorter) {

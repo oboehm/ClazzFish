@@ -43,7 +43,6 @@ public final class Starter {
     public static void start() {
         ClasspathMonitor.getInstance().registerMeAsMBean();
         ResourcepathMonitor.getInstance().registerMeAsMBean();
-        ClazzStatistic.getInstance().registerMeAsMBean();
         log.debug("ClazzFish library is started and ready.");
     }
 
@@ -53,8 +52,10 @@ public final class Starter {
      */
     public static void record() {
         start();
-        ClazzStatistic.getInstance().addMeAsShutdownHook();
-        log.trace("ClazzStatistic MBeans is registered as shutdown hook.");
+        URI cvsURI = Config.DEFAULT.getDumpURI();
+        ClazzStatistic statistic = ClazzStatistic.of(cvsURI);
+        statistic.addMeAsShutdownHook();
+        log.trace("{} is registered as shutdown hook.", statistic);
     }
 
     /**

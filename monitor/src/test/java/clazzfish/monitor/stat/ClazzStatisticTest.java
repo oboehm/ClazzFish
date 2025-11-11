@@ -114,7 +114,7 @@ class ClazzStatisticTest {
         clazzfish.core.stat.ClazzRecord
                 loaded = new clazzfish.core.stat.ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
         File csvFile = createImportCSV(loaded);
-        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
         rec.exportCSV(csvFile.toURI());
         String content = Files.readString(csvFile.toPath());
@@ -149,7 +149,7 @@ class ClazzStatisticTest {
     void importBigCSV() {
         File csvFile = new File("target/statistics", "big.csv");
         assumeTrue(csvFile.exists(), "performance test skipped");
-        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
@@ -238,7 +238,7 @@ class ClazzStatisticTest {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
-        ClazzStatistic rec = new ClazzStatistic(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
         rec.exportCSV(csvFile);
         return rec;
     }
