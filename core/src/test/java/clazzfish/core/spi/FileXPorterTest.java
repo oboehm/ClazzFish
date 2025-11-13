@@ -19,6 +19,7 @@ package clazzfish.core.spi;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import patterntesting.runtime.junit.ObjectTester;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +58,16 @@ class FileXPorterTest {
         FileXPorter xPorter = new FileXPorter(file);
         List<String> cvsLines = xPorter.importCSV();
         assertFalse(cvsLines.isEmpty());
+    }
+
+    @Test
+    void testEquals() {
+        File file = new File("target/statistics/test-equals.csv");
+        FileXPorter a = new FileXPorter(file);
+        FileXPorter b = new FileXPorter(file);
+        ObjectTester.assertEquals(a, b);
+        FileXPorter c = new FileXPorter(new File("c"));
+        ObjectTester.assertNotEquals(a, c);
     }
 
 }

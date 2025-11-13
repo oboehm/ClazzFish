@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import patterntesting.runtime.junit.CollectionTester;
 import patterntesting.runtime.junit.NetworkTester;
+import patterntesting.runtime.junit.ObjectTester;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +98,16 @@ class GitCsvXPorterTest {
         List<String> csvLines = xPorter.importCSV();
         assertNotNull(csvLines);
         assertFalse(csvLines.isEmpty());
+    }
+
+    @Test
+    void testEquals() {
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
+        GitCsvXPorter a = new GitCsvXPorter(sshConfig, gitURI);
+        GitCsvXPorter b = new GitCsvXPorter(sshConfig, gitURI);
+        ObjectTester.assertEquals(a, b);
+        GitCsvXPorter c = new GitCsvXPorter(sshConfig, URI.create("ssh://c"));
+        ObjectTester.assertNotEquals(a, c);
     }
 
 }

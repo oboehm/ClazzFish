@@ -160,4 +160,21 @@ public class FileXPorter implements CsvXPorter {
         return csvLines;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof FileXPorter)) return false;
+        FileXPorter xPorter = (FileXPorter) o;
+        return Objects.equals(uri, xPorter.uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uri);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "-" + uri;
+    }
+
 }

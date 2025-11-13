@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -122,6 +123,23 @@ public class GitCsvXPorter implements CsvXPorter {
         long dc = ac - lc;
         return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
                 lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "-" + uri;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GitCsvXPorter)) return false;
+        GitCsvXPorter that = (GitCsvXPorter) o;
+        return Objects.equals(uri, that.uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uri);
     }
 
 }
