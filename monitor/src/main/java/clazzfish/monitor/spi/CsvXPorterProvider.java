@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.Config;
 import clazzfish.core.spi.CsvXPorter;
 
 import java.net.URI;
@@ -34,7 +35,18 @@ public interface CsvXPorterProvider {
      *
      * @return a CsvXPorter object
      */
-    CsvXPorter create();
+    default CsvXPorter create() {
+        return create(Config.DEFAULT.getDumpURI());
+    }
+
+    /**
+     * Creates an object which implements the {@link CsvXPorter} interface.
+     *
+     * @param uri the URI for import/export
+     * @return a CsvXPorter object
+     * @since 3.0
+     */
+    CsvXPorter create(URI uri);
 
     /**
      * Indicates if the provider supports a given protocol.

@@ -36,6 +36,14 @@ public interface CsvXPorter {
     Logger log = Logger.getLogger(CsvXPorter.class.getName());
 
     /**
+     * Simple getter for the import and export URI
+     *
+     * @return URI
+     * @since 3.0
+     */
+    URI getURI();
+
+    /**
      * Interface for exporting CSV.
      *
      * @param uri         URI wher the CSV should be exported to
@@ -44,6 +52,18 @@ public interface CsvXPorter {
      * @throws IOException in case of I/O problems
      */
     void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException;
+
+    /**
+     * Interface for exporting CSV.
+     *
+     * @param csvHeadLine CSV header
+     * @param csvLines    CSV lines
+     * @throws IOException in case of I/O problems
+     * @since 3.0
+     */
+    default void exportCSV(String csvHeadLine, List<String> csvLines) throws IOException {
+        exportCSV(getURI(), csvHeadLine, csvLines);
+    }
 
     /**
      * Interface for importing a CSV. This method should be called in
@@ -57,6 +77,19 @@ public interface CsvXPorter {
     default List<String> importCSV(URI uri) throws IOException {
         log.log(Level.INFO, "Return empty list because 'importCSV({0})' is not supported.", uri);
         return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * Interface for importing a CSV. This method should be called in
+     * {@link #exportCSV(URI, String, List)} to aggregate the count of the
+     * actual export with former exports.
+     *
+     * @return list of CSV lines (including head line)
+     * @throws IOException in case of I/O problems
+     * @since 3.0
+     */
+    default List<String> importCSV() throws IOException {
+        return importCSV(getURI());
     }
 
 }

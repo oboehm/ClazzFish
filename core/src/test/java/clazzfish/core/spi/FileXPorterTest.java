@@ -36,8 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class FileXPorterTest {
 
-    private final CsvXPorter xPorter = new FileXPorter();
-
     @Test
     void exportCSV() throws IOException {
         File file = new File("target/statistics/test.csv");
@@ -46,7 +44,8 @@ class FileXPorterTest {
         for (int i = 1; i < 5; i++) {
             lines.add(String.format("line %d;%d-2;%d", i, i, i));
         }
-        xPorter.exportCSV(file.toURI(), header, lines);
+        FileXPorter xPorter = new FileXPorter(file);
+        xPorter.exportCSV(header, lines);
         assertTrue(file.exists());
         List<String> readLines = FileUtils.readLines(file, StandardCharsets.UTF_8);
         assertEquals(5, readLines.size());
@@ -55,7 +54,8 @@ class FileXPorterTest {
     @Test
     void importCSV() throws IOException {
         File file = new File("../monitor/src/test/resources/clazzfish/monitor/stat/corrupt.csv");
-        List<String> cvsLines = xPorter.importCSV(file.toURI());
+        FileXPorter xPorter = new FileXPorter(file);
+        List<String> cvsLines = xPorter.importCSV();
         assertFalse(cvsLines.isEmpty());
     }
 

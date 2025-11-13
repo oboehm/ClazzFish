@@ -32,8 +32,8 @@ import java.util.Objects;
 public class GitCsvXPorterProvider implements CsvXPorterProvider {
 
     @Override
-    public CsvXPorter create() {
-        return new GitCsvXPorter();
+    public CsvXPorter create(URI uri) {
+        return new GitCsvXPorter(uri);
     }
 
     @Override

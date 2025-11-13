@@ -20,6 +20,8 @@ package clazzfish.sample.spi;
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.monitor.spi.CsvXPorterProvider;
 
+import java.net.URI;
+
 /**
  * The CsvPrintProvider creates a printer object for printing CSV data.
  *
@@ -29,7 +31,7 @@ import clazzfish.monitor.spi.CsvXPorterProvider;
 public class CsvPrintProvider implements CsvXPorterProvider {
 
     @Override
-    public CsvXPorter create() {
+    public CsvXPorter create(URI uri) {
         return new CsvPrinter();
     }
 

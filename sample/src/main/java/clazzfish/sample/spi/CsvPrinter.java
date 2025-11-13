@@ -33,6 +33,11 @@ import java.util.List;
  */
 public class CsvPrinter implements CsvXPorter {
 
+    @Override
+    public URI getURI() {
+        return URI.create("print://dead.classes");
+    }
+
     /**
      * Prints only the dead classes to stdout.
      *

@@ -42,13 +42,20 @@ public class GitCsvXPorter implements CsvXPorter {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorter.class);
     private final SshConfig sshConfig;
+    private final URI uri;
 
-    public GitCsvXPorter() {
-        this(SshConfig.DEFAULT);
+    public GitCsvXPorter(URI uri) {
+        this(SshConfig.DEFAULT, uri);
     }
 
-    public GitCsvXPorter(SshConfig sshConfig) {
+    public GitCsvXPorter(SshConfig sshConfig, URI uri) {
         this.sshConfig = sshConfig;
+        this.uri = uri;
+    }
+
+    @Override
+    public URI getURI() {
+        return uri;
     }
 
     @Override
@@ -67,8 +74,8 @@ public class GitCsvXPorter implements CsvXPorter {
 
     private List<String> importCSV(File file) throws IOException {
         log.debug("Importing file {}...", file);
-        FileXPorter fileXPorter = new FileXPorter();
-        List<String> lines = fileXPorter.importCSV(file.toURI());
+        FileXPorter fileXPorter = new FileXPorter(file.toURI());
+        List<String> lines = fileXPorter.importCSV();
         return lines.stream().map(s -> StringUtils.substringAfter(s, ";")).collect(Collectors.toList());
     }
 
@@ -98,11 +105,11 @@ public class GitCsvXPorter implements CsvXPorter {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
-        FileXPorter fileXPorter = new FileXPorter();
+        FileXPorter fileXPorter = new FileXPorter(outputFile.toURI());
         List<String> csvLines = clazzRecords.stream()
                 .map(cr -> cr.classname() + ";" + (cr.count() > 0 ? "1" : "0"))
                 .collect(Collectors.toList());
-        fileXPorter.exportCSV(outputFile.toURI(), "Classname;Count", csvLines);
+        fileXPorter.exportCSV("Classname;Count", csvLines);
         repo.add(outputFile);
         String statistic = getStatistic(clazzRecords);
         repo.commit(statistic);

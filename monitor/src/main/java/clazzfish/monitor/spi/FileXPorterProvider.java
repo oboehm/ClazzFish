@@ -17,8 +17,11 @@
  */
 package clazzfish.monitor.spi;
 
+import clazzfish.core.Config;
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.spi.FileXPorter;
+
+import java.net.URI;
 
 /**
  * Die Klasse FileXPorterProvider ...
@@ -30,7 +33,11 @@ public class FileXPorterProvider implements CsvXPorterProvider {
 
     @Override
     public CsvXPorter create() {
-        return new FileXPorter();
+        return create(Config.DEFAULT.getDumpURI());
+    }
+
+    public CsvXPorter create(URI uri) {
+        return new FileXPorter(uri);
     }
 
     @Override

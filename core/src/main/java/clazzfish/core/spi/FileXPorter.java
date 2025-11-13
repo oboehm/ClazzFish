@@ -37,6 +37,20 @@ import java.util.regex.Pattern;
 public class FileXPorter implements CsvXPorter {
 
     private static final Logger log = Logger.getLogger(FileXPorter.class.getName());
+    private final URI uri;
+
+    public FileXPorter(File file) {
+        this(file.toURI());
+    }
+
+    public FileXPorter(URI uri) {
+        this.uri = uri;
+    }
+
+    @Override
+    public URI getURI() {
+        return uri;
+    }
 
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {

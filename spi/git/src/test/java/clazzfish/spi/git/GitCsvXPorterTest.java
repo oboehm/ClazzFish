@@ -45,14 +45,13 @@ class GitCsvXPorterTest {
 
     private static final Logger log = LoggerFactory.getLogger(GitCsvXPorterTest.class);
     private static final File privateKeyFile = new File(System.getProperty("user.home"), ".ssh/id_rsa");
-    private static GitCsvXPorter xPorter;
+    private static SshConfig sshConfig;
 
     @BeforeAll
-    static void setUpXPorter() {
+    static void setUpSshConfig() {
         Properties props = new Properties();
         props.setProperty("clazzfish.git.ssh.keyfile", privateKeyFile.getAbsolutePath());
-        SshConfig sshConfig = SshConfig.of(Config.of(props));
-        xPorter = new GitCsvXPorter(sshConfig);
+        sshConfig = SshConfig.of(Config.of(props));
     }
 
     @Test
@@ -66,7 +65,8 @@ class GitCsvXPorterTest {
         lines.add(String.format("%s;%s;%d", new File("target", "classes").toURI(), getClass().getName(), 2));
 
         // When
-        xPorter.exportCSV(gitURI, header, lines);
+        GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig, gitURI);
+        xPorter.exportCSV(header, lines);
 
         // Then
         List<String> imported = xPorter.importCSV(gitURI);
@@ -79,8 +79,9 @@ class GitCsvXPorterTest {
     @Test
     void importCSVnotExists() {
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFish.git");
+        GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig, gitURI);
         try {
-            List<String> csvLines = xPorter.importCSV(gitURI);
+            List<String> csvLines = xPorter.importCSV();
             assertNotNull(csvLines);
             assertTrue(csvLines.isEmpty(), "ClazzStatistics.csv should not exist direct under " + gitURI);
         } catch (IOException canhappen) {
@@ -92,7 +93,8 @@ class GitCsvXPorterTest {
     void importCsvFile() throws IOException {
         File csvFile = new File("src/test/resources/clazzfish/spi/git/test.csv");
         assertTrue(csvFile.exists());
-        List<String> csvLines = xPorter.importCSV(csvFile.toURI());
+        GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig, csvFile.toURI());
+        List<String> csvLines = xPorter.importCSV();
         assertNotNull(csvLines);
         assertFalse(csvLines.isEmpty());
     }
