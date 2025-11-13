@@ -22,7 +22,6 @@ import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
-import clazzfish.monitor.spi.XPorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,14 +64,14 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
-    private static final Map<URI, ClazzStatistic> INSTANCES = new ConcurrentHashMap<>();
+    private static final Map<CsvXPorter, ClazzStatistic> INSTANCES = new ConcurrentHashMap<>();
     private final Digger classpathDigger = new Digger();
     private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
     private final CsvXPorter xPorter;
 
-    public static ClazzStatistic of(URI csvURI) {
-        return INSTANCES.computeIfAbsent(csvURI, uri -> of(uri, XPorter.createCsvXPorter(uri)));
+    public static ClazzStatistic of(CsvXPorter xPorter) {
+        return INSTANCES.computeIfAbsent(xPorter, uri -> of(xPorter.getURI(), xPorter));
     }
 
     private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {

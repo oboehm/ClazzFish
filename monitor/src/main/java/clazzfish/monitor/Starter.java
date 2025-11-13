@@ -18,6 +18,7 @@
 package clazzfish.monitor;
 
 import clazzfish.core.Config;
+import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.stat.ClazzStatistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public final class Starter {
     public static void record() {
         start();
         URI cvsURI = Config.DEFAULT.getDumpURI();
-        ClazzStatistic statistic = ClazzStatistic.of(cvsURI);
+        ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(cvsURI));
         statistic.addMeAsShutdownHook();
         log.trace("{} is registered as shutdown hook.", statistic);
     }

@@ -19,8 +19,10 @@ package clazzfish.monitor.stat;
 
 import clazzfish.core.Config;
 import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.core.spi.FileXPorter;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
+import clazzfish.monitor.spi.XPorter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ClazzStatisticTest {
 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
-    private final ClazzStatistic recorder = ClazzStatistic.of(Config.DEFAULT.getDumpURI());
+    private final ClazzStatistic recorder = ClazzStatistic.of(XPorter.createCsvXPorter(Config.DEFAULT.getDumpURI()));
 
     @Test
     void registerMeAsMBean() {
@@ -115,7 +117,7 @@ class ClazzStatisticTest {
         clazzfish.core.stat.ClazzRecord
                 loaded = new clazzfish.core.stat.ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
         File csvFile = createImportCSV(loaded);
-        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
         rec.importCSV(csvFile.toURI());
         rec.exportCSV(csvFile.toURI());
         String content = Files.readString(csvFile.toPath());
@@ -150,7 +152,7 @@ class ClazzStatisticTest {
     void importBigCSV() {
         File csvFile = new File("target/statistics", "big.csv");
         assumeTrue(csvFile.exists(), "performance test skipped");
-        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
@@ -239,7 +241,7 @@ class ClazzStatisticTest {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
-        ClazzStatistic rec = ClazzStatistic.of(csvFile.toURI());
+        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
         rec.exportCSV(csvFile);
         return rec;
     }
