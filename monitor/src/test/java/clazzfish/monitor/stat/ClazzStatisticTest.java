@@ -17,6 +17,7 @@
  */
 package clazzfish.monitor.stat;
 
+import clazzfish.core.Config;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ClazzStatisticTest {
 
     private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
-    private final ClazzStatistic recorder = ClazzStatistic.getInstance();
+    private final ClazzStatistic recorder = ClazzStatistic.of(Config.DEFAULT.getDumpURI());
 
     @Test
     void registerMeAsMBean() {

@@ -17,7 +17,6 @@
  */
 package clazzfish.monitor.stat;
 
-import clazzfish.core.Config;
 import clazzfish.core.Digger;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.spi.CsvXPorter;
@@ -71,13 +70,6 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private final FutureTask<Set<ClazzRecord>> allClasses;
     private final URI csvURI;
     private final CsvXPorter xPorter;
-
-    public static ClazzStatistic getInstance() {
-        URI dumpURI = Config.DEFAULT.getDumpURI();
-        ClazzStatistic statistic = ClazzStatistic.of(dumpURI);
-        log.debug("Instance {} will be used.",  statistic);
-        return statistic;
-    }
 
     public static ClazzStatistic of(URI csvURI) {
         return INSTANCES.computeIfAbsent(csvURI, uri -> of(uri, XPorter.createCsvXPorter(uri)));
