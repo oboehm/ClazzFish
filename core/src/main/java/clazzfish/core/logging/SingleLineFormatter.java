@@ -16,13 +16,14 @@
  * (c)reated 17.03.2012 by oliver (ob@oasd.de)
  */
 
-package clazzfish.agent.logging;
+package clazzfish.core.logging;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 
 /**
  * We want a {@link Formatter} which does not log in two lines as the
@@ -30,7 +31,7 @@ import java.util.logging.LogRecord;
  *
  * @author oliver (ob@aosd.de)
  */
-public final class SingleLineFormatter extends Formatter {
+public final class SingleLineFormatter extends SimpleFormatter {
 
     private final DateFormat dateFormat = new SimpleDateFormat("MMM dd HH:mm:ss");
 

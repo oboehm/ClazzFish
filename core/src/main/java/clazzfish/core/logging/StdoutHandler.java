@@ -16,7 +16,7 @@
  * (c)reated 17.03.2012 by oliver (ob@oasd.de)
  */
 
-package clazzfish.agent.logging;
+package clazzfish.core.logging;
 
 import java.io.OutputStream;
 import java.util.logging.*;

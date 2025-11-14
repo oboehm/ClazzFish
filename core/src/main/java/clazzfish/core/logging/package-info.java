@@ -22,4 +22,4 @@
  * For more info see
  * <a href="http://javablog.co.uk/2008/07/12/logging-with-javautillogging/">Logging with 'java.util.logging'</a>.
  */
-package clazzfish.agent.logging;
+package clazzfish.core.logging;
