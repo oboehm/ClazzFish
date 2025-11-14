@@ -15,7 +15,7 @@
  *
  * (c)reated 29.11.24 by oboehm
  */
-package clazzfish.monitor.stat;
+package clazzfish.core.stat;
 
 import clazzfish.core.jmx.Description;
 import clazzfish.core.util.Shutdownable;

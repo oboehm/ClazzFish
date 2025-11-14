@@ -43,7 +43,7 @@ class BoringClassLoaderTest {
         assertFalse(loadedClasses.isEmpty());
         assertThat(loadedClasses, hasItem(getClass()));
         for (Class<?> cl : loadedClasses) {
-            if ("clazzfish.monitor.internal.DeadClass".equals(cl.getName())) {
+            if ("clazzfish.core.internal.DeadClass".equals(cl.getName())) {
                 fail(cl + " is a dead class and never loaded");
             }
         }

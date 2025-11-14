@@ -15,15 +15,12 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.stat;
+package clazzfish.core.stat;
 
 import clazzfish.core.Digger;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.spi.CsvXPorter;
-import clazzfish.core.stat.ClazzRecord;
 import clazzfish.core.util.ShutdownHook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +30,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The ClazzStatistic collects classes and resources to find classes which are
@@ -62,7 +61,7 @@ import java.util.concurrent.*;
  */
 public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean {
 
-    private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
+    private static final Logger log = Logger.getLogger(ClazzStatistic.class.getName());
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private static final Map<CsvXPorter, ClazzStatistic> INSTANCES = new ConcurrentHashMap<>();
     private final Digger classpathDigger = new Digger();
@@ -77,7 +76,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {
         ClazzStatistic statistic = new ClazzStatistic(csvURI, xPorter);
         statistic.registerMeAsMBean();
-        log.trace("{} is registered as MBean.", statistic);
+        log.log(Level.FINER, "{0} is registered as MBean.", statistic);
         return statistic;
     }
 
@@ -85,7 +84,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         this.xPorter = xPorter;
         this.allClasses = collectFutureClasses(classpathDigger);
         this.csvURI = csvURI;
-        log.debug("Statistics will be imported from / exported to '{}'.", csvURI);
+        log.log(Level.FINE, "Statistics will be imported from / exported to '{0}'.", csvURI);
     }
 
     private static FutureTask<Set<ClazzRecord>> collectFutureClasses(Digger digger) {
@@ -102,8 +101,8 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         try {
             return allClasses.get();
         } catch (ExecutionException | InterruptedException ex) {
-            log.info("Cannot get all classes ({}).", ex.getMessage());
-            log.debug("Details:", ex);
+            log.log(Level.INFO, "Cannot get all classes ({0}).", ex.getMessage());
+            log.log(Level.FINE, "Details:", ex);
             return classpathDigger.getClassRecords();
         }
     }
@@ -139,9 +138,9 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
              PrintWriter writer = new PrintWriter(sw)) {
             writeCSV(writer);
             sw.flush();
-            log.info("=== ClazzStatistic ===\n{}", sw);
+            log.log(Level.INFO, "=== ClazzStatistic ===\n{0}", sw);
         } catch (IOException ex) {
-            log.error("Cannot log statistic:", ex);
+            log.log(Level.SEVERE, "Cannot log statistic:", ex);
         }
     }
 
@@ -160,24 +159,24 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         try {
             return exportCSV(new URI(filename));
         } catch (URISyntaxException ex) {
-            log.debug("Trying to export CSV file '{}':", filename, ex);
+            log.log(Level.FINE, String.format("Trying to export CSV file '%s':", filename), ex);
             return exportCSV(new File(filename).getAbsoluteFile());
         }
     }
 
     public URI exportCSV(File csvFile) throws IOException {
-        log.debug("Exporting statistics to '{}'...", csvFile);
+        log.log(Level.FINE, "Exporting statistics to '{0}'...", csvFile);
         if (csvFile.exists()) {
             importCSV();
         }
         exportDirect(csvFile);
-        log.info("Statistics exported to '{}'.", csvFile);
+        log.log(Level.INFO, "Statistics exported to '{0}'.", csvFile);
         return csvFile.toURI();
     }
 
     public URI exportCSV(URI uri) throws IOException {
         importCSV(uri);
-        log.info("Exporting statistics to '{}'...", uri);
+        log.log(Level.INFO, "Exporting statistics to '{0}'...", uri);
         List<String> csvLines = getCsvLines();
         xPorter.exportCSV(uri, ClazzRecord.toCsvHeadline(), csvLines);
         return uri;
@@ -204,7 +203,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
             writer.println(rec.toCSV());
         }
         writer.flush();
-        log.debug("Statistics exported with {} lines.", statistics.size());
+        log.log(Level.FINE, "Statistics exported with {0} lines.", statistics.size());
     }
 
     private void importCSV() {
@@ -212,7 +211,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         if (exists(csvURI)) {
             importCSV(csvURI);
         } else {
-            log.debug("No '{}' for import available.", csvURI);
+            log.log(Level.FINE, "No '{0}' for import available.", csvURI);
         }
     }
 
@@ -221,7 +220,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
             File file = new File(uri);
             return file.exists();
         } else {
-            log.trace("Can't check if {} exists.", uri);
+            log.log(Level.FINER, "Can't check if {0} exists.", uri);
             return true;
         }
     }
@@ -234,10 +233,10 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
      */
     @Override
     public void importCSV(String filename) {
-        log.debug("Statistic will be imported from '{}'...", filename);
+        log.log(Level.FINER, "Statistic will be imported from '{0}'...", filename);
         URI uri = (filename.contains(":")) ? URI.create(filename) : new File(filename).toURI();
         importCSV(uri);
-        log.info("Statistic was imported from '{}'.", uri);
+        log.log(Level.INFO, "Statistic was imported from '{0}'.", uri);
     }
 
     /**
@@ -267,7 +266,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         try {
             List<String> csvLines = xPorter.importCSV(csvURI);
             if (csvLines.isEmpty()) {
-                log.debug("URI '{}' is empty and not imported.", csvURI);
+                log.log(Level.FINE, "URI '{0}' is empty and not imported.", csvURI);
                 return;
             }
             Map<String, ClazzRecord> loaded = new HashMap<>();
@@ -291,14 +290,14 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
                     }
                     getAllClasses().add(r);
                 } catch (IllegalArgumentException ex) {
-                    log.debug("Line {} ({}) is ignored ({}).", i + 1, line, ex.getMessage());
-                    log.trace("Details:", ex);
+                    log.log(Level.FINE, "Line {0} ({1}) is ignored ({2}).", new Object[]{i + 1, line, ex.getMessage()});
+                    log.log(Level.FINER, "Details:", ex);
                 }
             }
-            log.debug("Class records from {} imported.", csvURI);
+            log.log(Level.FINE, "Class records from {0} imported.", csvURI);
         } catch (IOException ex) {
-            log.info("File '{}' cannot be imported ({}).", csvURI, ex.getMessage());
-            log.debug("Details:", ex);
+            log.log(Level.INFO, "File '{0}' cannot be imported ({0}).", new Object[]{csvURI, ex.getMessage()});
+            log.log(Level.FINE, "Details:", ex);
         }
     }
 
@@ -307,8 +306,8 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         try {
             exportCSV();
         } catch (IOException ex) {
-            log.info("The class statistics could not be exported ({}).", ex.getMessage());
-            log.debug("Details:", ex);
+            log.log(Level.INFO, "The class statistics could not be exported ({0}).", ex.getMessage());
+            log.log(Level.FINE, "Details:", ex);
         }
     }
 

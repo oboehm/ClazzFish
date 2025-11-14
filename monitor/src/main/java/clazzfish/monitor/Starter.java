@@ -19,7 +19,7 @@ package clazzfish.monitor;
 
 import clazzfish.core.Config;
 import clazzfish.monitor.spi.XPorter;
-import clazzfish.monitor.stat.ClazzStatistic;
+import clazzfish.core.stat.ClazzStatistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

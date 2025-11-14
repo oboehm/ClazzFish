@@ -15,14 +15,12 @@
  *
  * (c)reated 25.11.24 by oboehm
  */
-package clazzfish.monitor.stat;
+package clazzfish.core.stat;
 
 import clazzfish.core.Config;
 import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.core.spi.FileXPorter;
-import clazzfish.core.stat.ClazzRecord;
 import clazzfish.monitor.exception.NotFoundException;
-import clazzfish.monitor.spi.XPorter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -43,21 +41,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
- * Unit tests for {@link ClazzStatistic}.
+ * Unit tests for {@link clazzfish.core.stat.ClazzStatistic}.
  *
  * @author oboehm
  * @since 25.11.24
  */
 class ClazzStatisticTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ClazzStatistic.class);
-    private final ClazzStatistic recorder = ClazzStatistic.of(XPorter.createCsvXPorter(Config.DEFAULT.getDumpURI()));
+    private static final Logger log = LoggerFactory.getLogger(clazzfish.core.stat.ClazzStatistic.class);
+    private final clazzfish.core.stat.ClazzStatistic recorder = clazzfish.core.stat.ClazzStatistic.of(new FileXPorter(Config.DEFAULT.getDumpURI()));
 
     @Test
     void registerMeAsMBean() {
         recorder.registerMeAsMBean();
-        assertTrue(MBeanFinder.isRegistered("clazzfish.monitor:name=ClazzStatistic,type=stat")
-                || MBeanFinder.isRegistered("clazzfish:type=monitor,monitor=stat,name=ClazzStatistic"));
+        assertTrue(MBeanFinder.isRegistered("clazzfish.core:name=ClazzStatistic,type=stat")
+                || MBeanFinder.isRegistered("clazzfish:type=core,core=stat,name=ClazzStatistic"));
     }
 
     @Test
@@ -117,7 +115,7 @@ class ClazzStatisticTest {
         clazzfish.core.stat.ClazzRecord
                 loaded = new clazzfish.core.stat.ClazzRecord(URI.create("nir://wana"), "smells.like.teen.Spirit", 1);
         File csvFile = createImportCSV(loaded);
-        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
+        clazzfish.core.stat.ClazzStatistic rec = clazzfish.core.stat.ClazzStatistic.of(new FileXPorter(csvFile));
         rec.importCSV(csvFile.toURI());
         rec.exportCSV(csvFile.toURI());
         String content = Files.readString(csvFile.toPath());
@@ -137,10 +135,10 @@ class ClazzStatisticTest {
     @Test
     void importCSV() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
-        ClazzStatistic rec = exportStatistic(csvFile);
+        clazzfish.core.stat.ClazzStatistic rec = exportStatistic(csvFile);
         rec.importCSV(csvFile.toString());
         checkClasses(rec.getStatistics(), this.getClass().getName(), 2);
-        checkClasses(rec.getStatistics(), "clazzfish.monitor.internal.DeadClass", 0);
+        checkClasses(rec.getStatistics(), "clazzfish.core.internal.DeadClass", 0);
     }
 
     /**
@@ -152,7 +150,7 @@ class ClazzStatisticTest {
     void importBigCSV() {
         File csvFile = new File("target/statistics", "big.csv");
         assumeTrue(csvFile.exists(), "performance test skipped");
-        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
+        clazzfish.core.stat.ClazzStatistic rec = clazzfish.core.stat.ClazzStatistic.of(new FileXPorter(csvFile));
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
         rec.importCSV(csvFile.toURI());
@@ -168,7 +166,7 @@ class ClazzStatisticTest {
     @Test
     void importCSVwithUpdatedClasspath() throws IOException {
         File csvFile = new File("target/statistics", "import.csv");
-        ClazzStatistic rec = exportStatistic(csvFile);
+        clazzfish.core.stat.ClazzStatistic rec = exportStatistic(csvFile);
         Set<URI> classpathes = rec.getClasspathes();
         File updated = updatedDependenciesIn(csvFile);
         rec.importCSV(updated.toURI().toString());
@@ -199,7 +197,7 @@ class ClazzStatisticTest {
      */
     @Test
     void importTmpFiles() throws IOException {
-        Path normal = Paths.get("src/test/resources/clazzfish/monitor/stat/normal.csv");
+        Path normal = Paths.get("../monitor/src/test/resources/clazzfish/monitor/stat/normal.csv");
         List<String> lines = Files.readAllLines(normal);
         Path statistic = createClazzStatistic("ClazzStatistic.csv", lines);
         ClazzRecord first = clazzfish.core.stat.ClazzRecord.fromCSV(lines.get(1)).withCount(5);
@@ -237,11 +235,11 @@ class ClazzStatisticTest {
         throw new NotFoundException(classname);
     }
 
-    private static ClazzStatistic exportStatistic(File csvFile) throws IOException {
+    private static clazzfish.core.stat.ClazzStatistic exportStatistic(File csvFile) throws IOException {
         if (csvFile.delete()) {
             log.info("{} is deleted.", csvFile);
         }
-        ClazzStatistic rec = ClazzStatistic.of(new FileXPorter(csvFile));
+        ClazzStatistic rec = clazzfish.core.stat.ClazzStatistic.of(new FileXPorter(csvFile));
         rec.exportCSV(csvFile);
         return rec;
     }

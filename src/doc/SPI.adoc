@@ -18,10 +18,10 @@ If you start your application with this URI you probably will get the following 
 ----
 Caused by: java.lang.IllegalArgumentException: Unsupported protocol: print
     at clazzfish.monitor.spi.XPorter.createCsvXPorter(XPorter.java:46)
-    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:101)
-    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:94)
-    at clazzfish.monitor.stat.ClazzStatistic.<init>(ClazzStatistic.java:90)
-    at clazzfish.monitor.stat.ClazzStatistic.<clinit>(ClazzStatistic.java:74)
+    at clazzfish.core.stat.ClazzStatistic.<init>(ClazzStatistic.java:101)
+    at clazzfish.core.stat.ClazzStatistic.<init>(ClazzStatistic.java:94)
+    at clazzfish.core.stat.ClazzStatistic.<init>(ClazzStatistic.java:90)
+    at clazzfish.core.stat.ClazzStatistic.<clinit>(ClazzStatistic.java:74)
 ----
 
 To support the print protocol you have to

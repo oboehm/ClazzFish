@@ -15,7 +15,7 @@
  *
  * (c)reated 15.12.24 by oboehm
  */
-package clazzfish.monitor.internal;
+package clazzfish.core.internal;
 
 /**
  * This class is an example of a class which is never loaded. It is used

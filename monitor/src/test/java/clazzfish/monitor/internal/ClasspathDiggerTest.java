@@ -81,7 +81,7 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         LOG.info("{} classes loaded.", classes.size());
         assertThat(classes, hasItem(this.getClass()));
         for (Class<?> clazz : classes) {
-            if ("clazzfish.monitor.internal.DeadClass".equals(clazz.getName())) {
+            if ("clazzfish.core.internal.DeadClass".equals(clazz.getName())) {
                 fail(clazz + " should be not loaded!");
             }
         }
@@ -94,7 +94,7 @@ public class ClasspathDiggerTest extends AbstractDiggerTest {
         LOG.info("{} classes loaded.", classnames.length);
         assertThat(classnames, hasItemInArray(this.getClass().getName()));
         for (String clname : classnames) {
-            if ("clazzfish.monitor.internal.DeadClass".equals(clname)) {
+            if ("clazzfish.core.internal.DeadClass".equals(clname)) {
                 fail(clname + " should be not loaded!");
             }
         }
