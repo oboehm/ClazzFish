@@ -196,7 +196,7 @@ public class MBeanFinder {
 			ObjectName name = new ObjectName(mbeanName);
 			registerMBean(name, mbean);
 		} catch (MalformedObjectNameException ex) {
-			log.log(Level.INFO, "Cannot register '{0}' as MBean ({1}).", new Object[] { mbean, ex.getMessage()});
+			log.log(Level.INFO, "Cannot register \"{0}\" as MBean ({1}).", new Object[] { mbean, ex.getMessage()});
             log.log(Level.FINE, "Details:", ex);
 		}
 	}
@@ -209,9 +209,9 @@ public class MBeanFinder {
 	 */
 	public static synchronized void registerMBean(final ObjectName name, final Object mbean) {
 		try {
-			log.log(Level.FINER, "Registering '{0}'...", name);
+			log.log(Level.FINER, "Registering \"{0}\"...", name);
 			MBEAN_SERVER.registerMBean(mbean, name);
-			log.log(Level.FINE, "'{0}' successful registered as MBean", name);
+			log.log(Level.FINE, "\"{0}\" successful registered as MBean", name);
 		} catch (InstanceAlreadyExistsException ex) {
             log.log(Level.FINE, "'{}' is already registered.", name);
             log.log(Level.FINER, "Details:", ex);
@@ -259,7 +259,7 @@ public class MBeanFinder {
 			ObjectInstance mbean = MBEAN_SERVER.getObjectInstance(name);
 			return (mbean != null);
 		} catch (InstanceNotFoundException ex) {
-            log.log(Level.FINER, "'{0}' not found ({1})'", new Object[] {name, ex.getMessage()});
+            log.log(Level.FINER, "\"{0}\" not found ({1})'", new Object[] {name, ex.getMessage()});
             log.log(Level.FINEST, "Details:", ex);
 			return false;
 		}
@@ -293,7 +293,7 @@ public class MBeanFinder {
 				ObjectName objectName = new ObjectName(name);
 				return MBEAN_SERVER.getObjectInstance(objectName);
 			} catch (InstanceNotFoundException | MalformedObjectNameException ex) {
-                log.log(Level.FINE, "'{0}' is not registered as MBean ({1})'", new Object[] {name, ex.getMessage()});
+                log.log(Level.FINE, "\"{0}\" is not registered as MBean ({1})'", new Object[] {name, ex.getMessage()});
                 log.log(Level.FINER, "Details:", ex);
 			}
 		}

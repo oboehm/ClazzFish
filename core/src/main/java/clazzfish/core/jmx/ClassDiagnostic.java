@@ -92,14 +92,14 @@ public final class ClassDiagnostic implements ClassLoading {
             String[] parts = lines[i].trim().split("\\s+");
             String className = parts[3];
             if (isNotRealClass(className)) {
-                log.log(Level.FINER, "'{0}' is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", classes);
                 continue;
             }
             try {
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException ex) {
-                log.log(Level.FINE, "Class '{0}' could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
+                log.log(Level.FINE, "Class \"{0}\" could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
                 log.log(Level.FINER, "Details:", ex);
             }
         }
@@ -111,11 +111,11 @@ public final class ClassDiagnostic implements ClassLoading {
         String[] loadedClassesNames = getLoadedClassnames();
         for (String className : loadedClassesNames) {
             try {
-                log.log(Level.FINER, "Try to get class '{0}'...", className);
+                log.log(Level.FINER, "Try to get class \"{0}\"...", className);
                 Class<?> cl = Class.forName(className);
                 classes.add(cl);
             } catch (ClassNotFoundException | Error ex) {
-                log.log(Level.FINE, "Class '{0}' could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
+                log.log(Level.FINE, "Class \"{0}\" could not be loaded ({1}).", new Object[] {className, ex.getMessage()});
                 log.log(Level.FINER, "Details:", ex);
             }
         }
@@ -145,7 +145,7 @@ public final class ClassDiagnostic implements ClassLoading {
                 className = getSubstringAfterLast(className, "|--");
             }
             if (isNotRealClass(className)) {
-                log.log(Level.FINER, "'{0}' is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", classes);
             } else {
                 classes.add(className);
             }

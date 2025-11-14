@@ -84,7 +84,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         this.xPorter = xPorter;
         this.allClasses = collectFutureClasses(classpathDigger);
         this.csvURI = csvURI;
-        log.log(Level.FINE, "Statistics will be imported from / exported to '{0}'.", csvURI);
+        log.log(Level.FINE, "Statistics will be imported from / exported to \"{0}\".", csvURI);
     }
 
     private static FutureTask<Set<ClazzRecord>> collectFutureClasses(Digger digger) {
@@ -165,18 +165,18 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     public URI exportCSV(File csvFile) throws IOException {
-        log.log(Level.FINE, "Exporting statistics to '{0}'...", csvFile);
+        log.log(Level.FINE, "Exporting statistics to \"{0}\"...", csvFile);
         if (csvFile.exists()) {
             importCSV();
         }
         exportDirect(csvFile);
-        log.log(Level.INFO, "Statistics exported to '{0}'.", csvFile);
+        log.log(Level.INFO, "Statistics exported to \"{0}\".", csvFile);
         return csvFile.toURI();
     }
 
     public URI exportCSV(URI uri) throws IOException {
         importCSV(uri);
-        log.log(Level.INFO, "Exporting statistics to '{0}'...", uri);
+        log.log(Level.INFO, "Exporting statistics to \"{0}\"...", uri);
         List<String> csvLines = getCsvLines();
         xPorter.exportCSV(uri, ClazzRecord.toCsvHeadline(), csvLines);
         return uri;
@@ -211,7 +211,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         if (exists(csvURI)) {
             importCSV(csvURI);
         } else {
-            log.log(Level.FINE, "No '{0}' for import available.", csvURI);
+            log.log(Level.FINE, "No \"{0}\" for import available.", csvURI);
         }
     }
 
@@ -233,10 +233,10 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
      */
     @Override
     public void importCSV(String filename) {
-        log.log(Level.FINER, "Statistic will be imported from '{0}'...", filename);
+        log.log(Level.FINER, "Statistic will be imported from \"{0}\"...", filename);
         URI uri = (filename.contains(":")) ? URI.create(filename) : new File(filename).toURI();
         importCSV(uri);
-        log.log(Level.INFO, "Statistic was imported from '{0}'.", uri);
+        log.log(Level.INFO, "Statistic was imported from \"{0}\".", uri);
     }
 
     /**
@@ -266,7 +266,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
         try {
             List<String> csvLines = xPorter.importCSV(csvURI);
             if (csvLines.isEmpty()) {
-                log.log(Level.FINE, "URI '{0}' is empty and not imported.", csvURI);
+                log.log(Level.FINE, "URI \"{0}\" is empty and not imported.", csvURI);
                 return;
             }
             Map<String, ClazzRecord> loaded = new HashMap<>();
@@ -296,7 +296,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
             }
             log.log(Level.FINE, "Class records from {0} imported.", csvURI);
         } catch (IOException ex) {
-            log.log(Level.INFO, "File '{0}' cannot be imported ({0}).", new Object[]{csvURI, ex.getMessage()});
+            log.log(Level.INFO, "File \"{0}\" cannot be imported ({0}).", new Object[]{csvURI, ex.getMessage()});
             log.log(Level.FINE, "Details:", ex);
         }
     }

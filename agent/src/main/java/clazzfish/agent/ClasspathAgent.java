@@ -62,7 +62,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
         INSTANCE = new ClasspathAgent();
         try {
             INSTANCE.registerAsMBean();
-            LOG.log(Level.INFO, "ClasspathAgent is ready and registered as MBean '{0}'.", MBEAN_NAME);
+            LOG.log(Level.INFO, "ClasspathAgent is ready and registered as MBean \"{0}\".", MBEAN_NAME);
         } catch (MBeanRegistrationException | OperationsException ex) {
             LOG.log(Level.INFO, "ClasspathAgent is ready but not registered as MBean \"" + MBEAN_NAME + "\":", ex);
         }

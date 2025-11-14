@@ -19,11 +19,11 @@
 package clazzfish.core.logging;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
 
 /**
  * We want a {@link Formatter} which does not log in two lines as the
@@ -31,12 +31,12 @@ import java.util.logging.SimpleFormatter;
  *
  * @author oliver (ob@aosd.de)
  */
-public final class SingleLineFormatter extends SimpleFormatter {
+public final class SingleLineFormatter extends Formatter {
 
     private final DateFormat dateFormat = new SimpleDateFormat("MMM dd HH:mm:ss");
 
     /**
-     * Formats the given record in onle line.
+     * Formats the given record in one line.
      *
      * @param record the record
      * @return the string
@@ -44,9 +44,17 @@ public final class SingleLineFormatter extends SimpleFormatter {
      */
     @Override
     public String format(final LogRecord record) {
+        String msg = formatMessage(record);
         Date eventTime = new Date(record.getMillis());
-        return dateFormat.format(eventTime) + " " + record.getLevel() + ": " + record.getMessage()
-                + "\n";
+        return dateFormat.format(eventTime) + " " + record.getLevel() + ": " + msg + "\n";
+    }
+
+    @Override
+    public synchronized String formatMessage(LogRecord record) {
+        if (record.getParameters() != null) {
+            return MessageFormat.format(record.getMessage(), record.getParameters());
+        }
+        return record.getMessage();
     }
 
 }

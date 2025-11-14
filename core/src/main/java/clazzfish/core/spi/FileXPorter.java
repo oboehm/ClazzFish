@@ -55,13 +55,13 @@ public class FileXPorter implements CsvXPorter {
     @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
         writeCSV(new File(uri), csvHeadLine, csvLines);
-        log.log(Level.FINE, "Statistic exported with {0} lines to '{0}'.", new Object[] { csvLines.size(), uri});
+        log.log(Level.FINE, "Statistic exported with {0} lines to \"{0}\".", new Object[] { csvLines.size(), uri});
     }
 
     private void writeCSV(File file, String csvHeadLine, List<String> csvLines) throws IOException {
         createDir(file.getParentFile());
         File tmpFile = new File(file + "-" + System.currentTimeMillis());
-        log.log(Level.FINER, "Statistic is temporary stored in '{0}'.", tmpFile);
+        log.log(Level.FINER, "Statistic is temporary stored in \"{0}\".", tmpFile);
         try (PrintWriter writer = new PrintWriter(tmpFile)) {
             writer.println(csvHeadLine);
             for (String line : csvLines) {
@@ -76,9 +76,9 @@ public class FileXPorter implements CsvXPorter {
     private static void createDir(File dir) {
         if (!dir.exists()) {
             if (dir.mkdirs()) {
-                log.log(Level.FINE, "Directory '{0}' successful created.", dir);
+                log.log(Level.FINE, "Directory \"{0}\" successful created.", dir);
             } else {
-                log.log(Level.WARNING, "Cannot create dir '{0}' and will give up.", dir);
+                log.log(Level.WARNING, "Cannot create dir \"{0}\" and will give up.", dir);
             }
         }
     }
@@ -116,7 +116,7 @@ public class FileXPorter implements CsvXPorter {
         for (File f : dir.listFiles(filter)) {
             addClazzRecordsTo(records, f);
             if (f.delete()) {
-                log.log(Level.INFO, "Temporary file '{0}' is deleted after import.", f);
+                log.log(Level.INFO, "Temporary file \"{0}\" is deleted after import.", f);
             }
         }
         return toCsvLines(records);
@@ -144,7 +144,7 @@ public class FileXPorter implements CsvXPorter {
                 ClazzRecord rec = ClazzRecord.fromCSV(csvLine);
                 records.put(rec.classname(), rec);
             } catch (IllegalArgumentException ex) {
-                log.log(Level.FINE, "Line '{0}' is ignored ({1}).", new Object[] { csvLine, ex.getMessage() });
+                log.log(Level.FINE, "Line \"{0}\" is ignored ({1}).", new Object[] { csvLine, ex.getMessage() });
                 log.log(Level.FINER, "Details:", ex);
             }
         }
