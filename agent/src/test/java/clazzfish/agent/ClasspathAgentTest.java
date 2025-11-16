@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
 
@@ -67,9 +66,8 @@ public final class ClasspathAgentTest {
     }
 
     @Test
-    public void testDumpLoadedClasses() throws IOException {
-        File dump = new File("target", "dump.txt");
-        agent.dumpLoadedClasses(dump.toString());
+    public void testDumpLoadedClasses() {
+        File dump = agent.dumpLoadedClasses();
         assertTrue(dump.isFile());
     }
 

@@ -18,13 +18,18 @@
 
 package clazzfish.agent;
 
+import clazzfish.core.Config;
 import clazzfish.core.Digger;
+import clazzfish.core.spi.CsvXPorter;
+import clazzfish.core.spi.FileXPorter;
+import clazzfish.core.stat.ClazzStatistic;
 import clazzfish.core.util.ShutdownHook;
 
 import javax.management.*;
 import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.SortedSet;
@@ -230,36 +235,23 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
      * is returned as value.
      * </p>
      * @return the temporary file
-     * @throws IOException Signals that an I/O exception has occurred.
      * @see ClasspathAgentMBean#dumpLoadedClasses()
      */
-    public File dumpLoadedClasses() throws IOException {
-        File dumpFile = File.createTempFile("dumpLoadedClasses", ".txt");
-        dumpLoadedClasses(dumpFile);
-        return dumpFile;
-    }
-
-    /**
-     * This operation dumps the loaded classes to the given file.
-     *
-     * @param filename the file where the classes are dumped to.
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @see ClasspathAgentMBean#dumpLoadedClasses(String)
-     */
-    public void dumpLoadedClasses(final String filename) throws IOException {
-        this.dumpLoadedClasses(new File(filename));
-    }
-
-    /**
-     * This operation dumps the loaded classes to the given file.
-     *
-     * @param dumpFile the file where the classes are dumped to.
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public void dumpLoadedClasses(final File dumpFile) throws IOException {
-        LOG.info("Loaded classes will be dumped to '" + dumpFile + "'.");
-        try (FileWriter writer = new FileWriter(dumpFile)) {
-            dumpLoadedClasses(new BufferedWriter(writer));
+    public File dumpLoadedClasses() {
+        URI dumpURI = getDumpURI();
+        if (dumpURI.getScheme().equals("file")) {
+            LOG.log(Level.INFO, "Loaded classes are dumped to {0}.", dumpURI);
+            FileXPorter porter = new FileXPorter(dumpURI);
+            ClazzStatistic statistic = ClazzStatistic.of(porter);
+            try {
+                statistic.exportCSV();
+            } catch (IOException ex) {
+                LOG.log(Level.WARNING, "Dump of loaded classes to {0} failed ({0})", new Object[]{dumpURI, ex.getMessage()});
+                LOG.log(Level.FINE, "Details:", ex);
+            }
+            return new File(dumpURI);
+        } else {
+            return null;
         }
     }
 
@@ -310,8 +302,20 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
     }
 
     @Override
+    public URI getDumpURI() {
+        URI dumpURI = Config.DEFAULT.getDumpURI();
+        if (dumpURI.getScheme().equals("file")) {
+            return dumpURI;
+        } else {
+            return CsvXPorter.NULL_URI;
+        }
+    }
+
+    @Override
     public void run() {
-        LOG.info("Dump of loaded classes is not yet implemented.");
+        long start = System.currentTimeMillis();
+        dumpLoadedClasses();
+        LOG.log(Level.INFO, "Shutdown of agent ends after {0} ms.", System.currentTimeMillis() - start);
     }
 
 }

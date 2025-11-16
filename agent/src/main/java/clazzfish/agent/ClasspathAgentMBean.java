@@ -21,8 +21,8 @@ package clazzfish.agent;
 import clazzfish.core.ClassLoading;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 
 /**
  * This is the MBean for the {@link ClasspathAgent} to be able to register
@@ -72,19 +72,9 @@ public interface ClasspathAgentMBean extends ClassLoading, Serializable {
      * </p>
      *
      * @return the temporary file
-     * @throws IOException Signals that an I/O exception has occurred.
      * @since 1.5
      */
-    File dumpLoadedClasses() throws IOException;
-
-    /**
-     * This operation dumps the loaded classes to the given file.
-     *
-     * @param filename the file where the classes are dumped to.
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @since 1.5
-     */
-    void dumpLoadedClasses(final String filename) throws IOException;
+    File dumpLoadedClasses();
 
     /**
      * Gets all classes which are available thru the classpath
@@ -102,6 +92,15 @@ public interface ClasspathAgentMBean extends ClassLoading, Serializable {
      * @since 3.0
      */
     String[] getUnusedClasses();
+
+    /**
+     * Returns the URI where a little statistic of loaded and unloaded
+     * classes are dumped to.
+     *
+     * @return dump URI or "dev:/null" if nothing is dumped
+     * @since 3.0
+     */
+    URI getDumpURI();
 
 }
 

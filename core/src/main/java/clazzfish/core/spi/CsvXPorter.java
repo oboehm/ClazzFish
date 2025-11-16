@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  */
 public interface CsvXPorter {
 
+    URI NULL_URI = URI.create("dev://null");
     Logger log = Logger.getLogger(CsvXPorter.class.getName());
 
     /**

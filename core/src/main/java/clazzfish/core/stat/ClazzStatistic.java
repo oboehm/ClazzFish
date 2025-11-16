@@ -74,10 +74,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {
-        ClazzStatistic statistic = new ClazzStatistic(csvURI, xPorter);
-        statistic.registerMeAsMBean();
-        log.log(Level.FINER, "{0} is registered as MBean.", statistic);
-        return statistic;
+        return new ClazzStatistic(csvURI, xPorter);
     }
 
     private ClazzStatistic(URI csvURI, CsvXPorter xPorter) {
