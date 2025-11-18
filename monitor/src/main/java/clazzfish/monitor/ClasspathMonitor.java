@@ -45,6 +45,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import static clazzfish.core.spi.CsvXPorter.NULL_URI;
+
 /**
  * To avoid classpath problems like double entries of the same class or resource
  * in the classpath there are several methods available.
@@ -83,7 +85,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 			"DoubletClasspathURIs", "Doublets", "LoadedClasses", "LoadedPackages", "IncompatibleClasses",
 			"IncompatibleClasspath", "IncompatibleClasspathURIs", "UnusedClasses", "UnusedClasspath", "UsedClasspath",
 			"UsedClasspathURIs" };
-	private static final URI NULL_URI = URI.create("http://null");
 
 	private final ClasspathDigger classpathDigger;
 	private final DoubletDigger doubletDigger;
@@ -1300,26 +1301,6 @@ public class ClasspathMonitor extends AbstractMonitor implements ClasspathMonito
 	public String toString() {
 		return this.getClass().getSimpleName() + " for " + this.cloader;
 	}
-
-//	/**
-//	 * This main method is only for testing the ClasspathMonitor together with
-//	 * the 'jconsole'. On a Java5 VM start it with the following options:
-//	 * -Dcom.sun.management.jmxremote.local.only=false
-//	 * -Dcom.sun.management.jmxremote
-//	 *
-//	 * @param args
-//	 *            the args
-//	 * @throws JMException
-//	 *             the JM exception
-//	 */
-//	public static void main(final String[] args) throws JMException {
-//		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-//		ObjectName name = new ObjectName("patterntesting.runtime.monitor:type=ClasspathMonitor");
-//		ClasspathMonitor hello = new ClasspathMonitor();
-//		Object mbean = new AnnotatedStandardMBean(hello, ClasspathMonitorMBean.class);
-//		mbs.registerMBean(mbean, name);
-//		ThreadUtil.sleep(300, TimeUnit.SECONDS);
-//	}
 
 	/**
 	 * Is multi threading enabled? Multi threading is automatically enabled if

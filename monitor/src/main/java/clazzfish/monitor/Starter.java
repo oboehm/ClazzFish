@@ -18,8 +18,9 @@
 package clazzfish.monitor;
 
 import clazzfish.core.Config;
-import clazzfish.monitor.spi.XPorter;
 import clazzfish.core.stat.ClazzStatistic;
+import clazzfish.monitor.jmx.AgentFinder;
+import clazzfish.monitor.spi.XPorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,10 +54,24 @@ public final class Starter {
      */
     public static void record() {
         start();
-        URI cvsURI = Config.DEFAULT.getDumpURI();
-        ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(cvsURI));
-        statistic.addMeAsShutdownHook();
-        log.trace("{} is registered as shutdown hook.", statistic);
+        if (isAgentRecording()) {
+            log.trace("Dumping of statistic is done by ClasspathAgent.");
+        } else {
+            URI cvsURI = Config.DEFAULT.getDumpURI();
+            ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(cvsURI));
+            statistic.addMeAsShutdownHook();
+            log.trace("{} is registered as shutdown hook.", statistic);
+        }
+    }
+
+    private static boolean isAgentRecording() {
+        AgentFinder agentFinder = new AgentFinder();
+        if (agentFinder.isAgentAvailable()) {
+            return agentFinder.isDumping();
+        } else {
+            log.debug("No agent available.");
+            return false;
+        }
     }
 
     /**

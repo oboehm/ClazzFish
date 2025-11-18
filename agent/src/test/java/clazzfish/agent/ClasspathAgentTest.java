@@ -67,6 +67,7 @@ public final class ClasspathAgentTest {
 
     @Test
     public void testDumpLoadedClasses() {
+        assertTrue(agent.isDumping());
         File dump = agent.dumpLoadedClasses();
         assertTrue(dump.isFile());
     }

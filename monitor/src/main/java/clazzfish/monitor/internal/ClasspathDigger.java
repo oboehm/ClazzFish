@@ -24,7 +24,7 @@ import clazzfish.core.jmx.ClassDiagnostic;
 import clazzfish.monitor.ClassloaderType;
 import clazzfish.monitor.exception.NotFoundException;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.monitor.jmx.AgentFinder;
 import clazzfish.monitor.util.ClasspathHelper;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.ReflectionHelper;
@@ -33,11 +33,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
+import javax.management.JMException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
@@ -58,24 +57,18 @@ import java.util.*;
  */
 public class ClasspathDigger extends Digger {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ClasspathDigger.class);
-	private static final String[] AGENT_MBEAN_NAMES = new String[]{
-			"clazzfish:type=agent,agent=ClasspathAgent",
-			"clazzfish.agent:type=ClasspathAgent"
-	};
-	private static final MBeanServer MBEAN_SERVER = ManagementFactory.getPlatformMBeanServer();
+	private static final Logger log = LoggerFactory.getLogger(ClasspathDigger.class);
 	private final ClassLoader classLoader;
 	private final String[] bootClassPath = ClasspathInspector.getBootClasspath();
-	private static final ObjectInstance agentMBean;
+    private static final AgentFinder agentFinder;
 
 	public static final ClasspathDigger DEFAULT = new ClasspathDigger();
 
 	static {
-		agentMBean = MBeanFinder.findMBean(AGENT_MBEAN_NAMES);
-		if ((agentMBean == null)) {
-			LOG.debug("No MBean \"{}\" is found.", Arrays.toString(AGENT_MBEAN_NAMES));
-			LOG.info("ClazzFish agent not available - start '-java -javaagent:clazzfish-agent-2.x.jar...' to activate it.");
-		}
+        agentFinder = new AgentFinder();
+        if (!agentFinder.isAgentAvailable()) {
+            log.info("ClazzFish agent not available - start '-java -javaagent:clazzfish-agent-2.x.jar...' to activate it.");
+        }
 	}
 
 	/**
@@ -89,7 +82,7 @@ public class ClasspathDigger extends Digger {
 		ClassLoader cloader = Thread.currentThread().getContextClassLoader();
 		if (cloader == null) {
 			cloader = ClasspathDigger.class.getClassLoader();
-			LOG.warn("No ContextClassLoader found - using now {}.", cloader);
+			log.warn("No ContextClassLoader found - using now {}.", cloader);
 		}
 		return cloader;
 	}
@@ -131,7 +124,7 @@ public class ClasspathDigger extends Digger {
 	 * @return true, if is agent available
 	 */
 	public static boolean isAgentAvailable() {
-		return agentMBean != null;
+		return agentFinder.isAgentAvailable();
 	}
 
 	/**
@@ -177,10 +170,10 @@ public class ClasspathDigger extends Digger {
 			case WEBSPHERE:
 				return getWebsphereClasspath();
 			default:
-				LOG.trace("using 'java.class.path' to get classpath...");
+				log.trace("using 'java.class.path' to get classpath...");
 			}
 		} catch (IllegalArgumentException ex) {
-			LOG.warn("Will fallback to 'java.class.path' because cannot get classpath from {}:", classLoader, ex);
+			log.warn("Will fallback to 'java.class.path' because cannot get classpath from {}:", classLoader, ex);
 		}
         return ClasspathInspector.getClasspath();
 	}
@@ -337,7 +330,7 @@ public class ClasspathDigger extends Digger {
 		try {
 			Enumeration<URL> resources = this.classLoader.getResources(name);
 			if (!resources.hasMoreElements()) {
-				LOG.trace("Resource '{}' not found in classpath", name);
+				log.trace("Resource '{}' not found in classpath", name);
 				if (name.startsWith("/")) {
 					return getResources(name.substring(1));
 				}
@@ -432,12 +425,12 @@ public class ClasspathDigger extends Digger {
 	 */
 	public Set<Class<?>> getLoadedClasses() {
 		List<Class<?>> loadedClasses = new ArrayList<>();
-		if (agentMBean != null) {
+		if (agentFinder.isAgentAvailable()) {
             try {
-				loadedClasses = getLoadedClassListFrom(agentMBean);
+				loadedClasses = getLoadedClassList();
             } catch (JMException ex) {
-				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
-				LOG.trace("Details:", ex);
+				log.debug("Cannot get loaded classes with {} ({}).", agentFinder, ex.getMessage());
+				log.trace("Details:", ex);
 				return Set.of(new ClassDiagnostic().getLoadedClasses());
             }
         }
@@ -446,8 +439,8 @@ public class ClasspathDigger extends Digger {
 				Field field = ReflectionHelper.getField(classLoader.getClass(), "classes");
 				loadedClasses = (List<Class<?>>) field.get(classLoader);
 			} catch (NoSuchFieldException | IllegalAccessException ex) {
-				LOG.debug("Cannot access field 'classes' of {}.", classLoader);
-				LOG.trace("Details:", ex);
+				log.debug("Cannot access field 'classes' of {}.", classLoader);
+				log.trace("Details:", ex);
 				loadedClasses = getLoadedClassesFrom(Thread.currentThread().getContextClassLoader());
 			}
 		}
@@ -462,9 +455,9 @@ public class ClasspathDigger extends Digger {
 	 * @since 2.7
 	 */
 	public String[] getLoadedClassnames() {
-		if (agentMBean != null) {
+		if (agentFinder.isAgentAvailable()) {
             try {
-				List<Class<?>> loadedClasses = getLoadedClassListFrom(agentMBean);
+				List<Class<?>> loadedClasses = getLoadedClassList();
 				Set<String> loadedClassnames = new TreeSet<>();
 				for (Class<?> loadedClass : loadedClasses) {
 					String classname = loadedClass.getName();
@@ -474,8 +467,8 @@ public class ClasspathDigger extends Digger {
 				}
 				return loadedClassnames.toArray(new String[0]);
 			} catch (JMException ex) {
-				LOG.debug("Cannot get loaded classes with {} ({}).", agentMBean, ex.getMessage());
-				LOG.trace("Details:", ex);
+				log.debug("Cannot get loaded classes with {} ({}).", agentFinder, ex.getMessage());
+				log.trace("Details:", ex);
             }
         }
 		return new ClassDiagnostic().getLoadedClassnames();
@@ -486,9 +479,8 @@ public class ClasspathDigger extends Digger {
 		return new ArrayList<>(bcl.getLoadedClasses());
 	}
 
-	private List<Class<?>> getLoadedClassListFrom(ObjectInstance agent) throws ReflectionException, InstanceNotFoundException, MBeanException {
-		Class<?>[] classes = (Class<?>[]) MBEAN_SERVER.invoke(agent.getObjectName(), "getLoadedClasses",
-				new Object[] { this.getClass().getClassLoader() }, new String[] { ClassLoader.class.getName() });
+	private List<Class<?>> getLoadedClassList() throws JMException {
+		Class<?>[] classes = agentFinder.getLoadedClasses();
 		return Arrays.asList(classes);
 	}
 
@@ -513,7 +505,7 @@ public class ClasspathDigger extends Digger {
 		String packageResourceWithoutSlash = packageResource.substring(1);
 		try (InputStream istream = this.classLoader.getResourceAsStream(packageResourceWithoutSlash)) {
 			if (istream == null) {
-				LOG.trace("Cannot load '{}' with {}.", packageResource, this.classLoader);
+				log.trace("Cannot load '{}' with {}.", packageResource, this.classLoader);
 				return loadedResources;
 			}
 			List<String> lines = IOUtils.readLines(istream, StandardCharsets.UTF_8);
@@ -524,7 +516,7 @@ public class ClasspathDigger extends Digger {
 				}
 			}
 		} catch (IOException ioe) {
-			LOG.warn("Cannot get resources for package '{}':", packageResource, ioe);
+			log.warn("Cannot get resources for package '{}':", packageResource, ioe);
 		}
 		return loadedResources;
 	}
