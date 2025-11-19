@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.management.JMException;
 import javax.management.RuntimeMBeanException;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,6 +54,13 @@ class AgentFinderTest {
     @Test
     void getDumpURI() throws JMException {
         assertNotNull(agentFinder.getDumpURI());
+    }
+
+    @Test
+    void setDumpURI() throws JMException {
+        URI uri = URI.create("file://tmp/test.csv");
+        agentFinder.setDumpURI(uri);
+        assertEquals(uri, agentFinder.getDumpURI());
     }
 
     @Test

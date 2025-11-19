@@ -19,7 +19,7 @@
 package clazzfish.agent;
 
 import clazzfish.core.ClassLoading;
-import clazzfish.core.spi.CsvXPorter;
+import clazzfish.core.Config;
 
 import java.io.File;
 import java.io.Serializable;
@@ -104,12 +104,21 @@ public interface ClasspathAgentMBean extends ClassLoading, Serializable {
     URI getDumpURI();
 
     /**
-     * Indicates if class statistic is damped at the end of the application.
+     * It is possible to change the URI where the classes are dumped to.
+     * If the URI cannot be handled (e.g. it is not a file URI) it will be
+     * ignored.
+     *
+     * @param dumpURI e.g. "file://tmp/test.csv"
+     */
+    void setDumpURI(URI dumpURI);
+
+    /**
+     * Indicates if class statistic is dumped at the end of the application.
      *
      * @return true if class statistic is dumped by agent
      */
     default boolean isDumping() {
-        return !CsvXPorter.NULL_URI.equals(getDumpURI());
+        return !Config.NULL_URI.equals(getDumpURI());
     }
 
 }

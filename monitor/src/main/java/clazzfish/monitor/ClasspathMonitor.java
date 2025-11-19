@@ -45,7 +45,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static clazzfish.core.spi.CsvXPorter.NULL_URI;
+import static clazzfish.core.Config.NULL_URI;
 
 /**
  * To avoid classpath problems like double entries of the same class or resource

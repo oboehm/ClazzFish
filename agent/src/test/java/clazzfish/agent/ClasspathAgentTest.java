@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.net.URI;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -128,6 +129,13 @@ public final class ClasspathAgentTest {
     @Test
     public void testShuthdownHook() {
         assertTrue(agent.isShutdownHook());
+    }
+
+    @Test
+    public void testDumpURI() {
+        URI uri = URI.create("file://tmp/a.csv");
+        agent.setDumpURI(uri);
+        assertEquals(uri, agent.getDumpURI());
     }
 
 }

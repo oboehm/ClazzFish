@@ -41,6 +41,8 @@ public final class Config {
     public static final String DUMP_URI = "clazzfish.dump.uri";
     /** Pattern of the resources (and classes) which should be filtered out. */
     public static final String PATTERN_EXCLUDE = "clazzfish.pattern.exclude";
+    /** NULL URI. */
+    public static final URI NULL_URI = URI.create("dev://null");
     private final Properties properties;
 
     public static Config DEFAULT = Config.of("clazzfish-default.properties", "clazzfish.properties");

@@ -21,6 +21,7 @@ import clazzfish.core.jmx.MBeanFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.Attribute;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
@@ -80,6 +81,16 @@ public final class AgentFinder {
 
     public URI getDumpURI() throws JMException {
         return getAttribute("DumpURI", URI.class);
+    }
+
+    public void setDumpURI(URI uri) {
+        Attribute attribute = new Attribute("DumpURI", uri);
+        try {
+            MBEAN_SERVER.setAttribute(agentMBean.getObjectName(), attribute);
+        } catch (JMException ex) {
+            log.warn("Could not set {} to {} ({}).", attribute, agentMBean, ex.getMessage());
+            log.debug("Details:", ex);
+        }
     }
 
     public <T> T getAttribute(String name, Class<T> type) throws JMException {

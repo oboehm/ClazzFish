@@ -20,7 +20,6 @@ package clazzfish.agent;
 
 import clazzfish.core.Config;
 import clazzfish.core.Digger;
-import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.spi.FileXPorter;
 import clazzfish.core.stat.ClazzStatistic;
 import clazzfish.core.util.ShutdownHook;
@@ -56,20 +55,21 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
     public static final String MBEAN_NAME = "clazzfish:type=agent,agent=ClasspathAgent";
 
     private static final long serialVersionUID = 20180517L;
-    private static final Logger LOG = Logger.getLogger(ClasspathAgent.class.getName());
+    private static final Logger log = Logger.getLogger(ClasspathAgent.class.getName());
     private static final ClasspathAgent INSTANCE;
     private static Instrumentation instrumentation;
     private static String args;
     private static final Digger digger = new Digger();
+    private URI dumpURI;
 
     static {
         setUpLogging();
         INSTANCE = new ClasspathAgent();
         try {
             INSTANCE.registerAsMBean();
-            LOG.log(Level.INFO, "ClasspathAgent is ready and registered as MBean \"{0}\".", MBEAN_NAME);
+            log.log(Level.INFO, "ClasspathAgent is ready and registered as MBean \"{0}\".", MBEAN_NAME);
         } catch (MBeanRegistrationException | OperationsException ex) {
-            LOG.log(Level.INFO, "ClasspathAgent is ready but not registered as MBean \"" + MBEAN_NAME + "\":", ex);
+            log.log(Level.INFO, "ClasspathAgent is ready but not registered as MBean \"" + MBEAN_NAME + "\":", ex);
         }
         INSTANCE.addMeAsShutdownHook();
     }
@@ -81,6 +81,13 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
      */
     public static ClasspathAgent getInstance() {
         return INSTANCE;
+    }
+
+    private ClasspathAgent() {
+        this.dumpURI = Config.DEFAULT.getDumpURI();
+        if (!dumpURI.getScheme().equals("file")) {
+            dumpURI = Config.NULL_URI;
+        }
     }
 
     /**
@@ -185,7 +192,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
             try {
                 setUpLogging("logging.properties");
             } catch (IOException ioe) {
-                LOG.warning("Using default logging because can't read 'logging.properties': " + ioe);
+                log.warning("Using default logging because can't read 'logging.properties': " + ioe);
             }
         }
     }
@@ -193,7 +200,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
     private static void setUpLogging(final String resourceName) throws IOException {
         InputStream istream = ClasspathAgent.class.getResourceAsStream("logging.properties");
         if (istream == null) {
-            LOG.warning("Using default logging because resource '" + resourceName + "' not found.");
+            log.warning("Using default logging because resource '" + resourceName + "' not found.");
         } else {
             try (istream) {
                 LogManager.getLogManager().readConfiguration(istream);
@@ -207,7 +214,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
             ObjectName mbeanName = new ObjectName(MBEAN_NAME);
             ManagementFactory.getPlatformMBeanServer().registerMBean(this, mbeanName);
         } catch (InstanceAlreadyExistsException e) {
-            LOG.info("Registration of \"" + MBEAN_NAME + "\" ignored because of " + e);
+            log.info("Registration of \"" + MBEAN_NAME + "\" ignored because of " + e);
         }
     }
 
@@ -220,10 +227,10 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
         try {
             StringWriter writer = new StringWriter();
             this.dumpLoadedClasses(new BufferedWriter(writer));
-            LOG.info(writer.toString().trim());
+            log.info(writer.toString().trim());
             writer.close();
         } catch (IOException ioe) {
-            LOG.log(Level.SEVERE, "Cannot log loaded classes:", ioe);
+            log.log(Level.SEVERE, "Cannot log loaded classes:", ioe);
         }
     }
 
@@ -240,14 +247,14 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
     public File dumpLoadedClasses() {
         URI dumpURI = getDumpURI();
         if (dumpURI.getScheme().equals("file")) {
-            LOG.log(Level.INFO, "Loaded classes are dumped to {0}.", dumpURI);
+            log.log(Level.INFO, "Loaded classes are dumped to {0}.", dumpURI);
             FileXPorter porter = new FileXPorter(dumpURI);
             ClazzStatistic statistic = ClazzStatistic.of(porter);
             try {
                 statistic.exportCSV();
             } catch (IOException ex) {
-                LOG.log(Level.WARNING, "Dump of loaded classes to {0} failed ({0})", new Object[]{dumpURI, ex.getMessage()});
-                LOG.log(Level.FINE, "Details:", ex);
+                log.log(Level.WARNING, "Dump of loaded classes to {0} failed ({0})", new Object[]{dumpURI, ex.getMessage()});
+                log.log(Level.FINE, "Details:", ex);
             }
             return new File(dumpURI);
         } else {
@@ -303,11 +310,15 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
 
     @Override
     public URI getDumpURI() {
-        URI dumpURI = Config.DEFAULT.getDumpURI();
+        return dumpURI;
+    }
+
+    @Override
+    public void setDumpURI(URI dumpURI) {
         if (dumpURI.getScheme().equals("file")) {
-            return dumpURI;
+            this.dumpURI = dumpURI;
         } else {
-            return CsvXPorter.NULL_URI;
+            log.log(Level.INFO, "URI '{0}' is not supported and ignored.", dumpURI);
         }
     }
 
@@ -315,7 +326,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
     public void run() {
         long start = System.currentTimeMillis();
         dumpLoadedClasses();
-        LOG.log(Level.INFO, "Shutdown of agent ends after {0} ms.", System.currentTimeMillis() - start);
+        log.log(Level.INFO, "Shutdown of agent ends after {0} ms.", System.currentTimeMillis() - start);
     }
 
 }

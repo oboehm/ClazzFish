@@ -54,18 +54,19 @@ public final class Starter {
      */
     public static void record() {
         start();
-        if (isAgentRecording()) {
-            log.trace("Dumping of statistic is done by ClasspathAgent.");
+        URI cvsURI = Config.DEFAULT.getDumpURI();
+        AgentFinder agentFinder = new AgentFinder();
+        if (isAgentRecording(agentFinder)) {
+            log.trace("Dumping of statistic to {} is done by ClasspathAgent.", cvsURI);
+            agentFinder.setDumpURI(cvsURI);
         } else {
-            URI cvsURI = Config.DEFAULT.getDumpURI();
             ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(cvsURI));
             statistic.addMeAsShutdownHook();
             log.trace("{} is registered as shutdown hook.", statistic);
         }
     }
 
-    private static boolean isAgentRecording() {
-        AgentFinder agentFinder = new AgentFinder();
+    private static boolean isAgentRecording(AgentFinder agentFinder) {
         if (agentFinder.isAgentAvailable()) {
             return agentFinder.isDumping();
         } else {
