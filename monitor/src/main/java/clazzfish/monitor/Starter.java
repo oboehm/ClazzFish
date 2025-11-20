@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import java.net.URI;
 public final class Starter {
 
     private static final Logger log = LoggerFactory.getLogger(Starter.class);
+    private static URI dumpURI = Config.DEFAULT.getDumpURI();
 
     /**
      * Registers all MBeans for monitoring the classpath and resources.
@@ -54,13 +55,12 @@ public final class Starter {
      */
     public static void record() {
         start();
-        URI cvsURI = Config.DEFAULT.getDumpURI();
         AgentFinder agentFinder = new AgentFinder();
         if (isAgentRecording(agentFinder)) {
-            log.trace("Dumping of statistic to {} is done by ClasspathAgent.", cvsURI);
-            agentFinder.setDumpURI(cvsURI);
+            log.trace("Dumping of statistic to {} is done by ClasspathAgent.", dumpURI);
+            agentFinder.setDumpURI(dumpURI);
         } else {
-            ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(cvsURI));
+            ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(dumpURI));
             statistic.addMeAsShutdownHook();
             log.trace("{} is registered as shutdown hook.", statistic);
         }
@@ -97,7 +97,6 @@ public final class Starter {
         record();
     }
 
-
     /**
      * Does not register all MBeans but add also the ClazzStatistic as shutdown
      * hook.
@@ -106,7 +105,7 @@ public final class Starter {
      * @since 2.5
      */
     public static void record(URI base) {
-        Config.DEFAULT.setDumpURI(base);
+        setDumpURI(base);
         record();
     }
 
@@ -118,7 +117,7 @@ public final class Starter {
      * @param dir directory where the dates are stored
      */
     public static void recordAll(File dir) {
-        Config.DEFAULT.setDumpDir(dir);
+        setDumpDir(dir);
         recordAll();
     }
 
@@ -131,8 +130,16 @@ public final class Starter {
      * @since 2.5
      */
     public static void recordAll(URI base) {
-        Config.DEFAULT.setDumpURI(base);
+        setDumpURI(base);
         recordAll();
+    }
+
+    private static void setDumpURI(URI uri) {
+        dumpURI = uri;
+    }
+
+    private static void setDumpDir(File dir) {
+        setDumpURI(dir.toURI());
     }
 
 }
