@@ -56,9 +56,11 @@ public final class Starter {
     public static void record() {
         start();
         AgentFinder agentFinder = new AgentFinder();
+        if (agentFinder.isAgentAvailable()) {
+            agentFinder.setDumpURI(dumpURI);
+        }
         if (isAgentRecording(agentFinder)) {
             log.trace("Dumping of statistic to {} is done by ClasspathAgent.", dumpURI);
-            agentFinder.setDumpURI(dumpURI);
         } else {
             ClazzStatistic statistic = ClazzStatistic.of(XPorter.createCsvXPorter(dumpURI));
             statistic.addMeAsShutdownHook();

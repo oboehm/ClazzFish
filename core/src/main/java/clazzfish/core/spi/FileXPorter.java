@@ -97,7 +97,7 @@ public class FileXPorter implements CsvXPorter {
                 String line = reader.readLine();
                 csvLines.add(line);
             }
-            log.log(Level.FINE, "{0} lines imported from file '{1}'.", new Object[] { csvLines.size(), file });
+            log.log(Level.FINE, "{0} lines imported from file {1}.", new Object[] { csvLines.size(), file });
         }
         return csvLines;
     }

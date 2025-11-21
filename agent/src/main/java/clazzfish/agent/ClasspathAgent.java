@@ -315,11 +315,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
 
     @Override
     public void setDumpURI(URI dumpURI) {
-        if (dumpURI.getScheme().equals("file")) {
-            this.dumpURI = dumpURI;
-        } else {
-            log.log(Level.INFO, "URI '{0}' is not supported and ignored.", dumpURI);
-        }
+        this.dumpURI = dumpURI;
     }
 
     @Override

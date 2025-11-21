@@ -19,7 +19,6 @@
 package clazzfish.agent;
 
 import clazzfish.core.ClassLoading;
-import clazzfish.core.Config;
 
 import java.io.File;
 import java.io.Serializable;
@@ -118,7 +117,7 @@ public interface ClasspathAgentMBean extends ClassLoading, Serializable {
      * @return true if class statistic is dumped by agent
      */
     default boolean isDumping() {
-        return !Config.NULL_URI.equals(getDumpURI());
+        return "file".equals(getDumpURI().getScheme());
     }
 
 }
