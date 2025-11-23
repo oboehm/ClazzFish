@@ -23,8 +23,7 @@ Because of the use of no other dependencies logging is done with the logging pac
 ## Dead Class Detection
 
 With v3 of the agent it is possible to record a statistic of loaded and unloaded classes to a CSV file.
-This allows you to detect dead classes.
-See the [monitor module](../monitor/README.md) how to find it.
+This allows you to detect [dead classes](../src/doc/DeadClasses.adoc).
 
 You can also record to other targets like a GIT repository (see e.g. [ClazzFishTest](https://github.com/oboehm/ClazzFishTest)).
 In this case you must use the [monitor module](../monitor/README.md).

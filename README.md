@@ -34,8 +34,8 @@ V2.x supports Java 17 and beyond but still works with Java 11.
 With v2.3 the ClazzStatistic class was introduced to store the statistic of loaded classes.
 The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath was discarded (no speedup was measured).
 
-With v3.x a core module was introduced to extend the ClasspathAgent and to share code of it with the monitor module.
-With v3.x the agent allows you now to store a class statistic to a CSV file without the need to add a ClazzFish library ad dependency.
+With v3.x a [core](core/README.md) module was introduced and the ClasspathAgent extended.
+It allows you now to store a class statistic using the ClazzStatistic of the core module.
 
 
 

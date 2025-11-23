@@ -52,11 +52,24 @@ But then classes with only static methods will be detected as "dead classes".
 
 == ClazzStatistic
 
-ClazzStatistic uses the ClasspathMonitor to record for each class in the classpath
+ClazzStatistic records for each class in the classpath
 
 * if class was loaded and
 * to which JAR or directory the class belongs.
 
+
+=== Added as Agent
+
+Since v3.x the ClasspathAgent is able to use the ClazzStatistic class to record loaded classes.
+This allows you use the agent standalone without adding the ClazzFish libraries as dependency.
+
+The configuration is limited to environment variables or system properties (see next section).
+And you can only use files to store the statistic.
+
+
+=== Added as Library
+
+You have the most options if you add one of the ClazzFish libraries (at least clazzfish-monitor).
 All you have to do to activate the export of #ClazzStatistic.csv# at the end of your application is encapsulated in the Starter class:
 
 [source:java]
@@ -185,7 +198,7 @@ If you start your application without the Java agent `clazzfish-agent` static an
 The reason for it is the use of the garbage collector (GC) as fallback.
 But the GC only collect object instances not classes.
 
-Also this problem ist fixed with v2.5 it is not guaranteed that it works with all kind of Java VMs.
+Also this problem is fixed with v2.5 it is not guaranteed that it works with all kind of Java VMs.
 In this case start your application with `clazzfish-agent`:
 
 ----
