@@ -1,7 +1,7 @@
 = How to Import/Export Statistics to Your URI
 
 
-As default the link:../../monitor/src/main/java/clazzfish/monitor/stat/ClazzStatistic.java[ClazzStatistic] exports the statistic to `ClazzStatistic.csv` in a temporary directory.
+As default the link:../../core/src/main/java/clazzfish/core/stat/ClazzStatistic.java[ClazzStatistic] exports the statistic to `ClazzStatistic.csv` in a temporary directory.
 But you can also define the system property #clazzfish.dump.uri# to use another directory or another location like e.g. `sftp://fritz.box/log` to export your statistic.
 
 

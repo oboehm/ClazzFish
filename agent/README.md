@@ -8,6 +8,7 @@ The agent can be started with
 The agent provides the information which classes were loaded by the classloader.
 
 
+
 ## Design Decisions
 
 To keep the agent small it was decided to
@@ -16,3 +17,16 @@ To keep the agent small it was decided to
 - keep the memory foot print small
 
 Because of the use of no other dependencies logging is done with the logging package of the JDK.
+
+
+
+## Dead Class Detection
+
+With v3 of the agent it is possible to record a statistic of loaded and unloaded classes to a CSV file.
+This allows you to detect dead classes.
+See the [monitor module](../monitor/README.md) how to find it.
+
+You can also record to other targets like a GIT repository (see e.g. [ClazzFishTest](https://github.com/oboehm/ClazzFishTest)).
+In this case you must use the [monitor module](../monitor/README.md).
+The agent module does not support it to avoid dependencies to external libraries and to keep the size small.
+With v3 the size of the agent increased to 53 kB (before: 8 kB).

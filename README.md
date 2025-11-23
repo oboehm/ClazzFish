@@ -29,8 +29,13 @@ On the talk about "[Dead Classes](https://jugsaxony.org/downloads/day/slides/JSD
 
 With v0.5 and v0.8 the first steps were done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
 V1.x is mainly for Java 8.
+
 V2.x supports Java 17 and beyond but still works with Java 11.
+With v2.3 the ClazzStatistic class was introduced to store the statistic of loaded classes.
 The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath was discarded (no speedup was measured).
+
+With v3.x a core module was introduced to extend the ClasspathAgent and to share code of it with the monitor module.
+With v3.x the agent allows you now to store a class statistic to a CSV file without the need to add a ClazzFish library ad dependency.
 
 
 
