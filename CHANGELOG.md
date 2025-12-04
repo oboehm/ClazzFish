@@ -8,13 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- class statistic can be dumped direct by agent, without adding clazzfish-monitor to classpath
+- deployment changed from oss.sonatype.org to central.sonatype.org
+
 ### Added
 
 - core module
-
-### Changed
-
-- deployment changed from oss.sonatype.org to central.sonatype.org
 
 
 ## [2.8] (26-Jul-2025)
