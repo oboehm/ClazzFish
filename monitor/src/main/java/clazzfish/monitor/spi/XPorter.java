@@ -55,7 +55,7 @@ public class XPorter {
     public static CsvXPorter createCsvXPorter(URI uri) {
         for (CsvXPorterProvider provider : getProviders()) {
             if (provider.supports(uri)) {
-                return provider.create();
+                return provider.create(uri);
             }
         }
         throw new IllegalArgumentException("Unsupported URI: " + uri);

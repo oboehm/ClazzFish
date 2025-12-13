@@ -17,8 +17,9 @@
  */
 package clazzfish.jdbc;
 
-import clazzfish.monitor.Starter;
 import clazzfish.core.Config;
+import clazzfish.monitor.Starter;
+import clazzfish.monitor.spi.XPorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +36,13 @@ import java.net.URI;
 public final class JdbcStarter {
 
     private static final Logger log = LoggerFactory.getLogger(JdbcStarter.class);
+    private static final URI dumpURI = Config.DEFAULT.getDumpURI();
 
     /**
-     * Registers all MBeans for monitoring the connection and SQL statements.
+     * Registers the MBeans for monitoring the connection.
      */
     public static void start() {
         ConnectionMonitor.getInstance().registerMeAsMBean();
-        SqlStatistic.getInstance().registerMeAsMBean();
         log.debug("ClazzFish JDBC library is started and ready.");
     }
 
@@ -61,8 +62,10 @@ public final class JdbcStarter {
     public static void record() {
         start();
         ConnectionMonitor.getInstance().addMeAsShutdownHook();
-        SqlStatistic.getInstance().addMeAsShutdownHook();
-        log.trace("All MBeans are registered as shutdown hook.");
+        SqlStatistic statistic = SqlStatistic.of(XPorter.createCsvXPorter(dumpURI));
+        statistic.registerMeAsMBean();
+        statistic.addMeAsShutdownHook();
+        log.trace("ConnectionMonitor and {} are registered as shutdown hook.", statistic);
     }
 
     /**
@@ -78,7 +81,7 @@ public final class JdbcStarter {
     }
 
     /**
-     * Does not register all MBeans but add them also as shutdown hook.
+     * Register all MBeans and add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
      * the base URI.
      *

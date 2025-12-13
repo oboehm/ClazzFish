@@ -21,7 +21,6 @@
 package clazzfish.jdbc;
 
 import clazzfish.jdbc.monitor.ProfileMonitor;
-import clazzfish.core.jmx.MBeanFinder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +31,7 @@ import javax.management.openmbean.TabularData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -58,7 +58,8 @@ public class SqlStatisticTest {
         "SELECT a FROM e",
         "SELECT a FROM f"
     };
-    private final SqlStatistic instance = SqlStatistic.getInstance();
+    private static final File TARGET_FILE = new File("target", "SqlStatistic.csv");
+    private final SqlStatistic instance = SqlStatistic.of(TARGET_FILE.toURI());
 
     /**
      * Prepare the statistics. Each monitor is started and stopped to have
@@ -81,14 +82,6 @@ public class SqlStatisticTest {
             }
             assertTrue(monitors[i].getLastValue() >= 0.0);
         }
-    }
-
-    /**
-     * Test method for {@link SqlStatistic#getInstance()}.
-     */
-    @Test
-    public void testGetInstance() {
-        assertNotNull(SqlStatistic.getInstance());
     }
 
     /**
@@ -149,14 +142,6 @@ public class SqlStatisticTest {
     }
 
     /**
-     * Test register as shutdown hook.
-     */
-    @Test
-    public void testRegisterAsShutdownHook() {
-        SqlStatistic.addAsShutdownHook();
-    }
-
-    /**
      * Because the statistic was set up by this test there should be some
      * statistics available.
      */
@@ -190,14 +175,13 @@ public class SqlStatisticTest {
         assertTrue(file.isFile());
     }
 
-    /**
-     * Test method for {@link SqlStatistic#registerAsMBean(String)}.
-     */
-	@Test
-    public void testRegisterAsMBean() {
-        String mbeanName = "test.mon.SqlStat";
-        SqlStatistic.registerAsMBean(mbeanName);
-        assertTrue(MBeanFinder.isRegistered(mbeanName), "not registered: " + mbeanName);
+    @Test
+    void exportCSV() throws IOException {
+        File csvFile = new File(instance.exportCSV());
+        assertTrue(csvFile.exists());
+        List<String> lines = Files.readAllLines(csvFile.toPath());
+        assertThat(lines.size(), greaterThan(1));
+        assertEquals(TARGET_FILE.getAbsoluteFile(), csvFile);
     }
 
     /**

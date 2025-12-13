@@ -1,7 +1,5 @@
 /*
- * $Id: SqlStatistic.java,v 1.12 2016/12/18 20:19:38 oboehm Exp $
- *
- * Copyright (c) 2014 by Oliver Boehm
+ * Copyright (c) 2014-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +18,22 @@
 
 package clazzfish.jdbc;
 
+import clazzfish.core.Config;
+import clazzfish.core.spi.CsvXPorter;
 import clazzfish.jdbc.internal.PasswordFilter;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import clazzfish.jdbc.monitor.ProfileMonitor;
-import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.StackTraceScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -40,25 +44,46 @@ import java.util.regex.Pattern;
  */
 public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SqlStatistic.class);
-	private static final SqlStatistic SQL_INSTANCE;
+	private static final Logger log = LoggerFactory.getLogger(SqlStatistic.class);
+    private static final Map<CsvXPorter, SqlStatistic> INSTANCES = new ConcurrentHashMap<>();
+	private static SqlStatistic SQL_INSTANCE;
+    private final URI csvURI;
+    private final CsvXPorter xPorter;
 
-	static {
-		SQL_INSTANCE = new SqlStatistic();
-	}
+    private static SqlStatistic getInstance() {
+        if (SQL_INSTANCE == null) {
+            SQL_INSTANCE = SqlStatistic.of(Config.DEFAULT.getDumpURI());
+        }
+        return SQL_INSTANCE;
+    }
 
-	/**
-	 * Gets the single instance of SqlStatistic.
-	 *
-	 * @return single instance of SqlStatistic
-	 */
-	public static SqlStatistic getInstance() {
-		return SQL_INSTANCE;
-	}
+    public static SqlStatistic of(URI csvURI) {
+        String c = "ClazzStatistic.csv";
+        String s = csvURI.toString();
+        if (s.endsWith(c)) {
+            csvURI = URI.create(s.substring(0, s.length() - c.length()) + "SqlStatistic.csv");
+            log.info("DumpURI is changed from '{}' to '{}'.", s, csvURI);
+        } else if (!s.endsWith(".csv")) {
+            csvURI = URI.create(s + "/SqlStatistic.csv");
+            log.info("SQL statistic will be dumped to '{}'.", csvURI);
+        }
+        return of(XPorter.createCsvXPorter(csvURI));
+    }
 
-	protected SqlStatistic() {
-		super("SQL");
-	}
+    public static SqlStatistic of(CsvXPorter xPorter) {
+        return INSTANCES.computeIfAbsent(xPorter, uri -> of(xPorter.getURI(), xPorter));
+    }
+
+    private static SqlStatistic of(URI csvURI, CsvXPorter xPorter) {
+        return new SqlStatistic(csvURI, xPorter);
+    }
+
+    private SqlStatistic(URI csvURI, CsvXPorter xPorter) {
+        super("SQL");
+        this.xPorter = xPorter;
+        this.csvURI = csvURI;
+        log.trace("Statistics will be imported from / exported to \"{}\".", csvURI);
+    }
 
 	/**
 	 * To start a new statistic call this method. In contradiction to
@@ -79,7 +104,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	 * @return the started profile monitor
 	 */
 	public static ProfileMonitor start(final String sql) {
-		return SQL_INSTANCE.startProfileMonitorFor(sql.trim());
+		return getInstance().startProfileMonitorFor(sql.trim());
 	}
 
 	/**
@@ -105,41 +130,31 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	 */
 	public static void stop(final ProfileMonitor mon, final String command, final Object returnValue) {
 		mon.stop();
-		if (LOG.isDebugEnabled()) {
+		if (log.isDebugEnabled()) {
 			String msg = '"' + PasswordFilter.filter(command) + "\" returned with " + Converter.toShortString(returnValue) + " after "
 					+ mon.getLastTime();
-			if (LOG.isTraceEnabled()) {
+			if (log.isTraceEnabled()) {
 				StackTraceElement[] stacktrace = StackTraceScanner.getCallerStackTrace(new Pattern[0],
 						SqlStatistic.class, StasiStatement.class, StasiPreparedStatement.class);
-				LOG.trace("{}\n\t{}", msg, Converter.toLongString(stacktrace).trim());
+				log.trace("{}\n\t{}", msg, Converter.toLongString(stacktrace).trim());
 			} else {
-				LOG.debug("{}.", msg);
+				log.debug("{}.", msg);
 			}
 		}
 	}
 
-	/**
-	 * You can register the instance as shutdown hook. If the VM is terminated
-	 * the profile values are logged and dumped to a CSV file in the tmp
-	 * directory.
-	 */
-	public static void addAsShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(SQL_INSTANCE);
-		LOG.debug("{} is registered as shutdown hook.", SQL_INSTANCE);
-	}
-
-	/**
-	 * With this method you can register the monitor with your own name. This is
-	 * e.g. useful if you have an application server with several applications.
-	 * <p>
-	 * You can only register the monitor only once. If you want to register it
-	 * with another name you have to first unregister it.
-	 * </p>
-	 *
-	 * @param name the MBean name (e.g. "my.class.Monitor")
-	 */
-	public static void registerAsMBean(final String name) {
-		getInstance().registerMeAsMBean(MBeanFinder.getAsObjectName(name));
-	}
+    /**
+     * Exports the SQL statistic as CSV.
+     *
+     * @return the URI where the statistic is exported
+     * @throws IOException in case of IO problems
+     * @since 3.0
+     */
+    @Override
+    public URI exportCSV() throws IOException {
+        log.info("Exporting SQL statistic to '{}'...", csvURI);
+        xPorter.exportCSV(getCsvLines());
+        return xPorter.getURI();
+    }
 
 }

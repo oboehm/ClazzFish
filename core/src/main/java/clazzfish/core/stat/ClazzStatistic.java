@@ -74,6 +74,9 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {
+        if (!csvURI.toString().endsWith(".csv")) {
+            csvURI = URI.create(csvURI + "/ClazzStatistic.csv");
+        }
         return new ClazzStatistic(csvURI, xPorter);
     }
 

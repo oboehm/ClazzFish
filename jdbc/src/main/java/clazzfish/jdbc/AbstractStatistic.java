@@ -19,13 +19,14 @@
  */
 package clazzfish.jdbc;
 
+import clazzfish.core.Config;
+import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.jdbc.monitor.*;
 import clazzfish.monitor.AbstractMonitor;
 import clazzfish.monitor.ClasspathMonitor;
-import clazzfish.core.Config;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.core.jmx.MBeanFinder;
 import clazzfish.monitor.util.ClasspathHelper;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,6 @@ import javax.management.openmbean.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -431,22 +431,24 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	 */
 	@Override
 	public void dumpMe(final File dumpFile) throws IOException {
-		ProfileMonitor[] monitors = getSortedMonitors();
-		if (monitors.length == 0) {
-			LOG.debug("No profiling data available.");
-			return;
-		}
-		try (BufferedWriter writer = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(dumpFile), StandardCharsets.UTF_8))) {
-    		writer.write(monitors[0].toCsvHeadline());
-    		writer.newLine();
-    		for (ProfileMonitor profMon : monitors) {
-    			writer.write(profMon.toCsvString());
-    			writer.newLine();
-    		}
-		}
-		LOG.info("Profiling data dumped to '{}'.", dumpFile);
+        List<String> csvLines = getCsvLines();
+        FileUtils.writeLines(dumpFile, csvLines);
+		LOG.info("Profiling data dumped to '{}' ({} lines).", dumpFile, csvLines.size());
 	}
+
+    protected List<String> getCsvLines() {
+        List<String> csvLines = new ArrayList<>();
+        ProfileMonitor[] monitors = getSortedMonitors();
+        if (monitors.length == 0) {
+            LOG.debug("No profiling data available.");
+        } else {
+            csvLines.add(monitors[0].toCsvHeadline());
+            for (ProfileMonitor profMon : monitors) {
+                csvLines.add(profMon.toCsvString());
+            }
+        }
+        return csvLines;
+    }
 
 	/**
 	 * It is only tested for Jamon 2.4 and 2.7 so we look for it

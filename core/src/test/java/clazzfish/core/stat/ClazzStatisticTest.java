@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ClazzStatisticTest {
 
     private static final Logger log = LoggerFactory.getLogger(clazzfish.core.stat.ClazzStatistic.class);
-    private final clazzfish.core.stat.ClazzStatistic recorder = clazzfish.core.stat.ClazzStatistic.of(new FileXPorter(Config.DEFAULT.getDumpURI()));
+    private final ClazzStatistic recorder = ClazzStatistic.of(new FileXPorter(Config.DEFAULT.getDumpURI()));
 
     @Test
     void registerMeAsMBean() {

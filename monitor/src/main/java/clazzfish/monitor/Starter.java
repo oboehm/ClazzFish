@@ -100,7 +100,7 @@ public final class Starter {
     }
 
     /**
-     * Does not register all MBeans but add also the ClazzStatistic as shutdown
+     * Register all MBeans and add also the ClazzStatistic as shutdown
      * hook.
      *
      * @param base URI where the statistic is stored

@@ -58,14 +58,27 @@ public abstract class AbstractMonitor extends ShutdownHook implements AbstractMo
     @Override
     public void run() {
         try {
-            File file = dumpMe();
-            LOG.debug("{} was dumped to '{}'.", this, file);
+            exportCSV();
         } catch (IOException ioe) {
             LOG.error("Cannot dump {}:", this, ioe);
             logMe();
         } catch (NoClassDefFoundError error) {
             System.err.println("Cannot dump " + this + ": " + error);
         }
+    }
+
+    /**
+     * If you want to configure via {@link Config#DUMP_URI} the location where
+     * the monitored data should be exported you should override this method.
+     *
+     * @return the URI where the dates are exported
+     * @throws IOException in case of IO problems
+     * @since 3.0
+     */
+    public URI exportCSV() throws IOException {
+        File file = dumpMe();
+        LOG.debug("{} was dumped to '{}'.", this, file);
+        return file.toURI();
     }
 
     /**
@@ -78,20 +91,6 @@ public abstract class AbstractMonitor extends ShutdownHook implements AbstractMo
     public void registerMeAsMBean() {
         this.registerMeAsMBean(MBeanFinder.getAsObjectName(this.getClass()));
     }
-
-//    /**
-//     * With this method you can register the monitor with your own name. This is
-//     * e.g. useful if you have an application server with several applications.
-//     * <p>
-//     * You can only register the monitor only once. If you want to register it
-//     * with another name you have to first unregister it.
-//     * </p>
-//     *
-//     * @param name the MBean name (e.g. "my.class.Monitor")
-//     */
-//    public void registerMeAsMBean(final String name) {
-//        this.registerMeAsMBean(MBeanFinder.getAsObjectName(name));
-//    }
 
     /**
      * With this method you can register the monitor with your own name. This is

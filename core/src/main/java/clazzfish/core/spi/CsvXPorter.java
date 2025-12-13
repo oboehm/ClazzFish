@@ -66,6 +66,18 @@ public interface CsvXPorter {
     }
 
     /**
+     * Interface for exporting CSV.
+     *
+     * @param csvLines CSV lines including head line
+     * @throws IOException in case of I/O problems
+     * @since 3.0
+     */
+    default void exportCSV(List<String> csvLines) throws IOException {
+        String csvHeadLine = csvLines.get(0);
+        exportCSV(csvHeadLine, csvLines.subList(1, csvLines.size()));
+    }
+
+    /**
      * Interface for importing a CSV. This method should be called in
      * {@link #exportCSV(URI, String, List)} to aggregate the count of the
      * actual export with former exports.
