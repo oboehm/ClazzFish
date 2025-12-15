@@ -73,8 +73,12 @@ public interface CsvXPorter {
      * @since 3.0
      */
     default void exportCSV(List<String> csvLines) throws IOException {
-        String csvHeadLine = csvLines.get(0);
-        exportCSV(csvHeadLine, csvLines.subList(1, csvLines.size()));
+        if (csvLines.isEmpty()) {
+            log.info("No CSV data available.");
+        } else {
+            String csvHeadLine = csvLines.get(0);
+            exportCSV(csvHeadLine, csvLines.subList(1, csvLines.size()));
+        }
     }
 
     /**

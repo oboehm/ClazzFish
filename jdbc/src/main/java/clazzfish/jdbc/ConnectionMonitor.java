@@ -1,7 +1,5 @@
 /*
- * $Id: ConnectionMonitor.java,v 1.17 2016/12/18 20:19:38 oboehm Exp $
- *
- * Copyright (c) 2012 by Oliver Boehm
+ * Copyright (c) 2012-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor implements ConnectionMonitorMBean {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ConnectionMonitor.class);
+	private static final Logger log = LoggerFactory.getLogger(ConnectionMonitor.class);
 	private static final ConnectionMonitor INSTANCE;
 	private static final List<ProxyConnection> openConnections = new CopyOnWriteArrayList<>();
 
@@ -63,7 +61,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	static {
 		INSTANCE = new ConnectionMonitor();
 		MBeanFinder.registerMBean(INSTANCE);
-		LOG.debug("{} created and registered as MBean.", INSTANCE);
+		log.debug("{} created and registered as MBean.", INSTANCE);
 	}
 
 	/**
@@ -72,7 +70,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	 * ConnectionMonitor in patterntesting.runtime.db.
 	 */
 	protected ConnectionMonitor() {
-		LOG.trace("New instance of {} created.", ConnectionMonitor.class);
+		log.trace("New instance of {} created.", ConnectionMonitor.class);
 	}
 
 	/**
@@ -190,7 +188,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 			}
 			return data;
 		} catch (OpenDataException ex) {
-			LOG.warn("Cannot get caller stacktraces of " + openConnections.size() + " open connections.", ex);
+			log.warn("Cannot get caller stacktraces of " + openConnections.size() + " open connections.", ex);
 			throw ex;
 		}
 	}
@@ -212,7 +210,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	public StackTraceElement getLastCaller() {
 		StackTraceElement[] callers = this.getCallers();
 		if (callers.length == 0) {
-			LOG.debug("No open connections - last caller is null.");
+			log.debug("No open connections - last caller is null.");
 			return null;
 		}
 		return callers[callers.length - 1];
@@ -309,9 +307,9 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 			dumpArray(this.getLastCallerStacktrace(), new BufferedWriter(writer), "lastCallerStracktrace");
 			dumpArray(openConnections.toArray(), new BufferedWriter(writer), "openConnections");
 			dumpArray(getCallerStacktraceDumps().toArray(), new BufferedWriter(writer), "callerStacktraces");
-			LOG.info(writer.toString());
+			log.info(writer.toString());
 		} catch (IOException cannothappen) {
-			LOG.warn("Cannot dump resources:", cannothappen);
+			log.warn("Cannot dump resources:", cannothappen);
 		}
 	}
 
@@ -324,7 +322,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	@Override
 	public void logCallerStacktraces() {
 		for (String dump : getCallerStacktraceDumps()) {
-			LOG.info(dump);
+			log.info(dump);
 		}
 	}
 
@@ -351,11 +349,15 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 	@Override
 	public void run() {
 		super.run();
-		LOG.info("---->>>>---->>>>----    {} of {} connection(s) are still open    ---->>>>---->>>>----",
-				openConnections.size(), sumOfConnections);
-		this.logCallerStacktraces();
-		LOG.info("----<<<<----<<<<----    {} of {} connection(s) are still open    ----<<<<----<<<<----",
-				openConnections.size(), sumOfConnections);
+        if (openConnections.isEmpty()) {
+            log.info("All {} connections are closed.", sumOfConnections);
+        } else {
+            log.info("---->>>>---->>>>----    {} of {} connection(s) are still open    ---->>>>---->>>>----",
+                    openConnections.size(), sumOfConnections);
+            this.logCallerStacktraces();
+            log.info("----<<<<----<<<<----    {} of {} connection(s) are still open    ----<<<<----<<<<----",
+                    openConnections.size(), sumOfConnections);
+        }
 	}
 
 }

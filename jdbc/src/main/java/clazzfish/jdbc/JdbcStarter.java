@@ -36,7 +36,7 @@ import java.net.URI;
 public final class JdbcStarter {
 
     private static final Logger log = LoggerFactory.getLogger(JdbcStarter.class);
-    private static final URI dumpURI = Config.DEFAULT.getDumpURI();
+    private static URI dumpURI = Config.DEFAULT.getDumpURI();
 
     /**
      * Registers the MBeans for monitoring the connection.
@@ -76,7 +76,7 @@ public final class JdbcStarter {
      * @param dir directory where the dates are stored
      */
     public static void record(File dir) {
-        Config.DEFAULT.setDumpDir(dir);
+        setDumpDir(dir);
         record();
     }
 
@@ -89,7 +89,7 @@ public final class JdbcStarter {
      * @since 2.5
      */
     public static void record(URI base) {
-        Config.DEFAULT.setDumpURI(base);
+        setDumpURI(base);
         record();
     }
 
@@ -107,7 +107,7 @@ public final class JdbcStarter {
      * </ul>
      */
     public static void recordAll() {
-        Starter.record();
+        Starter.record(dumpURI);
         record();
     }
 
@@ -119,7 +119,7 @@ public final class JdbcStarter {
      * @param dir directory where the dates are stored
      */
     public static void recordAll(File dir) {
-        Config.DEFAULT.setDumpDir(dir);
+        setDumpDir(dir);
         recordAll();
     }
 
@@ -132,8 +132,16 @@ public final class JdbcStarter {
      * @since 2.5
      */
     public static void recordAll(URI base) {
-        Config.DEFAULT.setDumpURI(base);
+        setDumpURI(base);
         recordAll();
+    }
+
+    private static void setDumpURI(URI uri) {
+        dumpURI = uri;
+    }
+
+    private static void setDumpDir(File dir) {
+        setDumpURI(dir.toURI());
     }
 
 }
