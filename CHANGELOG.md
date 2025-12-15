@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - core module
 
+### Removed
+
+- support of JaMon libary for profiling
+
 
 ## [2.8] (26-Jul-2025)
 

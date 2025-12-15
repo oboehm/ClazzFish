@@ -82,8 +82,6 @@ public abstract class ProfileMonitorFactoryTest {
 	/**
 	 * Test method for {@link ProfileMonitorFactory#getMonitor(String)}.
 	 * If the maximum number of monitors is unlimited this method works ok.
-	 * But if the maximum number is set and is reached the JamonMonitorFactory
-	 * fall back to a NullMonitor which causes problems.
 	 */
 	@Test
 	public void testGetMonitor() {

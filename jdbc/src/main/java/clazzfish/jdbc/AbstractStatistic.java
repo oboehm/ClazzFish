@@ -21,32 +21,28 @@ package clazzfish.jdbc;
 
 import clazzfish.core.Config;
 import clazzfish.core.jmx.MBeanFinder;
-import clazzfish.jdbc.monitor.*;
+import clazzfish.jdbc.monitor.ProfileMonitor;
+import clazzfish.jdbc.monitor.ProfileMonitorFactory;
+import clazzfish.jdbc.monitor.SimpleProfileMonitor;
+import clazzfish.jdbc.monitor.SimpleProfileMonitorFactory;
 import clazzfish.monitor.AbstractMonitor;
-import clazzfish.monitor.ClasspathMonitor;
 import clazzfish.monitor.io.ExtendedFile;
-import clazzfish.monitor.util.ClasspathHelper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.openmbean.*;
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 /**
- * This is constructed as a thin layer around com.jamonapi.MonitorFactory for
+ * This was constructed as a thin layer around com.jamonapi.MonitorFactory for
  * the needs of generating statistics. The reason for this layer is that sometimes you
  * want to minimize the use of other libraries. So this implementation provides
  * also an implementation if the JaMon library is missing.
  *
  * @author <a href="boehm@javatux.de">oliver</a>
- * @see com.jamonapi.MonitorFactory
  * @since 0.9
  */
 public abstract class AbstractStatistic extends AbstractMonitor implements AbstractStatisticMBean {
@@ -54,18 +50,6 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractStatistic.class);
 
 	private final ProfileMonitorFactory factory;
-
-	/** Is JaMon library available?. */
-	private static final boolean JAMON_AVAILABLE;
-
-	/*
-	 * Instances of this class *must* be initialized after isJamonAvailable 
-	 * attribute is set. Otherwise you'll get a NullPointerException after MBean
-	 * registration.
-	 */
-	static {
-		JAMON_AVAILABLE = isJamonAvailable();
-	}
 
 	/**
 	 * Instantiates a new profile statistic.
@@ -76,7 +60,7 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 	protected AbstractStatistic(final String rootLabel) {
 		super();
 		SimpleProfileMonitor rootMonitor = new SimpleProfileMonitor(rootLabel);
-		factory = JAMON_AVAILABLE ? new JamonMonitorFactory(rootMonitor) : new SimpleProfileMonitorFactory(rootMonitor);
+		factory = new SimpleProfileMonitorFactory(rootMonitor);
 		factory.setMaxNumMonitors(100);
 		registerMeAsMBean();
 	}
@@ -449,37 +433,5 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
         }
         return csvLines;
     }
-
-	/**
-	 * It is only tested for Jamon 2.4 and 2.7 so we look for it
-	 *
-	 * @return true if Jamon 2.4 or 2.7 (or greater) was found
-	 */
-	private static boolean isJamonAvailable() {
-		String resource = "/com/jamonapi/MonitorFactory.class";
-		URL classURL = SqlStatistic.class.getResource(resource);
-		if (classURL == null) {
-			LOG.debug("JAMon and {} not available, using simple profiling.", resource);
-			return false;
-		}
-		try (JarFile jarfile = ClasspathMonitor
-				.whichResourceJar(ClasspathHelper.getParent(classURL.toURI(), resource))) {
-			Manifest manifest = jarfile.getManifest();
-			Attributes attributes = manifest.getMainAttributes();
-			String version = attributes.getValue("version");
-			if (version == null) {
-				LOG.info("JAMon in {} available for profiling.", jarfile.getName());
-				return true;
-			} else if ("JAMon 2.4".equalsIgnoreCase(version) || (version.compareTo("JAMon 2.7") >= 0)) {
-				LOG.info("{} available for profiling.", version);
-				return true;
-			} else {
-				LOG.info("{} not supported (only JAMon 2.4 and 2.7 or higher), using simple profiling.", version);
-			}
-		} catch (IOException | URISyntaxException ex) {
-			LOG.info("Will use simple profiling because cannot read manifest for {}:", classURL, ex);
-		}
-		return false;
-	}
 
 }

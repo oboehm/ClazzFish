@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * This is the counterpart to JamonMonitorFactory. It encapsulate the different
+ * This was the counterpart to JamonMonitorFactory. It encapsulate the different
  * behaviour of the {@link SimpleProfileMonitor} for the AbstractStatistic class.
  *
  * @author oboehm (ob@aosd.de)
