@@ -60,6 +60,16 @@ public class GitCsvXPorter implements CsvXPorter {
     }
 
     @Override
+    public GitCsvXPorter withURI(URI csvURI) {
+        if (csvURI.equals(getURI())) {
+            return this;
+        } else {
+            log.trace("A new GitCsvXPorter for URI {} with {} will be created.", csvURI, sshConfig);
+            return new GitCsvXPorter(sshConfig, csvURI);
+        }
+    }
+
+    @Override
     public List<String> importCSV(URI uri) throws IOException {
         if (uri.getScheme().equalsIgnoreCase("file")) {
             return importCSV(new File(uri));

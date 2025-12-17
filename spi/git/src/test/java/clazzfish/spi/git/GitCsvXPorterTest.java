@@ -18,6 +18,7 @@
 package clazzfish.spi.git;
 
 import clazzfish.core.Config;
+import clazzfish.core.spi.CsvXPorter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -108,6 +109,16 @@ class GitCsvXPorterTest {
         ObjectTester.assertEquals(a, b);
         GitCsvXPorter c = new GitCsvXPorter(sshConfig, URI.create("ssh://c"));
         ObjectTester.assertNotEquals(a, c);
+    }
+
+    @Test
+    void testWithURI() {
+        URI a = URI.create("ssh://a");
+        URI b = URI.create("ssh://b");
+        CsvXPorter x1 = new GitCsvXPorter(a);
+        CsvXPorter x2 = x1.withURI(b);
+        assertNotEquals(x1, x2);
+        assertEquals(x1, x1.withURI(a));
     }
 
 }

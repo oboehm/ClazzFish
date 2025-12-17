@@ -36,12 +36,20 @@ public interface CsvXPorter {
     Logger log = Logger.getLogger(CsvXPorter.class.getName());
 
     /**
-     * Simple getter for the import and export URI
+     * Simple getter for the import and export URI.
      *
      * @return URI
      * @since 3.0
      */
     URI getURI();
+
+    /**
+     * Returns a (new) CsvXPorter with new URI.
+     *
+     * @param csvURI URI of the returned CsvXPorter
+     * @return usually a new CsvXPorter
+     */
+    CsvXPorter withURI(URI csvURI);
 
     /**
      * Interface for exporting CSV.

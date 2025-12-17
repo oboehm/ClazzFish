@@ -38,6 +38,11 @@ public class CsvPrinter implements CsvXPorter {
         return URI.create("print://dead.classes");
     }
 
+    @Override
+    public CsvPrinter withURI(URI csvURI) {
+        return this;
+    }
+
     /**
      * Prints only the dead classes to stdout.
      *

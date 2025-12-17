@@ -70,14 +70,17 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     private final CsvXPorter xPorter;
 
     public static ClazzStatistic of(CsvXPorter xPorter) {
-        return INSTANCES.computeIfAbsent(xPorter, uri -> of(xPorter.getURI(), xPorter));
-    }
-
-    private static ClazzStatistic of(URI csvURI, CsvXPorter xPorter) {
+        URI csvURI = xPorter.getURI();
         if (!csvURI.toString().endsWith(".csv")) {
-            csvURI = URI.create(csvURI + "/ClazzStatistic.csv");
+            csvURI = java.net.URI.create(csvURI + "/ClazzStatistic.csv");
+            xPorter = xPorter.withURI(csvURI);
         }
-        return new ClazzStatistic(csvURI, xPorter);
+        ClazzStatistic cached = INSTANCES.get(xPorter);
+        if (cached == null) {
+            cached = new ClazzStatistic(csvURI, xPorter);
+            INSTANCES.put(xPorter, cached);
+        }
+        return cached;
     }
 
     private ClazzStatistic(URI csvURI, CsvXPorter xPorter) {
@@ -105,6 +108,10 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
             log.log(Level.FINE, "Details:", ex);
             return classpathDigger.getClassRecords();
         }
+    }
+
+    public CsvXPorter getXPorter() {
+        return xPorter;
     }
 
     public SortedSet<ClazzRecord> getStatistics() {

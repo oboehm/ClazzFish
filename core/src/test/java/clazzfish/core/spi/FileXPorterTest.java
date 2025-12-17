@@ -70,4 +70,14 @@ class FileXPorterTest {
         ObjectTester.assertNotEquals(a, c);
     }
 
+    @Test
+    void testWithURI() {
+        File a = new File("a");
+        File b = new File("b");
+        CsvXPorter p1 = new FileXPorter(a.toURI());
+        CsvXPorter p2 = p1.withURI(b.toURI());
+        assertNotEquals(p1, p2);
+        assertEquals(p1, p1.withURI(a.toURI()));
+    }
+
 }

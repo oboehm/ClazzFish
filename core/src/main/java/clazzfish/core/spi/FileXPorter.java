@@ -53,6 +53,16 @@ public class FileXPorter implements CsvXPorter {
     }
 
     @Override
+    public FileXPorter withURI(URI csvURI) {
+        if (csvURI.equals(getURI())) {
+            return this;
+        } else {
+            log.log(Level.FINER, "A new FileXPorter for URI {0} will be created.", csvURI);
+            return new FileXPorter(csvURI);
+        }
+    }
+
+    @Override
     public void exportCSV(URI uri, String csvHeadLine, List<String> csvLines) throws IOException {
         writeCSV(new File(uri), csvHeadLine, csvLines);
         log.log(Level.FINE, "Statistic exported with {0} lines to \"{0}\".", new Object[] { csvLines.size(), uri});

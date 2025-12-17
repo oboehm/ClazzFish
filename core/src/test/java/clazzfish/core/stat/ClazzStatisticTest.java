@@ -65,6 +65,16 @@ class ClazzStatisticTest {
     }
 
     @Test
+    void testOf() {
+        File dir = new File("target");
+        FileXPorter xPorter = new FileXPorter(dir.toURI());
+        ClazzStatistic statistic = ClazzStatistic.of(xPorter);
+        URI exportURI = statistic.getExportURI();
+        assertThat(exportURI.toString(), endsWith(".csv"));
+        assertEquals(exportURI, statistic.getXPorter().getURI());
+    }
+
+    @Test
     void getStatistics() {
         Set<clazzfish.core.stat.ClazzRecord> classes = recorder.getStatistics();
         assertFalse(classes.isEmpty());
