@@ -20,6 +20,7 @@
 
 package clazzfish.jdbc;
 
+import clazzfish.core.spi.FileXPorter;
 import clazzfish.jdbc.monitor.ProfileMonitor;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.management.openmbean.TabularData;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Connection;
@@ -149,6 +151,16 @@ public class SqlStatisticTest {
     public void testInstance() {
         ProfileMonitor mon = instance.getMonitor(sqls[0]);
         assertThat(mon.getHits(), greaterThan(0));
+    }
+
+    @Test
+    void testOf() {
+        File dir = new File("target");
+        FileXPorter xPorter = new FileXPorter(dir.toURI());
+        SqlStatistic statistic = SqlStatistic.of(xPorter);
+        URI exportURI = statistic.getExportURI();
+        assertThat(exportURI.toString(), endsWith(".csv"));
+        assertEquals(exportURI, statistic.getXPorter().getURI());
     }
 
     /**

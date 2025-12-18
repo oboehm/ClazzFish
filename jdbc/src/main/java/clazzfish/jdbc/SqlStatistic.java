@@ -71,11 +71,17 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
     }
 
     public static SqlStatistic of(CsvXPorter xPorter) {
-        return INSTANCES.computeIfAbsent(xPorter, uri -> of(xPorter.getURI(), xPorter));
-    }
-
-    private static SqlStatistic of(URI csvURI, CsvXPorter xPorter) {
-        return new SqlStatistic(csvURI, xPorter);
+		URI csvURI = xPorter.getURI();
+		if (!csvURI.toString().endsWith(".csv")) {
+			csvURI = java.net.URI.create(csvURI + "/SqlStatistic.csv");
+			xPorter = xPorter.withURI(csvURI);
+		}
+		SqlStatistic cached = INSTANCES.get(xPorter);
+		if (cached == null) {
+			cached = new SqlStatistic(csvURI, xPorter);
+			INSTANCES.put(xPorter, cached);
+		}
+		return cached;
     }
 
     private SqlStatistic(URI csvURI, CsvXPorter xPorter) {
@@ -84,6 +90,10 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
         this.csvURI = csvURI;
         log.trace("Statistics will be imported from / exported to \"{}\".", csvURI);
     }
+
+	public CsvXPorter getXPorter() {
+		return xPorter;
+	}
 
 	/**
 	 * To start a new statistic call this method. In contradiction to
@@ -156,5 +166,10 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
         xPorter.exportCSV(getCsvLines());
         return xPorter.getURI();
     }
+
+	@Override
+	public URI getExportURI() {
+		return csvURI;
+	}
 
 }

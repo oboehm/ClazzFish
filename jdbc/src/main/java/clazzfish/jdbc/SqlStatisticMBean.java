@@ -22,6 +22,8 @@ package clazzfish.jdbc;
 
 import clazzfish.core.jmx.Description;
 
+import java.net.URI;
+
 /**
  * The Interface SqlStatisticMBean.
  *
@@ -30,5 +32,12 @@ import clazzfish.core.jmx.Description;
  */
 @Description("SQL statistic for different SQL statements")
 public interface SqlStatisticMBean extends AbstractStatisticMBean {
+
+    /**
+     * Returns the URI where the statistic should be exported to.
+     *
+     * @return export URI
+     */
+    URI getExportURI();
 
 }

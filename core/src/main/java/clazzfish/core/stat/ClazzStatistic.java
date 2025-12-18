@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  * </ol>
  * Please use only one of this environment options.
  * <p>
- * As alternative you can set one of the two environment variables:
+ * As an alternative you can set one of the two environment variables:
  * </p>
  * <ol>
  *     <li>CLAZZFISH_STATISTICS_DIR</li>
