@@ -47,7 +47,6 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	private static final Logger log = LoggerFactory.getLogger(SqlStatistic.class);
     private static final Map<CsvXPorter, SqlStatistic> INSTANCES = new ConcurrentHashMap<>();
 	private static SqlStatistic SQL_INSTANCE;
-    private final URI csvURI;
     private final CsvXPorter xPorter;
 
     private static SqlStatistic getInstance() {
@@ -78,17 +77,16 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 		}
 		SqlStatistic cached = INSTANCES.get(xPorter);
 		if (cached == null) {
-			cached = new SqlStatistic(csvURI, xPorter);
+			cached = new SqlStatistic(xPorter);
 			INSTANCES.put(xPorter, cached);
 		}
 		return cached;
     }
 
-    private SqlStatistic(URI csvURI, CsvXPorter xPorter) {
+    private SqlStatistic(CsvXPorter xPorter) {
         super("SQL");
         this.xPorter = xPorter;
-        this.csvURI = csvURI;
-        log.trace("Statistics will be imported from / exported to \"{}\".", csvURI);
+        log.trace("Statistics will be imported from / exported with \"{}\".", xPorter);
     }
 
 	public CsvXPorter getXPorter() {
@@ -162,14 +160,14 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
      */
     @Override
     public URI exportCSV() throws IOException {
-        log.info("Exporting SQL statistic to '{}'...", csvURI);
+        log.info("Exporting SQL statistic with '{}'...", xPorter);
         xPorter.exportCSV(getCsvLines());
         return xPorter.getURI();
     }
 
 	@Override
 	public URI getExportURI() {
-		return csvURI;
+		return xPorter.getURI();
 	}
 
 }
