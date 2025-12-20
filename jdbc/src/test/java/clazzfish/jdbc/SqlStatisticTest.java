@@ -20,6 +20,7 @@
 
 package clazzfish.jdbc;
 
+import clazzfish.core.Config;
 import clazzfish.core.spi.FileXPorter;
 import clazzfish.jdbc.monitor.ProfileMonitor;
 import org.apache.commons.io.FileUtils;
@@ -84,6 +85,18 @@ public class SqlStatisticTest {
             }
             assertTrue(monitors[i].getLastValue() >= 0.0);
         }
+    }
+
+    /**
+     * {@link SqlStatistic} works only correct as singleton. Experiences
+     * with different instances failed because the recording in
+     * {@link clazzfish.jdbc.internal.StasiPreparedStatement} will be
+     * distributed on the different instances.
+     */
+    @Test
+    public void testSingleton() {
+        SqlStatistic singleton = SqlStatistic.of(Config.DEFAULT.getDumpURI());
+        assertSame(instance, singleton);
     }
 
     /**

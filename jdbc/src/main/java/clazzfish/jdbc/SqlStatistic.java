@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -45,14 +43,10 @@ import java.util.regex.Pattern;
 public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean {
 
 	private static final Logger log = LoggerFactory.getLogger(SqlStatistic.class);
-    private static final Map<CsvXPorter, SqlStatistic> INSTANCES = new ConcurrentHashMap<>();
-	private static SqlStatistic SQL_INSTANCE;
-    private final CsvXPorter xPorter;
+	private static final SqlStatistic SQL_INSTANCE = new SqlStatistic();
+    private CsvXPorter xPorter;
 
     private static SqlStatistic getInstance() {
-        if (SQL_INSTANCE == null) {
-            SQL_INSTANCE = SqlStatistic.of(Config.DEFAULT.getDumpURI());
-        }
         return SQL_INSTANCE;
     }
 
@@ -75,13 +69,13 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 			csvURI = java.net.URI.create(csvURI + "/SqlStatistic.csv");
 			xPorter = xPorter.withURI(csvURI);
 		}
-		SqlStatistic cached = INSTANCES.get(xPorter);
-		if (cached == null) {
-			cached = new SqlStatistic(xPorter);
-			INSTANCES.put(xPorter, cached);
-		}
-		return cached;
+		SQL_INSTANCE.xPorter = xPorter;
+		return SQL_INSTANCE;
     }
+
+	private SqlStatistic() {
+		this(XPorter.createCsvXPorter(Config.DEFAULT.getDumpURI()));
+	}
 
     private SqlStatistic(CsvXPorter xPorter) {
         super("SQL");
@@ -168,6 +162,11 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	@Override
 	public URI getExportURI() {
 		return xPorter.getURI();
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "-" + getExportURI();
 	}
 
 }
