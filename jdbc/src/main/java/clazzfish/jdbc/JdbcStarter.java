@@ -62,7 +62,8 @@ public final class JdbcStarter {
     public static void record() {
         start();
         ConnectionMonitor.getInstance().addMeAsShutdownHook();
-        SqlStatistic statistic = SqlStatistic.of(XPorter.createCsvXPorter(dumpURI));
+        SqlStatistic statistic = SqlStatistic.getInstance();
+        statistic.setXPorter(XPorter.createCsvXPorter(dumpURI));
         statistic.registerMeAsMBean();
         statistic.addMeAsShutdownHook();
         log.trace("ConnectionMonitor and {} are registered as shutdown hook.", statistic);

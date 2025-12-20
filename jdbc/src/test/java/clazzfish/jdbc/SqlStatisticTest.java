@@ -20,7 +20,6 @@
 
 package clazzfish.jdbc;
 
-import clazzfish.core.Config;
 import clazzfish.core.spi.FileXPorter;
 import clazzfish.jdbc.monitor.ProfileMonitor;
 import org.apache.commons.io.FileUtils;
@@ -62,7 +61,7 @@ public class SqlStatisticTest {
         "SELECT a FROM f"
     };
     private static final File TARGET_FILE = new File("target", "SqlStatistic.csv");
-    private final SqlStatistic instance = SqlStatistic.of(TARGET_FILE.toURI());
+    private final SqlStatistic instance = SqlStatistic.getInstance();
 
     /**
      * Prepare the statistics. Each monitor is started and stopped to have
@@ -95,7 +94,7 @@ public class SqlStatisticTest {
      */
     @Test
     public void testSingleton() {
-        SqlStatistic singleton = SqlStatistic.of(Config.DEFAULT.getDumpURI());
+        SqlStatistic singleton = SqlStatistic.getInstance();
         assertSame(instance, singleton);
     }
 
@@ -167,13 +166,13 @@ public class SqlStatisticTest {
     }
 
     @Test
-    void testOf() {
+    void testSetXPorter() {
         File dir = new File("target");
         FileXPorter xPorter = new FileXPorter(dir.toURI());
-        SqlStatistic statistic = SqlStatistic.of(xPorter);
-        URI exportURI = statistic.getExportURI();
+        instance.setXPorter(xPorter);
+        URI exportURI = instance.getExportURI();
         assertThat(exportURI.toString(), endsWith(".csv"));
-        assertEquals(exportURI, statistic.getXPorter().getURI());
+        assertEquals(exportURI, instance.getXPorter().getURI());
     }
 
     /**

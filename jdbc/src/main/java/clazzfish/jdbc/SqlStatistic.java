@@ -43,38 +43,25 @@ import java.util.regex.Pattern;
 public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean {
 
 	private static final Logger log = LoggerFactory.getLogger(SqlStatistic.class);
-	private static final SqlStatistic SQL_INSTANCE = new SqlStatistic();
+	private static final SqlStatistic SQL_INSTANCE;
     private CsvXPorter xPorter;
 
-    private static SqlStatistic getInstance() {
+	static {
+		CsvXPorter cxp = normalize(XPorter.createCsvXPorter(Config.DEFAULT.getDumpURI()));
+		SQL_INSTANCE = new SqlStatistic(cxp);
+	}
+
+    public static SqlStatistic getInstance() {
         return SQL_INSTANCE;
     }
 
-    public static SqlStatistic of(URI csvURI) {
-        String c = "ClazzStatistic.csv";
-        String s = csvURI.toString();
-        if (s.endsWith(c)) {
-            csvURI = URI.create(s.substring(0, s.length() - c.length()) + "SqlStatistic.csv");
-            log.info("DumpURI is changed from '{}' to '{}'.", s, csvURI);
-        } else if (!s.endsWith(".csv")) {
-            csvURI = URI.create(s + "/SqlStatistic.csv");
-            log.info("SQL statistic will be dumped to '{}'.", csvURI);
-        }
-        return of(XPorter.createCsvXPorter(csvURI));
-    }
-
-    public static SqlStatistic of(CsvXPorter xPorter) {
+	private static CsvXPorter normalize(CsvXPorter xPorter) {
 		URI csvURI = xPorter.getURI();
 		if (!csvURI.toString().endsWith(".csv")) {
-			csvURI = java.net.URI.create(csvURI + "/SqlStatistic.csv");
+			csvURI = URI.create(csvURI + "/SqlStatistic.csv");
 			xPorter = xPorter.withURI(csvURI);
 		}
-		SQL_INSTANCE.xPorter = xPorter;
-		return SQL_INSTANCE;
-    }
-
-	private SqlStatistic() {
-		this(XPorter.createCsvXPorter(Config.DEFAULT.getDumpURI()));
+		return xPorter;
 	}
 
     private SqlStatistic(CsvXPorter xPorter) {
@@ -85,6 +72,10 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 
 	public CsvXPorter getXPorter() {
 		return xPorter;
+	}
+
+	public void setXPorter(CsvXPorter xPorter) {
+		this.xPorter = normalize(xPorter);
 	}
 
 	/**
