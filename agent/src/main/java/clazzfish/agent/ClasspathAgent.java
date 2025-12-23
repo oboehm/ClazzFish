@@ -256,7 +256,7 @@ public class ClasspathAgent extends ShutdownHook implements ClasspathAgentMBean 
                 log.log(Level.WARNING, "Dump of loaded classes to {0} failed ({0})", new Object[]{dumpURI, ex.getMessage()});
                 log.log(Level.FINE, "Details:", ex);
             }
-            return new File(dumpURI);
+            return new File(statistic.getExportURI());
         } else {
             return null;
         }
