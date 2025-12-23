@@ -303,7 +303,7 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
             }
             log.log(Level.FINE, "Class records from {0} imported.", csvURI);
         } catch (IOException ex) {
-            log.log(Level.INFO, "File \"{0}\" cannot be imported ({0}).", new Object[]{csvURI, ex.getMessage()});
+            log.log(Level.INFO, "URI \"{0}\" cannot be imported ({0}).", new Object[]{csvURI, ex.getMessage()});
             log.log(Level.FINE, "Details:", ex);
         }
     }

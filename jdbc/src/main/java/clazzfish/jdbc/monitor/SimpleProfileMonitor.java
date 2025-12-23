@@ -1,7 +1,5 @@
 /*
- * $Id: SimpleProfileMonitor.java,v 1.27 2016/12/18 20:19:36 oboehm Exp $
- *
- * Copyright (c) 2008 by Oliver Boehm
+ * Copyright (c) 2008-2025 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class SimpleProfileMonitor extends AbstractProfileMonitor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SimpleProfileMonitor.class);
+	private static final Logger log = LoggerFactory.getLogger(SimpleProfileMonitor.class);
 	private SimpleProfileMonitor parent;
 	private final Map<String, SimpleProfileMonitor> childs = new ConcurrentHashMap<>();
 	private final String label;
@@ -107,7 +105,7 @@ public final class SimpleProfileMonitor extends AbstractProfileMonitor {
 	 * @param child
 	 *            the child
 	 */
-	protected void addChild(final SimpleProfileMonitor child) {
+	public void addChild(final SimpleProfileMonitor child) {
 		this.childs.put(child.label, child);
 	}
 
@@ -165,7 +163,7 @@ public final class SimpleProfileMonitor extends AbstractProfileMonitor {
 	 */
 	public void removeMonitor(final SimpleProfileMonitor monitor) {
 		ProfileMonitor removed = this.childs.remove(monitor.label);
-		LOG.debug("{} was removed from childs.", removed);
+		log.debug("{} was removed from childs.", removed);
 	}
 
 	/**
@@ -346,6 +344,35 @@ public final class SimpleProfileMonitor extends AbstractProfileMonitor {
 	public String toCsvString() {
 		return '"' + this.getLabel() + "\"; ms; " + this.total + "; " + this.getAvg() + "; " + this.hits + "; "
 				+ this.getMax() + "; " + this.getMin();
+	}
+
+	@Override
+	public void readFromCsv(String line) {
+		String[] values = line.split(";");
+		int csvHits = Integer.parseInt(values[4].trim());
+		if (csvHits < 0) {
+			log.info("Line '{}' with {} hits is ignored.", line, csvHits);
+			return;
+		}
+		String lbl = values[0].trim();
+		if (!lbl.equals('"' + this.label + '"')) {
+			throw new IllegalArgumentException(String.format("wrong label (%s) - expected: %s", lbl, label));
+		}
+		String u = values[1].trim();
+		if (!this.getUnits().equals(u)) {
+			throw new UnsupportedOperationException(String.format("unit %s is not supported (only %s)", u, getUnits()));
+		}
+		double csvAvg = Double.parseDouble(values[3]);
+		double csvMax = Double.parseDouble(values[5]);
+		double csvMin = Double.parseDouble(values[6]);
+		add(csvMin);
+		if (csvHits > 1) {
+			add(csvMax);
+			for (int i = 2; i < csvHits; i++) {
+				add(csvAvg);
+			}
+		}
+		log.debug("Line '{}' was imported.", line);
 	}
 
 	/**

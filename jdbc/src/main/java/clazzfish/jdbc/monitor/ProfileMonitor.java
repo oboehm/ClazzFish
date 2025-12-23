@@ -118,6 +118,14 @@ public interface ProfileMonitor extends Comparable<ProfileMonitor> {
 	String toCsvHeadline();
 
 	/**
+	 * Reads the data from an CSV line.
+	 *
+	 * @param line containing data
+	 * @since 3.0
+	 */
+	void readFromCsv(String line);
+
+	/**
 	 * Gets the active.
 	 *
 	 * @return the active

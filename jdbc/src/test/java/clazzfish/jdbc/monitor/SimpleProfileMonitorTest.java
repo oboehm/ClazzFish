@@ -153,4 +153,17 @@ public final class SimpleProfileMonitorTest extends AbstractProfileMonitorTest {
         }
     }
 
+    @Test
+    public void testReadFromCsv() {
+        String line = "\"SELECT * FROM accounts\"; ms; 1.24; 0.62; 2; 0.99; 0.25";
+        SimpleProfileMonitor monitor = new SimpleProfileMonitor("SELECT * FROM accounts");
+        monitor.readFromCsv(line);
+        assertEquals("ms", monitor.getUnits());
+        assertEquals(1.24, monitor.getTotal(), 0.001);
+        assertEquals(0.62, monitor.getAvg(), 0.001);
+        assertEquals(2, monitor.getHits());
+        assertEquals(0.99, monitor.getMax());
+        assertEquals(0.25, monitor.getMin());
+    }
+
 }
