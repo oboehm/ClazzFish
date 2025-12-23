@@ -22,6 +22,7 @@ package clazzfish.jdbc;
 
 import clazzfish.core.spi.FileXPorter;
 import clazzfish.jdbc.monitor.ProfileMonitor;
+import clazzfish.monitor.spi.XPorter;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -201,11 +202,21 @@ public class SqlStatisticTest {
 
     @Test
     void exportCSV() throws IOException {
+        instance.setXPorter(XPorter.createCsvXPorter(TARGET_FILE.toURI()));
         File csvFile = new File(instance.exportCSV());
         assertTrue(csvFile.exists());
+        assertEquals("SqlStatistic.csv", csvFile.getName());
         List<String> lines = Files.readAllLines(csvFile.toPath());
         assertThat(lines.size(), greaterThan(1));
         assertEquals(TARGET_FILE.getAbsoluteFile(), csvFile);
+    }
+
+    @Test
+    void importCSV() throws IOException {
+        int maxHits = instance.getMaxHits();
+        URI exportURI = instance.exportCSV();
+        instance.importCSV(exportURI);
+        assertThat(instance.getMaxHits(), greaterThan(maxHits));
     }
 
     /**

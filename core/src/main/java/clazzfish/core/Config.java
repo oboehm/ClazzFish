@@ -223,7 +223,7 @@ public final class Config {
         }
         String dumpUri = getEnvironment(DUMP_URI);
         if (dumpUri == null) {
-            return new File(getDumpDir(), "ClazzStatistic.csv").toURI();
+            return getDumpDir().toURI();
         } else {
             return URI.create(dumpUri);
         }

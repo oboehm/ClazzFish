@@ -27,12 +27,16 @@ import clazzfish.jdbc.monitor.ProfileMonitor;
 import clazzfish.monitor.spi.XPorter;
 import clazzfish.monitor.util.Converter;
 import clazzfish.monitor.util.StackTraceScanner;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.Strings.CS;
 
 /**
  * This class monitors and measures SQL statements.
@@ -153,6 +157,32 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
 	@Override
 	public URI getExportURI() {
 		return xPorter.getURI();
+	}
+
+	/**
+	 * Imports the statistics from the given URI.
+	 *
+	 * @param csvURI URI where the statistic should be imported from
+	 */
+	public void importCSV(URI csvURI) {
+		try {
+			List<String> csvLines = xPorter.importCSV(csvURI);
+			if (csvLines.isEmpty()) {
+				log.debug("URI \"{}\" is empty and not imported.", csvURI);
+				return;
+			}
+			for (int i = 1; i < csvLines.size(); i++) {
+				String line = csvLines.get(i);
+				String label = line.split(";")[0];
+				label = CS.removeEnd(StringUtils.removeStart(label, '"'), "\"");
+				ProfileMonitor mon = getMonitor(label);
+				mon.readFromCsv(line);
+			}
+			log.debug("SQL statistic from {} imported.", csvURI);
+		} catch (IOException ex) {
+			log.info("URI \"{}\" cannot be imported ({}).", csvURI, ex.getMessage());
+			log.debug("Details:", ex);
+		}
 	}
 
 	@Override
