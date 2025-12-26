@@ -219,6 +219,14 @@ public class SqlStatisticTest {
         assertThat(instance.getMaxHits(), greaterThan(maxHits));
     }
 
+    @Test
+    void importSampleCSV() {
+        File sample = new File("src/test/resources/csv/sample.csv");
+        assertTrue(sample.exists());
+        instance.importCSV(sample.toURI());
+        assertThat(instance.getMaxHits(), greaterThan(0));
+    }
+
     /**
      * Unit test for issue #14.
      *

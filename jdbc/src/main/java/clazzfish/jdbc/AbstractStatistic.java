@@ -148,7 +148,9 @@ public abstract class AbstractStatistic extends AbstractMonitor implements Abstr
 				return profMon;
 			}
 		}
-		throw new IllegalArgumentException("not a valid monitor label: '" + label + "'");
+		LOG.debug("'{}' is added as new monitor.", label);
+		factory.addMonitor(label);
+		return getMonitor(label);
 	}
 
 	/**

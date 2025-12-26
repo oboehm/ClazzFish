@@ -1,0 +1,7 @@
+Label; Unit; Total; Avg; Hits; Max; Min
+"SELECT * FROM accounts WHERE name = ?"; ms; 7.040304; 3.520152; 2; 6.214264; 0.82604
+"SELECT * FROM accounts"; ms; 5.651977; 1.41299425; 4; 3.704296; 0.548713
+"INSERT INTO accounts (balance, name) VALUES (0.00, ?)"; ms; 4.790391; 2.3951955; 2; 4.50181; 0.288581
+"UPDATE accounts SET name = ? WHERE number = ?"; ms; 1.843467; 0.9217335; 2; 1.385569; 0.457898
+"SELECT balance, name FROM accounts where number = ?"; ms; 0.791979; 0.3959895; 2; 0.592107; 0.199872
+"CREATE TABLE accounts (number INTEGER IDENTITY PRIMARY KEY, balance DECIMAL(10,2), name VARCHAR(50))"; ms; 0.441171; 0.441171; 1; 0.441171; 0.441171

@@ -149,6 +149,7 @@ public class SqlStatistic extends AbstractStatistic implements SqlStatisticMBean
      */
     @Override
     public URI exportCSV() throws IOException {
+		importCSV(xPorter.getURI());
         log.info("Exporting SQL statistic with '{}'...", xPorter);
         xPorter.exportCSV(getCsvLines());
         return xPorter.getURI();
