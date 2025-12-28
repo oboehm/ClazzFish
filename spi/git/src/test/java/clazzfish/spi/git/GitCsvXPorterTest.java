@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -57,7 +59,7 @@ class GitCsvXPorterTest {
     }
 
     @Test
-    void exportCSV() throws IOException {
+    void exportClazzStatistic() throws IOException {
         // Given
         assumeTrue(privateKeyFile.exists(), "no SSH key file");
         URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/ClazzStatistic.csv");
@@ -72,8 +74,29 @@ class GitCsvXPorterTest {
 
         // Then
         List<String> imported = xPorter.importCSV(gitURI);
-        assertEquals("Classname;Count", imported.get(0));
-        assertEquals(getClass().getName() + ";1", imported.get(1));
+        assertThat(imported.get(0), containsString("Classname;Count"));
+        assertThat(imported.get(1), containsString(getClass().getName()));
+        RepoTest.deleteRepoPath(gitURI);
+        CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
+    }
+
+    @Test
+    void exportSqlStatistic() throws IOException {
+        // Given
+        assumeTrue(privateKeyFile.exists(), "no SSH key file");
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/SqlStatistic.csv");
+        assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
+        String header = "Label; Unit; Total; Avg; Hits; Max; Min";
+        List<String> lines = new ArrayList<>();
+        lines.add("\"SELECT * FROM accounts\"; ms; 7.0; 3.5; 2; 6.0; 1.0");
+
+        // When
+        GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig, gitURI);
+        xPorter.exportCSV(header, lines);
+
+        // Then
+        List<String> imported = xPorter.importCSV(gitURI);
+        assertEquals(header, imported.get(0));
         RepoTest.deleteRepoPath(gitURI);
         CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
     }

@@ -19,7 +19,6 @@ package clazzfish.spi.git;
 
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.spi.FileXPorter;
-import clazzfish.core.stat.ClazzRecord;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Die Klasse GitCsvXPorter ...
@@ -102,38 +100,28 @@ public class GitCsvXPorter implements CsvXPorter {
     }
 
     private void writeCSV(Repo repo, String csvHeadLine, List<String> csvLines) throws IOException, GitAPIException {
-        List<ClazzRecord> clazzRecords = csvLines.stream()
-                .map(ClazzRecord::fromCSV)
-                .collect(Collectors.toList());
-        writeCSV(repo, clazzRecords);
-        log.trace("{} lines with headline '{}'", csvLines.size(), csvHeadLine);
-    }
-
-    private void writeCSV(Repo repo, List<ClazzRecord> clazzRecords) throws IOException, GitAPIException {
-        File outputFile = new File(repo.getDir(), "ClazzStatistic.csv");
+        File outputFile = new File(repo.getDir(), Repo.getContextPath(uri).toString());
         if (!outputFile.exists()) {
             if (!outputFile.createNewFile()) {
                 throw new IOException("cannot create file " + outputFile.getAbsolutePath());
             }
         }
         FileXPorter fileXPorter = new FileXPorter(outputFile.toURI());
-        List<String> csvLines = clazzRecords.stream()
-                .map(cr -> cr.classname() + ";" + (cr.count() > 0 ? "1" : "0"))
-                .collect(Collectors.toList());
-        fileXPorter.exportCSV("Classname;Count", csvLines);
+        fileXPorter.exportCSV(csvHeadLine, csvLines);
         repo.add(outputFile);
-        String statistic = getStatistic(clazzRecords);
-        repo.commit(statistic);
+        String comment = String.format("statistic with %d entries", csvLines.size());
+        repo.commit(comment);
         repo.push();
+        log.trace("{} lines with headline '{}'", csvLines.size(), csvHeadLine);
     }
 
-    private String getStatistic(List<ClazzRecord> clazzRecords) {
-        long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
-        long ac = clazzRecords.size();
-        long dc = ac - lc;
-        return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
-                lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
-    }
+//    private String getStatistic(List<ClazzRecord> clazzRecords) {
+//        long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
+//        long ac = clazzRecords.size();
+//        long dc = ac - lc;
+//        return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
+//                lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
+//    }
 
     @Override
     public String toString() {
