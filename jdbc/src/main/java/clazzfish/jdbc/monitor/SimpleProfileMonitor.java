@@ -349,30 +349,36 @@ public final class SimpleProfileMonitor extends AbstractProfileMonitor {
 	@Override
 	public void readFromCsv(String line) {
 		String[] values = line.split(";");
-		int csvHits = Integer.parseInt(values[4].trim());
-		if (csvHits < 0) {
-			log.info("Line '{}' with {} hits is ignored.", line, csvHits);
-			return;
-		}
-		String lbl = values[0].trim();
-		if (!lbl.equals('"' + this.label + '"')) {
-			throw new IllegalArgumentException(String.format("wrong label (%s) - expected: %s", lbl, label));
-		}
-		String u = values[1].trim();
-		if (!this.getUnits().equals(u)) {
-			throw new UnsupportedOperationException(String.format("unit %s is not supported (only %s)", u, getUnits()));
-		}
-		double csvAvg = Double.parseDouble(values[3]);
-		double csvMax = Double.parseDouble(values[5]);
-		double csvMin = Double.parseDouble(values[6]);
-		add(csvMin);
-		if (csvHits > 1) {
-			add(csvMax);
-			for (int i = 2; i < csvHits; i++) {
-				add(csvAvg);
+		try {
+			int csvHits = Integer.parseInt(values[4].trim());
+			if (csvHits < 0) {
+				log.info("Line '{}' with {} hits is ignored.", line, csvHits);
+				return;
 			}
+			String lbl = values[0].trim();
+			if (!lbl.equals('"' + this.label + '"')) {
+				throw new IllegalArgumentException(String.format("wrong label (%s) - expected: %s", lbl, label));
+			}
+			String u = values[1].trim();
+			if (!this.getUnits().equals(u)) {
+				throw new UnsupportedOperationException(
+						String.format("unit %s is not supported (only %s)", u, getUnits()));
+			}
+			double csvAvg = Double.parseDouble(values[3]);
+			double csvMax = Double.parseDouble(values[5]);
+			double csvMin = Double.parseDouble(values[6]);
+			add(csvMin);
+			if (csvHits > 1) {
+				add(csvMax);
+				for (int i = 2; i < csvHits; i++) {
+					add(csvAvg);
+				}
+			}
+			log.debug("Line '{}' was imported.", line);
+		} catch (IndexOutOfBoundsException ex) {
+			log.info("Line '{}' with unknown elements is ignored ({}).", line, ex.getMessage());
+			log.debug("Details:", ex);
 		}
-		log.debug("Line '{}' was imported.", line);
 	}
 
 	/**

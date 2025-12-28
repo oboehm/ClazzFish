@@ -20,7 +20,6 @@ package clazzfish.spi.git;
 import clazzfish.core.spi.CsvXPorter;
 import clazzfish.core.spi.FileXPorter;
 import clazzfish.core.stat.ClazzRecord;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -74,10 +74,11 @@ public class GitCsvXPorter implements CsvXPorter {
         if (uri.getScheme().equalsIgnoreCase("file")) {
             return importCSV(new File(uri));
         }
+        Path context = Repo.getContextPath(uri);
         try (Repo repo = Repo.of(uri, sshConfig)) {
-            return importCSV(new File(repo.getDir(), "ClazzStatistic.csv"));
+            return importCSV(new File(repo.getDir(), context.toString()));
         } catch (GitAPIException ex) {
-            log.info("Cannot import ClazzStatistic.csv from {} ({}).", uri, ex.getMessage());
+            log.info("Cannot import {} from {} ({}).", context, uri, ex.getMessage());
             log.debug("Details: ", ex);
             return Collections.emptyList();
         }
@@ -86,8 +87,7 @@ public class GitCsvXPorter implements CsvXPorter {
     private List<String> importCSV(File file) throws IOException {
         log.debug("Importing file {}...", file);
         FileXPorter fileXPorter = new FileXPorter(file.toURI());
-        List<String> lines = fileXPorter.importCSV();
-        return lines.stream().map(s -> StringUtils.substringAfter(s, ";")).collect(Collectors.toList());
+        return fileXPorter.importCSV();
     }
 
     @Override

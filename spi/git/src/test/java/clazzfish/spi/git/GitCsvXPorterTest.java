@@ -60,7 +60,7 @@ class GitCsvXPorterTest {
     void exportCSV() throws IOException {
         // Given
         assumeTrue(privateKeyFile.exists(), "no SSH key file");
-        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git");
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/ClazzStatistic.csv");
         assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
         String header = "Classpath;Classname;Count";
         List<String> lines = new ArrayList<>();
@@ -74,6 +74,23 @@ class GitCsvXPorterTest {
         List<String> imported = xPorter.importCSV(gitURI);
         assertEquals("Classname;Count", imported.get(0));
         assertEquals(getClass().getName() + ";1", imported.get(1));
+        RepoTest.deleteRepoPath(gitURI);
+        CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
+    }
+
+    @Test
+    void importCSV() throws IOException {
+        // Given
+        assumeTrue(privateKeyFile.exists(), "no SSH key file");
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/SqlStatistic.csv");
+        assumeTrue(NetworkTester.isOnline(gitURI), gitURI + " is not online");
+
+        // When
+        GitCsvXPorter xPorter = new GitCsvXPorter(sshConfig, gitURI);
+
+        // Then
+        List<String> imported = xPorter.importCSV(gitURI);
+        assertEquals("Label; Unit; Total; Avg; Hits; Max; Min", imported.get(0));
         RepoTest.deleteRepoPath(gitURI);
         CollectionTester.assertEquals(imported, xPorter.importCSV(gitURI));
     }

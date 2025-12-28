@@ -14,7 +14,7 @@
     <Logger name="clazzfish.monitor" level="DEBUG" />
     <Logger name="clazzfish.monitor.internal" level="INFO" />
     <Logger name="clazzfish.core.stat.ClazzStatistic" level="DEBUG" />
-    <Logger name="clazzfish.spi.git" level="DEBUG" />
+    <Logger name="clazzfish.spi.git.GitCsvXPorter" level="DEBUG" />
     <!--
       If you want to see the executed SQL statements in the log set the
       logger of SqlStatistic to
@@ -24,7 +24,7 @@
       This will slow down your application so use it only for tracing.
     -->
     <Logger name="clazzfish.jdbc.SqlStatistic" level="DEBUG" />
-    <Root level="DEBUG">
+    <Root level="INFO">
       <AppenderRef ref="CONSOLE" />
     </Root>
   </Loggers>

@@ -63,7 +63,13 @@ public class Repo implements AutoCloseable {
         return new Repo(baseURI, git);
     }
 
-    private static URI getBaseURI(URI gitURI) {
+    /**
+     * Gets the base URI of the given GIT-URI.
+     *
+     * @param gitURI GIT-URI, e.g. "ssh://git@github.com/oboehm/ClazzFishTest.git/SqlStatistic.csv"
+     * @return the base URI, e.g. "ssh://git@github.com/oboehm/ClazzFishTest.git"
+     */
+    public static URI getBaseURI(URI gitURI) {
         String uri = gitURI.toString();
         if (uri.contains(".git/")) {
             return URI.create(StringUtils.substringBefore(uri, ".git/") + ".git");
@@ -71,6 +77,20 @@ public class Repo implements AutoCloseable {
             return URI.create(StringUtils.substringBefore(uri, "/ClazzStatistic.csv") + ".csv");
         }
         return gitURI;
+    }
+
+    /**
+     * Gets the context path of the given GIT-URI.
+     *
+     * @param gitURI GIT-URI, e.g. "ssh://git@github.com/oboehm/ClazzFishTest.git/SqlStatistic.csv"
+     * @return the context path, e.g. "SqlStatistic.csv"
+     * @since 3.0
+     */
+    public static Path getContextPath(URI gitURI) {
+        URI baseURI = getBaseURI(gitURI);
+        String path = gitURI.toString().substring(baseURI.toString().length());
+        path = StringUtils.removeStart(path, '/');
+        return Paths.get(path);
     }
 
     private static Git getRepo(URI gitURI, SshConfig sshCfg) throws IOException, GitAPIException {

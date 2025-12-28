@@ -129,7 +129,7 @@ class RepoTest {
      *     -Dclazzfish.git.ssh.keyfile=...
      * </p>
      * @throws GitAPIException in case of GIT problems
-     * @throws IOException.    in case of I/O problems
+     * @throws IOException     in case of I/O problems
      */
     @Test
     void ofTestRepo() throws GitAPIException, IOException {
@@ -153,7 +153,7 @@ class RepoTest {
     }
 
     public static void deleteRepoPath(URI uri) throws IOException {
-        Path repoPath = Repo.getRepoPathOf(uri);
+        Path repoPath = Repo.getRepoPathOf(Repo.getBaseURI(uri));
         if (Files.exists(repoPath)) {
             FileUtils.deleteDirectory(repoPath.toFile());
             log.info("'{}' wurde entfernt.", repoPath);
@@ -200,6 +200,12 @@ class RepoTest {
             File pushed = new File(repo.getDir(), filename);
             assertTrue(pushed.isFile());
         }
+    }
+
+    @Test
+    void getContextPath() {
+        URI gitURI = URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git/SqlStatistic.csv");
+        assertEquals(Path.of("SqlStatistic.csv"), Repo.getContextPath(gitURI));
     }
 
     @AfterAll

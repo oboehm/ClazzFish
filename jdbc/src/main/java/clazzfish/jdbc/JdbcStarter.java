@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ public final class JdbcStarter {
 
     /**
      * Does not register all MBeans but add them also as shutdown hook.
-     * So at the end of the program all collected dates are exported.
+     * So at the end of the program all collected dates are exported to
+     * "SqlStatistic.csv".
      */
     public static void record() {
         start();
@@ -72,7 +73,7 @@ public final class JdbcStarter {
     /**
      * Does not register all MBeans but add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
-     * the given directory
+     * the given directory.
      *
      * @param dir directory where the dates are stored
      */
@@ -84,7 +85,7 @@ public final class JdbcStarter {
     /**
      * Register all MBeans and add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
-     * the base URI.
+     * the base URI into "SqlStatistic.csv".
      *
      * @param base URI where the dates are stored
      * @since 2.5
@@ -97,7 +98,8 @@ public final class JdbcStarter {
     /**
      * Registers all MBeans of jdbc module but also the statistic MBean of
      * monitor module as shutdown hook. This means at the end of the program all
-     * alll statistic dates of the different modules are exported.
+     * all statistic dates of the different modules are exported (into
+     * "ClazzStatistic.csv" and "SqlStatistic.csv".
      * <p>
      * If you want to export ALL dates including the dates of the monitor
      * MBeans you have to call
@@ -115,7 +117,7 @@ public final class JdbcStarter {
     /**
      * Does not register all MBeans but add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
-     * the given directory.
+     * the given directory (to "SqlStatistic.csv" and "ClazzStatistic.csv").
      *
      * @param dir directory where the dates are stored
      */
@@ -127,7 +129,7 @@ public final class JdbcStarter {
     /**
      * Does not register all MBeans but add them also as shutdown hook.
      * So at the end of the program all collected dates are exported to
-     * the base URI.
+     * the base URI (into "SqlStatistic.csv" and "ClazzStatistic.csv").
      *
      * @param base URI where the dates are stored
      * @since 2.5
