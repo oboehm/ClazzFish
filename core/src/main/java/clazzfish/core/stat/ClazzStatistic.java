@@ -309,6 +309,16 @@ public class ClazzStatistic extends ShutdownHook implements ClazzStatisticMBean 
     }
 
     @Override
+    public String getSummary() {
+        Set<ClazzRecord> clazzRecords = getStatistics();
+        long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
+        long ac = clazzRecords.size();
+        long dc = ac - lc;
+        return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
+                lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
+    }
+
+    @Override
     public void run() {
         try {
             exportCSV();

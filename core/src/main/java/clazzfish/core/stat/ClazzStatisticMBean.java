@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 by Oli B.
+ * Copyright (c) 2024,2025 by Oli B.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,5 +69,13 @@ public interface ClazzStatisticMBean extends Shutdownable {
      * @return export URI
      */
     URI getExportURI();
+
+    /**
+     * Gets a summary about the loaded and dead classes.
+     *
+     * @return a string with a short summary
+     * @since 3.0
+     */
+    String getSummary();
 
 }
