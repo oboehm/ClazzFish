@@ -34,7 +34,7 @@ a dependency for SLF4J (Simple Log Facade for Java) is missing:
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-log4j12</artifactId>
-    <version>2.0.11</version>
+    <version>2.0.17</version>
 </dependency>
 ----
 
@@ -136,7 +136,7 @@ in link:../../sample[clazzfish-sample].
 === Other Logging Frameworks
 
 Logging is based on SLF4J.
-So if you want to use other logging framewors see the https://xxx[https://sematext.com/blog/slf4j-tutorial/].
+So if you want to use other logging frameworks see the https://sematext.com/blog/slf4j-tutorial/[SLF4J Tutorial].
 
 
 
@@ -175,3 +175,71 @@ With this configruration you see
 ....
 
 in the log.
+
+
+== Monitoring
+
+You have different JMX-Beans which allows you to have a look on different states and statistics of your application:
+
+* clazzfish.jdbc.ConnectionMonitor: shows you, which connections are open
+* clazzfish.jdbc.SqlStatistic: shows you the execution time of the different SQL statements
+
+image::images/jconsole-SqlStatistic.png[]
+
+With the Statistics attribute you can walk thru the different SQL statements to see
+
+* Label: the SQL statement itself
+* Hits: how often the SQL statement was called
+* Avg: the average execution time
+* Max: the maximal execution time
+* Min: the minimal execution time
+* Total: the sum of the execution time
+
+The units of the execution is measured in milliseconds (ms).
+The number of different SQL statements which are stored is 100.
+If you want more set the attribute `MaxSize` to a higher value.
+
+
+=== Optimization
+
+To optimize your SQL statements take a look at the following attributes:
+
+* prefix `MaxAvg`: describes the SQL statement with the highest average execution time
+* prefix `MaxHits`: the SQL statements with the higest number of calls
+* prefix `MaxMax`: the maximal execution time of a SQL statement
+* prefix `MaxTotal`: the maximal total time of all SQL statments
+
+
+=== Dumping and Recording
+
+There is a `JdbcStarter` class which allows you to create a CSV-File 'SqlStatstitic.csv' with the statistic dates of the SQL statements:
+
+[source,java]
+----
+static {
+    URI statDir = new File("target", "statistic").toURI();
+    JdbcStarter.recordAll(statDir);
+}
+----
+
+At the end of you application a file 'SqlStatistic.csv' is created at the given directory ('target/statistic').
+If the file exists from the last call the dates are imported before.
+
+[%autowidth]
+|===
+|Label |Unit |Total |Avg |Hits |Max |Min
+
+|"SELECT * FROM accounts WHERE name = ?"| ms| 7.466053| 2.488684333333333| 3| 6.481176| 0.456471
+
+|"INSERT INTO accounts (balance, name) VALUES (0.00, ?)"| ms| 5.215328| 1.7384426666666668| 3| 4.167582| 0.493241
+
+|"UPDATE accounts SET name = ? WHERE number = ?"| ms| 2.4940510000000002| 0.8313503333333334| 3| 1.605394| 0.395452
+
+|"SELECT * FROM accounts"| ms| 1.263792| 0.631896| 2| 0.677539| 0.586253
+
+|"SELECT balance, name FROM accounts where number = ?"| ms| 0.8120809999999999| 0.27069366666666667| 3| 0.342806| 0.229994
+
+|"CREATE TABLE accounts (number INTEGER IDENTITY PRIMARY KEY, balance DECIMAL(10,2), name VARCHAR(50))"| ms| 0.489595| 0.489595| 1| 0.489595| 0.489595
+|===
+
+The exported table is sorted after the total execution time of the SQL statement.

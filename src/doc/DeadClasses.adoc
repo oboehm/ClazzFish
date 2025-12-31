@@ -185,7 +185,7 @@ If you use Log4J2 add log4j-slf4j-impl to your dependencies (e.g. to your pom.xm
 <dependency>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-slf4j-impl</artifactId>
-    <version>2.24.3</version>
+    <version>2.25.1</version>
 </dependency>
 ----
 

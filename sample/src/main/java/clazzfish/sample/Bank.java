@@ -24,7 +24,7 @@ import clazzfish.sample.jdbc.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Scanner;
@@ -43,8 +43,8 @@ public class Bank {
 
     static {
         // log and store SQL statements at the end
-        //JdbcStarter.recordAll(new File("target", "statistic").toURI());
-        JdbcStarter.recordAll(URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git"));
+        JdbcStarter.recordAll(new File("target", "statistic").toURI());
+        //JdbcStarter.recordAll(URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git"));
         //JdbcStarter.recordAll();
         //Starter.record(new File("target", "statistic").toURI());
         //Starter.record(URI.create("ssh://git@github.com/oboehm/ClazzFishTest.git"));

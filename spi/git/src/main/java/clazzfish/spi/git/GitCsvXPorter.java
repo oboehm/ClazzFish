@@ -115,14 +115,6 @@ public class GitCsvXPorter implements CsvXPorter {
         log.trace("{} lines with headline '{}'", csvLines.size(), csvHeadLine);
     }
 
-//    private String getStatistic(List<ClazzRecord> clazzRecords) {
-//        long lc = clazzRecords.stream().filter(cr -> cr.count() > 0).count();
-//        long ac = clazzRecords.size();
-//        long dc = ac - lc;
-//        return String.format("%d classes: %d loaded (%d%%), %d dead (%d%%)", ac,
-//                lc, (lc * 100 + ac/2) / ac, dc, (dc * 100 + dc/2) / ac);
-//    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "-" + uri;
