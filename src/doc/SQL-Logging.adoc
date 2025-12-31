@@ -19,7 +19,7 @@ To add the SQL features of ClazzFish to your project use the following dependeci
 <dependency>
   <groupId>de.aosd.clazzfish</groupId>
   <artifactId>clazzfish-jdbc</artifactId>
-  <version>2.2</version>
+  <version>3.0</version>
 </dependency>
 ----
 

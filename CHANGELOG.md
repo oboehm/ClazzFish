@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - class statistic can be dumped direct by agent, without adding clazzfish-monitor to classpath
 - deployment changed from oss.sonatype.org to central.sonatype.org
+- Java 17 or higher required
 
 ### Added
 
 - core module
+- jdbc module: SQL statistic can be exported at the end of your application
 
 ### Removed
 

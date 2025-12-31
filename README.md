@@ -27,15 +27,16 @@ On the talk about "[Dead Classes](https://jugsaxony.org/downloads/day/slides/JSD
 
 ## History
 
-With v0.5 and v0.8 the first steps were done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
-V1.x is mainly for Java 8.
+With v3.x a [core](core/README.md) module is introduced and the ClasspathAgent extended.
+It allows you now to store a class statistic using ClazzStatistic of the core module.
+The jdbc module let you monitor your SQL statements and allows you to export it as 'SqlStatistic.csv'.
 
-V2.x supports Java 17 and beyond but still works with Java 11.
+V2.x supported Java 17 and beyond but still works with Java 11.
 With v2.3 the ClazzStatistic class was introduced to store the statistic of loaded classes.
 The use of [fast-classpath-scanner](https://github.com/lukehutch/fast-classpath-scanner) to dive into the classpath was discarded (no speedup was measured).
 
-With v3.x a [core](core/README.md) module was introduced and the ClasspathAgent extended.
-It allows you now to store a class statistic using the ClazzStatistic of the core module.
+With v0.5 and v0.8 the first steps were done - the transfer of ClasspathMonitor and ResourcepathMonitor from the [PatternTesting](http://patterntesting.org) project.
+V1.x is mainly for Java 8.
 
 
 
