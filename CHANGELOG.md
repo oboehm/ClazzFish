@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [3.0] (01-Jan-2026)
 
 ### Changed
 
@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - support of JaMon libary for profiling
 
 
+---
+
+
 ## [2.8] (26-Jul-2025)
 
 ### Changed
@@ -35,16 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - exported ClazzStatistic.csv is now sorted by classnames and not classpath
 
 
-## [2.7.1] (25-Jun-2025)
+## [2.7] (Jun-2025)
 
 ### Fixed
-- import of file is supported now by clazzfish-spi-git
+- **v2.71**: import of file is supported now by clazzfish-spi-git
   ([issue #39](https://github.com/oboehm/ClazzFish/issues/39))
-- dependency to `io.github.classgraph` removed
+- **v2.71**: dependency to `io.github.classgraph` removed
   ([issue #28](https://github.com/oboehm/ClazzFish/issues/28))
-
-
-## [2.7.0] (23-Jun-2025)
 
 ### Added
 - import of ClazzStatistic.csv can now be triggered by JMX (e.g. with `jconsole`)
@@ -154,6 +154,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - update to Log4J 2.17.1
   ([CVE-2021-44832](https://github.com/advisories/GHSA-8489-44mv-ggj8))
+
+
+---
 
 
 ## [1.0] (13-Jul-2019)
