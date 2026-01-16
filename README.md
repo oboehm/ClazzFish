@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.aosd.clazzfish/clazzfish)
+[![Maven Central](https://maven-badges.sml.io/maven-central/de.aosd.clazzfish/clazzfish/badge.svg)](https://maven-badges.sml.io/maven-central/de.aosd.clazzfish/clazzfish)
 
 # ClazzFish <img src="src/doc/images/clazzfish-128x64.png" width="64">
 
