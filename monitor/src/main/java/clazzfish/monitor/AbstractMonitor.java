@@ -57,6 +57,7 @@ public abstract class AbstractMonitor extends ShutdownHook implements AbstractMo
      */
     @Override
     public void run() {
+        LOG.info("Shutdown hook for {} starts...", getClass());
         try {
             exportCSV();
         } catch (IOException ioe) {

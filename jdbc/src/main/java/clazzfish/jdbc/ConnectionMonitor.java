@@ -28,10 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -326,8 +323,8 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 		}
 	}
 
-	private static List<String> getCallerStacktraceDumps() {
-		List<String> connectionStacktraces = new ArrayList<>();
+	static Set<String> getCallerStacktraceDumps() {
+		Set<String> connectionStacktraces = new HashSet<>();
 		for (ProxyConnection proxy : openConnections) {
 			StringBuilder buf = new StringBuilder();
 			StackTraceElement[] stacktrace = proxy.getCaller();
@@ -335,7 +332,7 @@ public class ConnectionMonitor extends clazzfish.monitor.AbstractMonitor impleme
 				buf.append("\n\tat ");
 				buf.append(element);
 			}
-			connectionStacktraces.add(proxy + " was called " + buf);
+			connectionStacktraces.add("Connection was called " + buf);
 		}
 		return connectionStacktraces;
 	}

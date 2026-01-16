@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -131,11 +132,21 @@ class ConnectionMonitorTest extends AbstractDbTest {
 
     /**
      * Test method for {@link ConnectionMonitor#logCallerStacktraces()}. Watch
-     * the log to see if it works.
+     * the log to see if logging works.
+     * <p>
+     * For issue #50 the test was extended to see if the same stacktrace (for
+     * the 2nd setup) will be only dumped once.
+     * </p>
      */
     @Test
-    public void testLogStacktraces() {
+    public void testLogStacktraces() throws SQLException {
         monitor.logCallerStacktraces();
+        int size = ConnectionMonitor.getCallerStacktraceDumps().size();
+        for (int i = 0; i < 2; i++) {
+            setUpConnection();
+        }
+        Collection<String> dumps = ConnectionMonitor.getCallerStacktraceDumps();
+        assertEquals(size+1, dumps.size());
     }
 
     /**
