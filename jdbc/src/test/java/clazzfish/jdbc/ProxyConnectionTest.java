@@ -1,7 +1,5 @@
 /*
- * $Id: ProxyConnectionTest.java,v 1.8 2016/12/18 20:19:39 oboehm Exp $
- *
- * Copyright (c) 2012 by Oliver Boehm
+ * Copyright (c) 2012-2026 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Proxy;
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,6 +102,37 @@ s     */
             conn.close();
             assertTrue(conn.isClosed(), "should be closed:");
         }
+    }
+
+    @Test
+    public void testCommit() throws SQLException {
+        try (Connection conn = ProxyConnection.newInstance(proxy)) {
+            createUncommitedStatement(conn);
+            assertTrue(hasUncommittedStatements(proxy));
+            conn.commit();
+            assertFalse(hasUncommittedStatements(proxy));
+        }
+    }
+
+    @Test
+    public void testRollback() throws SQLException {
+        try (Connection conn = ProxyConnection.newInstance(proxy)) {
+            createUncommitedStatement(conn);
+            assertTrue(hasUncommittedStatements(proxy));
+            conn.rollback();
+            assertFalse(hasUncommittedStatements(proxy));
+        }
+    }
+
+    private static void createUncommitedStatement(Connection conn) throws SQLException {
+        conn.setAutoCommit(false);
+        Statement stmt = conn.createStatement();
+        stmt.execute("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+    }
+
+    private static boolean hasUncommittedStatements(Connection conn) {
+        ProxyConnection handler = (ProxyConnection) Proxy.getInvocationHandler(conn);
+        return !handler.getUncommittedStatements().isEmpty();
     }
 
 }

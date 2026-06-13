@@ -1,7 +1,5 @@
 /*
- * $Id: ProxyConnection.java,v 1.18 2016/12/18 20:19:38 oboehm Exp $
- *
- * Copyright (c) 2012-2014 by Oliver Boehm
+ * Copyright (c) 2012-2026 by Oliver Boehm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This is a dynamic proxy for a JDBC connection which monitors together with
@@ -48,7 +46,7 @@ public class ProxyConnection implements InvocationHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(ProxyConnection.class);
 	private final Connection connection;
 	private final StackTraceElement[] caller;
-	private final Collection<StasiStatement> uncommittedStatements = new CopyOnWriteArrayList<>();
+	private final Collection<StasiStatement> uncommittedStatements = new ArrayList<>();
 	private boolean committed = false;
 	private boolean autoCommit = true;
 
@@ -84,6 +82,10 @@ public class ProxyConnection implements InvocationHandler {
 		} catch (SQLException sex) {
 			LOG.debug("Cannot decide if auto-commit is on:", sex);
 		}
+	}
+
+	public Collection<StasiStatement> getUncommittedStatements() {
+		return uncommittedStatements;
 	}
 
 	/**
