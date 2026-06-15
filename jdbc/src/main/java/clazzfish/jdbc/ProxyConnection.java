@@ -18,6 +18,7 @@
 
 package clazzfish.jdbc;
 
+import clazzfish.jdbc.internal.Caller;
 import clazzfish.jdbc.internal.StasiPreparedStatement;
 import clazzfish.jdbc.internal.StasiStatement;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class ProxyConnection implements InvocationHandler {
 	 */
 	protected ProxyConnection(final Connection connection) {
 		this.connection = connection;
-		this.caller = StasiStatement.getCallerStacktrace(ProxyConnection.class, ProxyDriver.class,
+		this.caller = Caller.getCallerStacktrace(ProxyConnection.class, ProxyDriver.class,
 				ConnectionMonitor.class, DriverManager.class);
 		try {
 			this.autoCommit = connection.getAutoCommit();
