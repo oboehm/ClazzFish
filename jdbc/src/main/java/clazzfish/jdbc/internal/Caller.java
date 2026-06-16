@@ -18,6 +18,9 @@
 package clazzfish.jdbc.internal;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.WeakHashMap;
 
 /**
  * The class Caller looks for the caller by analyzing the stacktrace.
@@ -28,6 +31,8 @@ import java.util.Arrays;
  */
 public final class Caller {
 
+    private static final Map<StackTraceElement, Caller> WEAK_CACHE = new WeakHashMap<>();
+
     private final StackTraceElement stackTraceElement;
 
     private Caller(StackTraceElement stackTraceElement) {
@@ -36,13 +41,16 @@ public final class Caller {
 
     /**
      * Creates a caller element with the corresponding stack trace entry.
+     * To avoid to many objects of the same caller the created instances
+     * are cached.
      *
      * @param ignoredClasses caller which should be ignored
      * @return caller of the of method
      */
     public static Caller of(final Class<?>... ignoredClasses) {
         StackTraceElement [] stackTraceElements = getCallerStacktrace(ignoredClasses);
-        return new Caller(stackTraceElements[0]);
+        StackTraceElement key = stackTraceElements[0];
+        return WEAK_CACHE.computeIfAbsent(key, Caller::new);
     }
 
     /**
@@ -82,6 +90,18 @@ public final class Caller {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " " + stackTraceElement;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Caller)) return false;
+        Caller caller = (Caller) o;
+        return Objects.equals(stackTraceElement, caller.stackTraceElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stackTraceElement);
     }
 
 }

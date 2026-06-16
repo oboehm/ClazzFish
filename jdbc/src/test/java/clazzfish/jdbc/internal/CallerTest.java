@@ -18,8 +18,10 @@
 package clazzfish.jdbc.internal;
 
 import org.junit.jupiter.api.Test;
+import patterntesting.runtime.junit.ObjectTester;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Unit tests for {@link Caller}.
@@ -34,6 +36,25 @@ class CallerTest {
         Caller caller = Caller.of();
         StackTraceElement element = caller.getStackTraceElement();
         assertEquals("getStackTraceElement", element.getMethodName());
+    }
+
+    @Test
+    void testEquals() {
+        Caller c1 = createCaller();
+        Caller c2 = createCaller();
+        ObjectTester.assertEquals(c1, c2);
+
+    }
+    @Test
+    void testCaching() {
+        Caller c1 = createCaller();
+        Caller c2 = createCaller();
+        assertEquals(c1.getStackTraceElement(), c2.getStackTraceElement());
+        assertSame(c1.getStackTraceElement(), c2.getStackTraceElement());
+    }
+
+    private static Caller createCaller() {
+        return Caller.of();
     }
 
 }
