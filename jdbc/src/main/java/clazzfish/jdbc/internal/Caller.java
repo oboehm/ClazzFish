@@ -17,7 +17,10 @@
  */
 package clazzfish.jdbc.internal;
 
-import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * The class Caller looks for the caller by analyzing the stacktrace.
@@ -27,6 +30,10 @@ import java.util.Arrays;
  * @since 3.1 (15.06.26)
  */
 public final class Caller {
+
+    private static final Logger log = LoggerFactory.getLogger(Caller.class);
+    private static final Map<StackTraceElement, Caller> WEAK_CACHE = new WeakHashMap<>();
+    private static final Map<Caller, Set<StackTraceElement[]>> STACKTRACE_CACHE = new WeakHashMap<>();
 
     private final StackTraceElement stackTraceElement;
 
@@ -42,22 +49,62 @@ public final class Caller {
      */
     public static Caller of(final Class<?>... ignoredClasses) {
         StackTraceElement [] stackTraceElements = getCallerStacktrace(ignoredClasses);
-        return new Caller(stackTraceElements[0]);
+        return of(stackTraceElements[0]);
     }
 
     /**
-     * Gets the caller stacktrace. To find the real caller we ignore the first 3
-     * elements from the stacktrace because this is e.g. the method
+     * Creates a caller element with the given stack trace entry.
+     * To avoid too many objects of the same caller the created instances
+     * are cached.
+     *
+     * @param stackTraceElement the stacktrace element of the caller
+     * @return caller of the of method
+     */
+    public static Caller of(StackTraceElement stackTraceElement) {
+        StackTraceElement key = stackTraceElement;
+        return WEAK_CACHE.computeIfAbsent(key, Caller::new);
+    }
+
+    /**
+     * Gets the caller stacktrace. To find the real caller we ignore the first
+     * element from the stacktrace because this is e.g. the method
      * {@link Thread#getStackTrace()} which is not relevant here.
+     * <p>
+     * In case of a connection pool we have many caller with the same#
+     * stacktrace. For this rease we cache the stacktrace to reduche the
+     * number of doublettes.
+     * </p>
      *
      * @param ignoredClasses the ignored classes
      * @return the caller stacktrace
      */
     public static StackTraceElement[] getCallerStacktrace(final Class<?>... ignoredClasses) {
+        StackTraceElement[] stacktraceCaller = getUncachedCallerStacktrace(ignoredClasses);
+        Caller caller = Caller.of(stacktraceCaller[0]);
+        Set<StackTraceElement[]> cached = STACKTRACE_CACHE.get(caller);
+        if (cached == null) {
+            cached = new HashSet<>();
+            cached.add(stacktraceCaller);
+            STACKTRACE_CACHE.put(caller, cached);
+        } else {
+            for (StackTraceElement[] element : cached) {
+                if (Arrays.equals(element, stacktraceCaller)) {
+                    log.trace("Using cached {} as result.", element);
+                    return element;
+                }
+            }
+            cached.add(stacktraceCaller);
+        }
+        return stacktraceCaller;
+    }
+
+    private static StackTraceElement[] getUncachedCallerStacktrace(final Class<?>... ignoredClasses) {
+        Class<?>[] clazzes = Arrays.copyOf(ignoredClasses, ignoredClasses.length + 1);
+        clazzes[ignoredClasses.length] = Caller.class;
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        for (int i = 3; i < stacktrace.length; i++) {
+        for (int i = 1; i < stacktrace.length; i++) {
             String classname = stacktrace[i].getClassName();
-            if (!(classname.startsWith("com.sun.proxy.") || classname.startsWith("jdk.proxy") || matches(classname, ignoredClasses))) {
+            if (!(classname.startsWith("com.sun.proxy.") || classname.startsWith("jdk.proxy") || matches(classname, clazzes))) {
                 StackTraceElement[] stacktraceCaller = new StackTraceElement[stacktrace.length - i];
                 System.arraycopy(stacktrace, i, stacktraceCaller, 0, stacktrace.length - i);
                 return stacktraceCaller;
@@ -82,6 +129,18 @@ public final class Caller {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " " + stackTraceElement;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Caller)) return false;
+        Caller caller = (Caller) o;
+        return Objects.equals(stackTraceElement, caller.stackTraceElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stackTraceElement);
     }
 
 }
