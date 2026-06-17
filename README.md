@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Maven Central](https://maven-badges.sml.io/maven-central/de.aosd.clazzfish/clazzfish/badge.svg)](https://maven-badges.sml.io/maven-central/de.aosd.clazzfish/clazzfish)
+[![Maven Central](https://img.shields.io/maven-central/v/de.aosd.clazzfish/clazzfish)](ttps://central.sonatype.com/artifact/de.aosd.clazzfish/clazzfish)
 
 # ClazzFish <img src="src/doc/images/clazzfish-128x64.png" width="64">
 

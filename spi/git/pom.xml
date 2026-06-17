@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.aosd.clazzfish</groupId>
     <artifactId>clazzfish-spi</artifactId>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.0.2</version>
   </parent>
   <artifactId>clazzfish-spi-git</artifactId>
   <packaging>jar</packaging>

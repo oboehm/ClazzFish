@@ -40,7 +40,7 @@ This is a little checklist for the next release:
   `mvn -Psign -DskipTests clean install source:jar javadoc:jar gpg:sign -Dgpg.passphrase=xx deploy`
 . after successful deployment go to https://central.sonatype.com/publishing and _publish_ the deployment
 . build the Javadoc (`mvn javadoc:aggregate`) and transfer `target/reports/apidocs` to http://aosd.de/ClazzFish/
-. checkin the pom.xml (if not already done), label the sources, e.g. with "clazzfish-3.0.1" and push it (`git push --tags`)
+. checkin the pom.xml (if not already done), label the sources, e.g. with "clazzfish-3.0.2" and push it (`git push --tags`)
 . publish release notes: go to https://github.com/oboehm/ClazzFish/releases[Releases], https://github.com/oboehm/ClazzFish/releases/new[Draft a new release] and publish it
 . merge the release branch to master and develop branch
 . change to develop branch and start next SNAPSHOT
