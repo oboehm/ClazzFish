@@ -43,6 +43,8 @@ public final class Caller {
 
     /**
      * Creates a caller element with the corresponding stack trace entry.
+     * To avoid to many objects of the same caller the created instances
+     * are cached.
      *
      * @param ignoredClasses caller which should be ignored
      * @return caller of the of method
@@ -61,8 +63,7 @@ public final class Caller {
      * @return caller of the of method
      */
     public static Caller of(StackTraceElement stackTraceElement) {
-        StackTraceElement key = stackTraceElement;
-        return WEAK_CACHE.computeIfAbsent(key, Caller::new);
+        return WEAK_CACHE.computeIfAbsent(stackTraceElement, Caller::new);
     }
 
     /**
@@ -89,7 +90,7 @@ public final class Caller {
         } else {
             for (StackTraceElement[] element : cached) {
                 if (Arrays.equals(element, stacktraceCaller)) {
-                    log.trace("Using cached {} as result.", element);
+                    log.trace("Using cached stacktrace as result.");
                     return element;
                 }
             }
