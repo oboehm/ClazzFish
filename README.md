@@ -15,7 +15,7 @@ Part of ClassFish are several modules:
 * [spi/git](spi/git/README.md)
 
 
-## Upcoming Events
+## Past Events
 
 In September 2025 the [JUG Saxony Day](https://jugsaxony.org/timeline/2025/9/25/JSD2025) took place in Eastern Germany.
 On the talk about "[Dead Classes](https://jugsaxony.org/downloads/day/slides/JSD2025_DeadClasses_Oliver-Boehm.pdf)" you could learn 
@@ -49,5 +49,5 @@ V1.x is mainly for Java 8.
 * [Configuration](src/doc/Config.adoc)
 
 ---
-July 2025,
+August 2026,
 Oli B.

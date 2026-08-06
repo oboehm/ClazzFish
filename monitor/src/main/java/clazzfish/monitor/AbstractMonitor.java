@@ -22,6 +22,7 @@ import clazzfish.core.Config;
 import clazzfish.core.util.ShutdownHook;
 import clazzfish.monitor.io.ExtendedFile;
 import clazzfish.core.jmx.MBeanFinder;
+import clazzfish.monitor.log.JulToSlf4j;
 import clazzfish.monitor.util.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,10 @@ public abstract class AbstractMonitor extends ShutdownHook implements AbstractMo
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMonitor.class);
     private ObjectName mbeanName = MBeanFinder.getAsObjectName(this.getClass());
+
+    static {
+        JulToSlf4j.install();
+    }
 
     /**
      * This method is called when the ClasspathMonitor is registered as shutdown
