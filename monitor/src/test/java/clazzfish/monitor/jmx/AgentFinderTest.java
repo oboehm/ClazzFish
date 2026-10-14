@@ -43,7 +43,7 @@ class AgentFinderTest {
 
     @Test
     void isAgentAvailable() {
-        assertTrue(agentFinder.isAgentAvailable());
+        assertEquals(agent.isActive(), agentFinder.isAgentAvailable());
     }
 
     @Test

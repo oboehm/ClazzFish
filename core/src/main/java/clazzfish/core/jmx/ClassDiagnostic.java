@@ -92,7 +92,7 @@ public final class ClassDiagnostic implements ClassLoading {
             String[] parts = lines[i].trim().split("\\s+");
             String className = parts[3];
             if (isNotRealClass(className)) {
-                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", className);
                 continue;
             }
             try {
@@ -145,7 +145,7 @@ public final class ClassDiagnostic implements ClassLoading {
                 className = getSubstringAfterLast(className, "|--");
             }
             if (isNotRealClass(className)) {
-                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", classes);
+                log.log(Level.FINER, "\"{0}\" is ignored because it is not a real class name.", className);
             } else {
                 classes.add(className);
             }

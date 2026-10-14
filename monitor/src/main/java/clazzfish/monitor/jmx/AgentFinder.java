@@ -66,7 +66,18 @@ public final class AgentFinder {
      * @return true, if is agent available
      */
     public boolean isAgentAvailable() {
-        return agentMBean != null;
+        if (agentMBean == null) {
+            return false;
+        }
+        try {
+            boolean active = getAttribute("Active", Boolean.class);
+            log.debug("Agent {} is available and {}.", agentMBean, active ? "active" : "inactive");
+            return active;
+        } catch (JMException ex) {
+            log.debug("Agent {} is available but not acessible ({}).", agentMBean, ex.getMessage());
+            log.debug("Details:", ex);
+            return false;
+        }
     }
 
     public boolean isDumping() {
