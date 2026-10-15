@@ -27,6 +27,7 @@ import java.lang.instrument.Instrumentation;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
@@ -52,12 +53,13 @@ import java.util.zip.ZipFile;
 public class Digger {
 
     private static final Logger log = Logger.getLogger(Digger.class.getName());
+    private static final Executor EXECUTOR = Executors.newCachedThreadPool();
     private final ClassLoading classLoading;
     private final FutureTask<AllClazzRecords> allClazzRecords;
 
     {
         allClazzRecords = new FutureTask<>(this::getAllClazzRecords);
-        Executors.newCachedThreadPool().execute(allClazzRecords);
+        EXECUTOR.execute(allClazzRecords);
     }
 
     public Digger() {
@@ -102,8 +104,11 @@ public class Digger {
             return null;
         }
         if (name.endsWith(".class")) {
-            int lastdot = name.lastIndexOf('.');
-            String classname = name.substring(0, lastdot).replaceAll("[/\\\\]", "\\.");
+            int lastdot = name.length() - 6;
+            String classname = name.substring(0, lastdot);
+            if (classname.indexOf('/') >= 0 || classname.indexOf('\\') >= 0) {
+                classname = classname.replace('/', '.').replace('\\', '.');
+            }
             if (classname.startsWith(".")) {
                 classname = classname.substring(1);
             }
@@ -136,7 +141,7 @@ public class Digger {
      * @return classes of the classpath
      */
     public String[] getClasses() {
-        Set<ClazzRecord> clazzRecords = getAllClazzRecords().clazzRecords;
+        Set<ClazzRecord> clazzRecords = accessAllClassRecords().clazzRecords;
         String[] classes = new String[clazzRecords.size()];
         int i = 0;
         for (ClazzRecord cr : clazzRecords) {
@@ -213,7 +218,7 @@ public class Digger {
             if (resource.endsWith(suffix)) {
                 String classname = resourceToClass(resource);
                 if (ClassFilter.DEFAULT.isIncluded(classname)) {
-                    elements.add(resourceToClass(classname));
+                    elements.add(classname);
                 }
             }
         }

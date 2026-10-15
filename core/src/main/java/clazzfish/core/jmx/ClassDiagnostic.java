@@ -109,10 +109,11 @@ public final class ClassDiagnostic implements ClassLoading {
     public Set<Class<?>> getLoadedClassesFromVmClassHierarchy() {
         Set<Class<?>> classes = new HashSet<>();
         String[] loadedClassesNames = getLoadedClassnames();
+        ClassLoader classLoader = ClassDiagnostic.class.getClassLoader();
         for (String className : loadedClassesNames) {
             try {
                 log.log(Level.FINER, "Try to get class \"{0}\"...", className);
-                Class<?> cl = Class.forName(className);
+                Class<?> cl = Class.forName(className, false, classLoader);
                 classes.add(cl);
             } catch (ClassNotFoundException | Error ex) {
                 log.log(Level.FINE, "Class \"{0}\" could not be loaded ({1}).", new Object[] {className, ex.getMessage()});

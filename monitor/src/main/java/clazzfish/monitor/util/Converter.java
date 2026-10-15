@@ -136,7 +136,7 @@ public final class Converter {
 		if (name == null) {
 			return null;
 		}
-		return name.replaceAll("\\.", "/") + ".class";
+		return name.replace('.', '/') + ".class";
 	}
 
 	/**
@@ -164,7 +164,7 @@ public final class Converter {
 		if (name == null) {
 			return null;
 		}
-		return name.replaceAll("\\.", "/");
+		return name.replace('.', '/');
 	}
 
 	/**
@@ -214,8 +214,8 @@ public final class Converter {
 	 */
 	public static URI toURI(final String uri) {
 		try {
-            String converted = uri.replaceAll(" ", "%20");
-            converted = converted.replace("file://", "file:/");
+			String converted = uri.indexOf(' ') < 0 ? uri : uri.replace(" ", "%20");
+			converted = converted.replace("file://", "file:/");
 			return normalize(new URI(converted));
 		} catch (URISyntaxException ex) {
             LOG.trace("Cannot convert '{}' to URI:", uri, ex);
@@ -624,17 +624,6 @@ public final class Converter {
 	public static String toString(final Date date, final String pattern, final Locale locale) {
 		DateFormat df = new SimpleDateFormat(pattern, locale);
 		return df.format(date);
-	}
-
-	/**
-	 * Converts variable number of arguments into an object array.
-	 *
-	 * @param objects
-	 *            the objects
-	 * @return the object[]
-	 */
-	public static Object[] toArray(final Object... objects) {
-		return objects;
 	}
 
 	/**
