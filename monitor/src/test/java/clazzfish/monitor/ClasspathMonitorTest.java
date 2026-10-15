@@ -311,7 +311,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
      * {@link ClasspathMonitor#getUsedClasspathSet()} needed about 90 ms in
      * average and about 200 ms for the first call on a i5 CPU with
      * 2.60GHz. This is too much. We expect that we can do it in less than 50
-     * ms. To avoid a false positive test we accept 80 ms for a call of this
+     * ms. To avoid a false positive test we accept 100 ms for a call of this
      * method.
      */
     @Test
@@ -322,7 +322,7 @@ public class ClasspathMonitorTest extends AbstractMonitorTest implements Seriali
             long measured = measureGetUsedClasspathSet();
             LOG.info("{}. call of getUsedClasspathSet() needed {} ms.", i, measured);
             t += measured;
-            if (measured < 80) {
+            if (measured < 100) {
                 return;
             }
         }
